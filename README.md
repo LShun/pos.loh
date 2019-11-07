@@ -37,3 +37,8 @@ Agriculture POS System, made in 8086 Assembly
 - Open your GitHub client, check if all your modifications are there.
 - Commit then push.
 - No need to specifically copy here and there, because all the file are already in appropriate location.
+
+## Uninstallation
+
+- If you used the `setup.bat`, run the `dejunction.bat`
+- Remove the `pos.loh` folder from your computer
