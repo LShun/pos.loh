@@ -12,10 +12,11 @@
 	; Login
 	strRequestPw 	DB "Please enter password: $"
 	strLoginSuccess DB "User authorized. Welcome!$"
-	strLoginFail 	DB "Incorrect login details. Please try again$"
 	strLoginDenied  DB "Wrong login too many times, check with support.$"
-	strPw			DB "123$"
-	userPw			DB ?
+	strPw			DB "Password$"
+	userPw			DB 20        ; Max char
+	                DB ?         ; Char entered
+	                DB 20 DUP(0DH) ; Char entered
 	
 	; Main menu
 	strMainMenu 	DB "====Main Menu====",13,10
@@ -126,14 +127,76 @@ next_line ENDP
 
 ; Login function
 LOGIN PROC
+	; Show login prompt
 	CALL next_line
 	MOV	AH, 09H
 	LEA DX, strRequestPw
 	INT 21H
-    	
-	CALL next_line
-	RET
+
+	CALL LOGIN_CMP_SETUP
+	
+	checkPw:
+		; Compare each letter
+		CMP BH, BL
+		JNE loginFail
+		
+		; if no match, ask user to try 
+		
+		INC DI
+		INC SI
+		
+		MOV BL, [DI]
+	    MOV BH, [SI]
+		
+		; once reach end, perform final check
+		CMP BL, '$'
+		JNE checkPw
+		CMP BH, 0DH
+		JNE loginFail
+		
+		; If all match, welcome user
+		CALL next_line
+		
+		MOV AH, 09H
+        LEA DX, strLoginSuccess
+        INT 21H
+        
+        CALL next_line
+        RET
+        
+
+    ; Ask user to try again
+    loginFail:
+        CALL next_line
+        MOV AH, 09H
+        LEA DX, strLoginFail
+        INT 21H
+        CALL next_line
+        
+        CALL LOGIN_CMP_SETUP
+        JMP checkPw
+         
 LOGIN ENDP
+
+LOGIN_CMP_SETUP PROC
+    ; Overwrite buffer
+    
+    
+    ; Get password
+	MOV AH, 0AH
+	LEA DX, userPw
+	INT 21H
+
+	; Compare the string with actual PW, char by char
+	LEA DI, strPw
+	MOV SI, OFFSET userPw + 2
+	CALL next_line
+	
+	MOV BL, [DI]
+	MOV BH, [SI]
+	
+	RET
+LOGIN_CMP_SETUP ENDP    
 
 ; Purchase function
 PURCHASE PROC
