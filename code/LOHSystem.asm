@@ -127,54 +127,54 @@ next_line ENDP
 
 ; Login function
 LOGIN PROC
-	; Show login prompt
-	CALL next_line
-	MOV	AH, 09H
-	LEA DX, strRequestPw
-	INT 21H
-
-	CALL LOGIN_CMP_SETUP
-	
-	checkPw:
-		; Compare each letter
-		CMP BH, BL
-		JNE loginFail
-		
-		; if no match, ask user to try 
-		
-		INC DI
-		INC SI
-		
-		MOV BL, [DI]
-	    MOV BH, [SI]
-		
-		; once reach end, perform final check
-		CMP BL, '$'
-		JNE checkPw
-		CMP BH, 0DH
-		JNE loginFail
-		
-		; If all match, welcome user
-		CALL next_line
-		
-		MOV AH, 09H
-        LEA DX, strLoginSuccess
-        INT 21H
-        
-        CALL next_line
+	;; Show login prompt
+;	CALL next_line
+;	MOV	AH, 09H
+;	LEA DX, strRequestPw
+;	INT 21H
+;
+;	CALL LOGIN_CMP_SETUP
+;	
+;	checkPw:
+;		; Compare each letter
+;		CMP BH, BL
+;		JNE loginFail
+;		
+;		; if no match, ask user to try 
+;		
+;		INC DI
+;		INC SI
+;		
+;		MOV BL, [DI]
+;	    MOV BH, [SI]
+;		
+;		; once reach end, perform final check
+;		CMP BL, '$'
+;		JNE checkPw
+;		CMP BH, 0DH
+;		JNE loginFail
+;		
+;		; If all match, welcome user
+;		CALL next_line
+;		
+;		MOV AH, 09H
+;        LEA DX, strLoginSuccess
+;        INT 21H
+;        
+;        CALL next_line
         RET
-        
-
-    ; Ask user to try again
-    loginFail:
-        CALL next_line
-        MOV AH, 09H
-        LEA DX, strLoginFail
-        INT 21H
-        CALL next_line
-        
-        CALL LOGIN_CMP_SETUP
-        JMP checkPw
+;        
+;
+;    ; Ask user to try again
+;    loginFail:
+;        CALL next_line
+;        MOV AH, 09H
+;        LEA DX, strLoginFail
+;        INT 21H
+;        CALL next_line
+;        
+;        CALL LOGIN_CMP_SETUP
+;        JMP checkPw
          
 LOGIN ENDP
 
