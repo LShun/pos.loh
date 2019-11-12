@@ -12,7 +12,7 @@
 	; Login
 	strRequestPw 	DB "Please enter password: $"
 	strLoginSuccess DB "User authorized. Welcome!$"
-	strLoginDenied  DB "Wrong login too many times, check with support.$"
+	strLoginFail 	DB "Incorrect login details. Please try again$"
 	strPw			DB "Password$"
 	userPw			DB 20        ; Max char
 	                DB ?         ; Char entered
