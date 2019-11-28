@@ -5,8 +5,15 @@
 	stub			DB "Stub$"
 
     ; Main screen
-	strWelcome		DB "Welcome to LOH Pork Sales System$"
-	strMainWarn		DB "AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW$"
+	logo			DB " __         ______     __  __     ______   ______     ______", 13, 10
+					DB "/\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\", 13, 10
+					DB "\ \ \____  \ \ \/\ \  \ \  __ \  \ \  _-/ \ \ \/\ \  \ \___  \", 13, 10
+					DB " \ \_____\  \ \_____\  \ \_\ \_\  \ \_\    \ \_____\  \/\_____\", 13, 10
+					DB "  \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____/", 13, 10, "$"
+
+	strSeparator	DB "===============================================================", 13, 10, "$"
+	strWelcome		DB "               Welcome to LOH Pork Sales System", 13, 10, "$"
+	strMainWarn		DB " AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW", 13, 10, "$"
 	userMenuChoice  DB ?
 
 	; Login
@@ -19,7 +26,7 @@
 	                DB 20 DUP(0DH) ; Char entered
 	
 	; Main menu
-	strMainMenu 	DB "====Main Menu====",13,10
+	strMainMenu 	DB "===========================Main Menu===========================",13,10
 	                DB "1.     Purchase",13,10
 	                DB "2.     Billing",13,10
 	                DB "3.     Summary",13,10
@@ -47,11 +54,19 @@
 MAIN PROC
     MOV AX,@DATA
     MOV DS,AX
-    
-    ; Put the rest of your code here
+
     MOV AH, 09H
+	LEA DX, logo
+	INT 21H
+	
+	LEA DX, strSeparator
+	INT 21H
+	
     LEA DX, strWelcome
     INT 21H
+    
+    LEA DX, strSeparator
+	INT 21H
     
     CALL next_line
 	
@@ -63,42 +78,43 @@ MAIN PROC
 	
 	CALL LOGIN
 	
-	CALL display_menu
-    
-    ; check Purchase
-    chkPurc:
-	    CMP userMenuChoice, '1'
-	    JZ purc
-	    JNZ chkBill
-	    
-	    purc:
-		    CALL PURCHASE
-    ; check Bill
-	chkBill:
-	    CMP userMenuChoice, '2'
-	    JZ bill
-	    JNZ chkSum
-	    
-	    bill:
-		    CALL BILLING
-   	; check Sum
-   	chkSum:
-	    CMP userMenuChoice, '3'
-	    JZ sum
-        JNZ chkExit
-	    sum:
-		    CALL SUMMARY
+	MENU:
+		CALL display_menu
 		
-    ; end program
-	chkExit:
-		CMP userMenuChoice, '4'
-	    JZ exit
-		JNZ continue
-		exit:
-        	MOV AX,4C00H
-        	INT 21H
-	continue:
-		LOOP 	MAIN
+		; check Purchase
+		chkPurc:
+			CMP userMenuChoice, '1'
+			JZ purc
+			JNZ chkBill
+			
+			purc:
+				CALL PURCHASE
+		; check Bill
+		chkBill:
+			CMP userMenuChoice, '2'
+			JZ bill
+			JNZ chkSum
+			
+			bill:
+				CALL BILLING
+		; check Sum
+		chkSum:
+			CMP userMenuChoice, '3'
+			JZ sum
+			JNZ chkExit
+			sum:
+				CALL SUMMARY
+			
+		; end program
+		chkExit:
+			CMP userMenuChoice, '4'
+			JZ exit
+			JNZ continue
+			exit:
+				MOV AX,4C00H
+				INT 21H
+		continue:
+			LOOP 	MENU
     
 MAIN ENDP
 
