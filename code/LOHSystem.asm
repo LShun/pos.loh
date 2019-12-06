@@ -53,7 +53,7 @@
 	sumTitle			DB "Summary", 13, 10, "$"
 	taTxt               DB "Total actions: $"    ; UPDATE HERE AFTER EACH LOOP
 	tfTxt			    DB "Total figures: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-	totalActions        DW 100
+	totalActions        DW 0
 	totalFigure         DW 0
 	operand             DW ?
 	operator            DW ?
