@@ -1,8 +1,12 @@
 .MODEL SMALL
 .STACK 100
 .DATA
-	; Extra
+	; Extra/Useful Constants
 	stub			DB "Stub$"
+	TENDW           DW 10
+	SIGN            DB "RM $"
+	CENTS           DB ".00$"                      
+	
 
     ; Main screen
 	logo			DB " __         ______     __  __     ______   ______     ______", 13, 10
@@ -21,9 +25,9 @@
 	strLoginSuccess DB "User authorized. Welcome!$"
 	strLoginFail 	DB "Incorrect login details. Please try again$"
 	strPw			DB "Password$"
-	userPw			DB 20        ; Max char
-	                DB ?         ; Char entered
-	                DB 20 DUP(0DH) ; Char entered
+	userPw			DB 20           ; Max char
+	                DB ?            ; Num of char entered
+	                DB 20 DUP(0DH)  ; BUffer for Char entered
 	
 	; Main menu
 	strMainMenu 	DB "===========================Main Menu===========================",13,10
@@ -46,9 +50,13 @@
 
 
 	; Summary
-	sumStub				DB "Summary Stub$"
-	totalActions    DB 0
-	totalFigure     DW 0
+	sumTitle			DB "Summary", 13, 10, "$"
+	taTxt               DB "Total actions: $"    ; UPDATE HERE AFTER EACH LOOP
+	tfTxt			    DB "Total figures: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	totalActions        DW 100
+	totalFigure         DW 0
+	operand             DW ?
+	operator            DW ?
     
 .CODE
 MAIN PROC
@@ -140,6 +148,33 @@ next_line PROC
 	INT 	21H
 	RET
 next_line ENDP
+
+; divides and displays content in AX register in 5-digits.
+dispax PROC
+	MOV DX, 0
+	MOV CX, 5
+	MOV operand, 10000
+	MOV DX, 0
+	DIVDISP:
+		; divide
+		
+		DIV operand
+		MOV operator, DX
+		
+		MOV DX, AX
+		MOV AH, 02h
+		ADD DL, "0"
+		INT 21h
+		
+		MOV AX, operand
+		MOV DX, 0
+		DIV TENDW
+		MOV operand, AX
+		MOV AX, operator  
+
+		LOOP DIVDISP
+		RET
+dispax ENDP
 
 ; Login function
 LOGIN PROC
@@ -241,12 +276,48 @@ BILLING ENDP
 ; Summary function
 SUMMARY PROC
 	CALL next_line
-		
+	
+	; Print title	
 	MOV	AH, 09H
-    LEA DX, sumStub
+    LEA DX, sumTitle
+    INT 21H
+    
+    CALL next_line
+    
+    ; Print total actions
+    MOV	AH, 09H
+    LEA DX, taTxt
     INT 21H
 
-	CALL next_line
+    ; display al (quotient)
+    MOV AX, totalActions
+    
+    CALL dispax
+    
+    CALL next_line
+    
+    ; Print total figures
+    MOV AH, 09H
+    LEA DX, tfTxt
+    INT 21H
+    
+    ;  display "money sign"
+    MOV AH, 09H
+    LEA DX, SIGN
+    INT 21H
+    
+    ; display al (quotient)
+    MOV AX, totalFigure
+    
+    CALL dispax
+    
+    ;  display ".00"
+    MOV AH, 09H
+    LEA DX, CENTS
+    INT 21H 
+    
+    CALL next_line
+    CALL next_line
     RET
 SUMMARY ENDP
 
