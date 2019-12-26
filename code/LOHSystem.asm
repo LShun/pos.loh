@@ -4,8 +4,7 @@
 	; Extra/Useful Constants
 	stub			DB "Stub$"
 	TENDW           DW 10
-	SIGN            DB "RM $"
-	CENTS           DB ".00$"                      
+	SIGN            DB "RM $"                      
 	
 
     ; Main screen
@@ -24,10 +23,13 @@
 	strRequestPw 	DB "Please enter password: $"
 	strLoginSuccess DB "User authorized. Welcome!$"
 	strLoginFail 	DB "Incorrect login details. Please try again$"
-	strPw			DB "Password$"
+	strPw			DB "Zk}}Åy|n$"  ; PW without offset is "Password"
 	userPw			DB 20           ; Max char
 	                DB ?            ; Num of char entered
 	                DB 20 DUP(0DH)  ; BUffer for Char entered
+	pwOffset        DB 10           ; refers to strPw offset
+	                                ; can be positive OR negative OFFSET, remember to change
+	                                ; strPw accordingly
 	
 	; Main menu
 	strMainMenu 	DB "===========================Main Menu===========================",13,10
@@ -36,9 +38,6 @@
 	                DB "3.     Summary",13,10
 	                DB "4. 	   Exit",13,10
 					DB "Enter your choice: (1-4): ",'$'
-
-	; Login
-	loginStub			DB "Login Stub$"
 
 
 	; Billing
@@ -53,8 +52,9 @@
 	sumTitle			DB "Summary", 13, 10, "$"
 	taTxt               DB "Total actions: $"    ; UPDATE HERE AFTER EACH LOOP
 	tfTxt			    DB "Total figures: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-	totalActions        DW 0
-	totalFigure         DW 0
+	totalActions        DW 2
+	totalCash           DW 2243
+	totalCoins          DB 53
 	operand             DW ?
 	operator            DW ?
     
@@ -148,14 +148,47 @@ next_line PROC
 	INT 	21H
 	RET
 next_line ENDP
+;
+; divides and displays content in a DW/?X register, max is 4 digits.
+DISPWORD PROC
+	MOV DX, 0
+	MOV CX, 4
+	MOV operand, 1000
+	MOV BX, totalActions
+	DIVDISPDW:
+		; divide
+		MOV AX, BX
+		DIV operand
+		MOV operator, DX
+		
+		CMP AX, 0
+		JZ CONTDISPWORD
+		
+		MOV DX, AX
+		MOV AH, 02h
+		ADD DL, "0"
+		INT 21h
+		
+		CONTDISPWORD:
+    		MOV AX, operand
+    		MOV DX, 0
+    		DIV TENDW
+    		MOV operand, AX
+    		MOV AX, operator
+    		MOV BX, AX  
 
-; divides and displays content in AX register in 5-digits.
-dispax PROC
+		LOOP DIVDISPDW
+		
+		RET
+DISPWORD ENDP
+
+; divides and displays content in a DB/?H/L register, max is 2 digits.
+DISPBYTE PROC
 	MOV DX, 0
-	MOV CX, 5
-	MOV operand, 10000
-	MOV DX, 0
-	DIVDISP:
+	MOV CX, 2
+	MOV operand, 10
+	MOV BL, totalCoins
+	DIVDISPDB:
 		; divide
 		
 		DIV operand
@@ -172,60 +205,64 @@ dispax PROC
 		MOV operand, AX
 		MOV AX, operator  
 
-		LOOP DIVDISP
+		LOOP DIVDISPDB
+		
 		RET
-dispax ENDP
+DISPBYTE ENDP
 
 ; Login function
 LOGIN PROC
-	;; Show login prompt
-;	CALL next_line
-;	MOV	AH, 09H
-;	LEA DX, strRequestPw
-;	INT 21H
-;
-;	CALL LOGIN_CMP_SETUP
-;	
-;	checkPw:
-;		; Compare each letter
-;		CMP BH, BL
-;		JNE loginFail
-;		
-;		; if no match, ask user to try 
-;		
-;		INC DI
-;		INC SI
-;		
-;		MOV BL, [DI]
-;	    MOV BH, [SI]
-;		
-;		; once reach end, perform final check
-;		CMP BL, '$'
-;		JNE checkPw
-;		CMP BH, 0DH
-;		JNE loginFail
-;		
-;		; If all match, welcome user
-;		CALL next_line
-;		
-;		MOV AH, 09H
-;        LEA DX, strLoginSuccess
-;        INT 21H
-;        
-;        CALL next_line
+	; Show login prompt
+	CALL next_line
+	MOV	AH, 09H
+	LEA DX, strRequestPw
+	INT 21H
+
+	CALL LOGIN_CMP_SETUP
+	
+	checkPw:
+	    ; Add pwOffset to user PW char in BH
+	    ADD BH, pwOffset
+	    
+		; Compare each letter
+		CMP BH, BL
+		JNE loginFail
+		
+		; if no match, ask user to try 
+		
+		INC DI
+		INC SI
+		
+		MOV BL, [DI]
+	    MOV BH, [SI]
+		
+		; once reach end, perform final check
+		CMP BL, '$'
+		JNE checkPw
+		CMP BH, 0DH
+		JNE loginFail
+		
+		; If all match, welcome user
+		CALL next_line
+		
+		MOV AH, 09H
+        LEA DX, strLoginSuccess
+        INT 21H
+        
+        CALL next_line
         RET
-;        
-;
-;    ; Ask user to try again
-;    loginFail:
-;        CALL next_line
-;        MOV AH, 09H
-;        LEA DX, strLoginFail
-;        INT 21H
-;        CALL next_line
-;        
-;        CALL LOGIN_CMP_SETUP
-;        JMP checkPw
+        
+
+    ; Ask user to try again
+    loginFail:
+        CALL next_line
+        MOV AH, 09H
+        LEA DX, strLoginFail
+        INT 21H
+        CALL next_line
+        
+        CALL LOGIN_CMP_SETUP
+        JMP checkPw
          
 LOGIN ENDP
 
@@ -292,29 +329,32 @@ SUMMARY PROC
     ; display al (quotient)
     MOV AX, totalActions
     
-    CALL dispax
+    CALL DISPWORD
     
     CALL next_line
     
-    ; Print total figures
-    MOV AH, 09H
-    LEA DX, tfTxt
-    INT 21H
-    
-    ;  display "money sign"
-    MOV AH, 09H
-    LEA DX, SIGN
-    INT 21H
-    
-    ; display al (quotient)
-    MOV AX, totalFigure
-    
-    CALL dispax
-    
-    ;  display ".00"
-    MOV AH, 09H
-    LEA DX, CENTS
-    INT 21H 
+;    ; Print total figures
+;    MOV AH, 09H
+;    LEA DX, tfTxt
+;    INT 21H
+;    
+;    ;  display "money sign"
+;    MOV AH, 09H
+;    LEA DX, SIGN
+;    INT 21H
+;    
+;    ; display al (quotient)
+;    MOV AX, totalCash
+;    
+;    CALL DISPWORD
+;    
+;    MOV AH, 02H
+;    MOV DL, '.'
+;    INT 21H
+;    
+;    MOV  AL, totalCoins
+;    
+;    CALL DISPBYTE
     
     CALL next_line
     CALL next_line
