@@ -38,7 +38,15 @@
     WEIGHT_STR LABEL BYTE    
     WEIGHT_MAXN DB 2
     WEIGHT_ACTN DB ?
-    WEIGHT DB 3 DUP("$")     
+    WEIGHT DB 3 DUP("$") 
+    
+    QUANTITY_STR LABEL BYTE    
+    QUANTITY_MAXN DB 5
+    QUANTITY_ACTN DB ?
+    QUANTITY DB 6 DUP("$") 
+    
+    WGT DB ?
+    TEN DB 10   
     
 
 .CODE
@@ -169,6 +177,8 @@ MAIN PROC
         INT 21H
         
         MOV DI,0
+        MOV BL,WEIGHT[DI]
+        MOV WGT,BL
 
 		CMP WEIGHT[DI],"1"		;COMPARE THE INPUT WITH NUMBER 1
 		JE QUANTITY_INPUT
@@ -191,6 +201,8 @@ MAIN PROC
 	
 	
 	QUANTITY_INPUT:	
+	    MOV DI,0
+	    
 	    MOV AH,09H
 	    LEA DX,NL
 	    INT 21H
@@ -199,11 +211,75 @@ MAIN PROC
 		LEA DX,MSG4
 		INT 21H
 		
-		
-				
-		
-		
-		 
+		QTY_INPUT1:
+		    MOV AH,0AH              ;INPUT STRING
+            LEA DX,QUANTITY_STR
+            INT 21H
+                
+            ;MOV AH,02H        
+            ;MOV DL,QUANTITY_STR[DI+1]   ;PRINT LENGTH OF STRING
+            ;ADD DL,30H
+            ;INT 21H 
+        
+            CMP QUANTITY_STR[DI+1],"1"
+            JE TOT_WEIGHT_ONE
+        
+            CMP QUANTITY_STR[DI+1],"2"
+            JE TOT_WEIGHT_TEN
+        
+            CMP QUANTITY_STR[DI+1],"3" 
+            JE TOT_WEIGHT_HUNDRED
+            
+            CMP QUANTITY_STR[DI+1],"4" 
+            JE TOT_WEIGHT_HUNDRED
+            
+            CMP QUANTITY_STR[DI+1],"5" 
+            JE TOT_WEIGHT_HUNDRED 
+            
+            ;JMP QTY_INPUT1
+            
+            TOT_WEIGHT_ONE:
+                MOV AL,QUANTITY[DI]
+                SUB AL,30H
+                  
+                
+                JMP EXIT
+                
+            TOT_WEIGHT_TEN:
+            
+                
+                    
+                
+            TOT_WEIGHT_HUNDRED:
+                
+            
+                  
+                  
+                  
+                  
+            
+            SUB WGT,30H
+            MUL WGT
+                  
+            EXIT: 
+                MOV BX,AX
+                
+                MOV AH,09H
+		        LEA DX,NL
+		        INT 21H
+                
+                MOV AH,02H
+	            MOV DL,BL
+	            ADD DL,30H
+	            INT 21H
+            
+                         
+            
+                
+            
+            
+                         
+       
 		
 		
 	MOV AX,4C00H
