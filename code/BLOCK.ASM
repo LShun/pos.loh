@@ -1,0 +1,216 @@
+.MODEL SMALL
+.STACK 100
+.DATA
+	
+	MSG1 DB "TYPES OF PORK$"
+	ASTERISK DB "*************$"
+	MSG2 DB "Enter a number (1 to 6): $"
+	ERRORM DB "Invalid! Please enter again: $"
+	MSG3 DB "Enter the weight (1kg,3kg or 5kg): $"
+	MSG4 DB "Enter the quantity: $"
+	MSG5 DB "The total weight of $"
+	KG DB ".00 kg$"
+	NL DB 0AH,0DH,"$"
+
+	BELLY DB "1. PORK BELLY$"
+	LOIN DB "2. PORK LOIN$"
+	RIB DB "3. PORK RIB$"
+	SHOULDER DB "4. PORK SHOULDER$"
+	HAM DB "5. HAM$"
+	QUIT DB "6. QUIT$"
+
+	TYPE1M DB "Pork Belly is $"
+	TYPE2M DB "Pork Loin is $"
+	TYPE3M DB "Pork Rib is $"
+	TYPE4M DB "Pork Shoulder is $"
+	TYPE5M DB "Ham is $"
+
+	INPUT DB 30 DUP ('$')
+	N      DW ?
+	COUNT  DW ?
+	OUTPUT DB 30 DUP ('$')
+	
+    TYPE_STR LABEL BYTE    
+    TYPE_MAXN DB 2
+    TYPE_ACTN DB ?
+    CHOICE DB 3 DUP("$") 
+    
+    WEIGHT_STR LABEL BYTE    
+    WEIGHT_MAXN DB 2
+    WEIGHT_ACTN DB ?
+    WEIGHT DB 3 DUP("$")     
+    
+
+.CODE
+MAIN PROC
+
+	MOV AX,@DATA
+	MOV DS,AX
+
+	;-----DISPLAY THE MENU
+	MOV AH,09H
+	LEA DX,MSG1
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,NL
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,ASTERISK
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,NL
+	INT 21H
+	
+	MOV AH,09H
+	LEA DX,BELLY
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,NL
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,LOIN
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,NL
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,RIB
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,NL
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,SHOULDER
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,NL
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,HAM
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,NL
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,QUIT
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,NL
+	INT 21H
+
+	MOV AH,09H
+	LEA DX,NL
+	INT 21H
+
+	;-----DISPLAY THE INPUT MESSAGE
+	MOV AH,09H	
+	LEA DX,MSG2
+	INT 21H
+		
+	;-----ALLOW USER TO SELECT THE TYPE OF MEAT
+    MEAT_TYPE_INPUT:
+        MOV AH,0AH     ;INPUT STRING
+        LEA DX,TYPE_STR
+        INT 21H
+        
+        MOV DI,0
+    
+        CMP CHOICE[DI],"1"
+        JNGE ERROR
+
+        CMP CHOICE[DI],"6"
+	    JNLE ERROR
+
+        
+        JMP WEIGHT_INPUT
+
+	    ERROR:
+		    MOV AH,09H
+	        LEA DX,NL
+	        INT 21H
+		    
+		    MOV AH,09H
+		    LEA DX,ERRORM
+		    INT 21H
+    
+        JMP MEAT_TYPE_INPUT
+
+
+
+
+	;-----ALLOW USER TO ENTER THE WEIGHT OF MEAT
+	WEIGHT_INPUT:			
+		MOV AH,09H
+	    LEA DX,NL
+	    INT 21H
+		
+		MOV AH,09H
+		LEA DX,MSG3		        ;ENTER THE WEIGHT (1,3,5KG) :
+		INT 21H
+	
+		
+	INPUT_WEIGHT_AGAIN:
+		MOV AH,0AH              ;INPUT STRING
+        LEA DX,WEIGHT_STR
+        INT 21H
+        
+        MOV DI,0
+
+		CMP WEIGHT[DI],"1"		;COMPARE THE INPUT WITH NUMBER 1
+		JE QUANTITY_INPUT
+		
+		CMP WEIGHT[DI],"3"		;COMPARE THE INPUT WITH NUMBER 3
+		JE QUANTITY_INPUT
+
+		CMP WEIGHT[DI],"5"		;COMPARE THE INPUT WITH NUMBER 5
+		JE QUANTITY_INPUT
+
+		MOV AH,09H
+	    LEA DX,NL
+	    INT 21H
+		
+		MOV AH,09H
+		LEA DX,ERRORM
+		INT 21H
+
+	JMP INPUT_WEIGHT_AGAIN
+	
+	
+	QUANTITY_INPUT:	
+	    MOV AH,09H
+	    LEA DX,NL
+	    INT 21H
+	    
+	    MOV AH,09H
+		LEA DX,MSG4
+		INT 21H
+		
+		
+				
+		
+		
+		 
+		
+		
+	MOV AX,4C00H
+	INT 21H
+	
+	
+MAIN ENDP
+END MAIN		
+
+	
