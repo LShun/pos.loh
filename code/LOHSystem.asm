@@ -22,14 +22,12 @@
 	; Login
 	strRequestPw 	DB "Please enter password: $"
 	strLoginSuccess DB "User authorized. Welcome!$"
-	strLoginFail 	DB "Incorrect login details. Please try again$"
-	strPw			DB "Zk}}Åy|n$"  ; PW without offset is "Password"
+	strLoginFail 	DB "Incorrect login details. Try again: $"
+	strPw			DB 53,37,22,22,18,85,23,1,"$" ; PW Hash
 	userPw			DB 20           ; Max char
 	                DB ?            ; Num of char entered
 	                DB 20 DUP(0DH)  ; BUffer for Char entered
-	pwOffset        DB 10           ; refers to strPw offset
-	                                ; can be positive OR negative OFFSET, remember to change
-	                                ; strPw accordingly
+	xorKey          DB "e"           
 	
 	; Main menu
 	strMainMenu 	DB "===========================Main Menu===========================",13,10
@@ -221,8 +219,8 @@ LOGIN PROC
 	CALL LOGIN_CMP_SETUP
 	
 	checkPw:
-	    ; Add pwOffset to user PW char in BH
-	    ADD BH, pwOffset
+	    ; XOR user PW char in BH
+	    XOR BH, xorKey
 	    
 		; Compare each letter
 		CMP BH, BL
@@ -259,7 +257,6 @@ LOGIN PROC
         MOV AH, 09H
         LEA DX, strLoginFail
         INT 21H
-        CALL next_line
         
         CALL LOGIN_CMP_SETUP
         JMP checkPw
