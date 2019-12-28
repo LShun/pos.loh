@@ -1,4 +1,4 @@
-.MODEL SMALL
+                              .MODEL SMALL
 .STACK 100
 .DATA
 	; Extra/Useful Constants
@@ -103,7 +103,7 @@
     	QUANTITY DB 6 DUP("$")    
 
 
-	WGT DW ?
+	WGT DB ?
     	TEN DB 10  
    	HUNDRED DB 100
     	THOUSAND DW 1000
@@ -137,7 +137,7 @@
 	;INPUT DB ?
 	QTY DB ?
 	PRICE DW ?
-    	COUNTS DB ?
+    COUNTS DB ?
 	PRICEPKG DB 20,18,18,15,21	;ARRAY
 	INPUT1 DB 30 DUP ('$')
 	N1      DW ?
@@ -564,7 +564,7 @@ PURCHASE PROC
         	MOV DI,0
         	MOV BL,WEIGHT[DI] 
         	SUB BL,30H  
-        	MOV WGT,BX
+        	MOV WGT,BL
 
 		CMP WEIGHT[DI],"1"		;COMPARE THE INPUT WITH NUMBER 1
 		JE QUANTITY_INPUT
@@ -598,8 +598,10 @@ PURCHASE PROC
 		
 		;QTY_INPUT1:
 		MOV AH,0AH              ;INPUT STRING
-        LEA DX,QUANTITY_STR
-        INT 21H
+        	LEA DX,QUANTITY_STR
+        	INT 21H
+
+		CALL next_line
 	
 	; LOAD CHAR COUNT INTO VAR 
 	    MOV BH,QUANTITY_ACTN
@@ -618,17 +620,16 @@ PURCHASE PROC
 	  
 		        MOV BL,QUANTITY[SI]
 		        SUB BL,30H
-			    ADD AL,BL
-                MUL TEN
-			    INC SI
+			ADD AL,BL
+                	MUL TEN
+			INC SI
 		
-		    LOOP LP1 
+		LOOP LP1 
 	    
 	    
 	   CALQ:
 	          MOV BL,QUANTITY[SI]
-		      SUB BL,30H 
-		      ;MOV AH,0 ;NEW
+		  SUB BL,30H 
 	          ADD AL,BL
 		    
 		MOV QUANT,AX
@@ -642,26 +643,26 @@ PURCHASE PROC
 	        ; CONTINUE
 	    ; ELSE, LOAD LAST NUMBER INTO BX
 	
-	; STORE INTO QUANT
+	; STORE INTO QUANT    
 	
-	;MOV QUANT,AX     
-	
-	
+	MOV AX,QUANT
 	MUL WGT
-	;MOV DH,0
-	;MOV DL,MTYPE
-	;MOV SI,DX
-	;MOV WEIGHT1,AX
+	MOV WEIGHT1,AX
 	
-	
+
 	MOV BX,AX
+	;MOV BH,0
+	;MOV BX,WGT
+	CALL DISPWORD
+
+	
 	
 	CALL next_line	
 
 	;MOV BH,0
 	;MOV BL,QUANT
 	
-	CALL DISPWORD
+	
 
 	;MOV AH,02H
 	;MOV DL,QUANT
@@ -704,17 +705,13 @@ BILLING PROC
 	CALL next_line
 
 	MOV DH,0
-	MOV DL,MTYPE
+    MOV DL,MTYPE
 	MOV SI,DX
 	MOV AX,WEIGHT1
 	MUL PRICEPKG[SI]
-
-	;MUL PRICEPKG[SI]
-	;MOV MPRICE,AX
-	;DIV PRICEPKG[SI]
-
+   
+   
 	MOV BX,AX
-	
 	
 	CALL DISPWORD	
 	
