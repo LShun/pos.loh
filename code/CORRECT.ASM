@@ -23,11 +23,12 @@
 	; Login
 	strRequestPw 	DB "Please enter password: $"
 	strLoginSuccess DB "User authorized. Welcome!$"
-	strLoginFail 	DB "Incorrect login details. Please try again$"
-	strPw			DB "Password$"
+	strLoginFail 	DB "Incorrect login details. Try again: $"
+	strPw			DB 53,37,22,22,18,85,23,1,"$" ; PW Hash
 	userPw			DB 20           ; Max char
 	                DB ?            ; Num of char entered
 	                DB 20 DUP(0DH)  ; BUffer for Char entered
+	xorKey          DB "e"
 	
 	; Main menu
 	strMainMenu 	DB "===========================Main Menu===========================",13,10
@@ -36,10 +37,6 @@
 	                DB "3.     Summary",13,10
 	                DB "4. 	   Exit",13,10
 					DB "Enter your choice: (1-4): ",'$'
-
-	; Login
-	loginStub			DB "Login Stub$"
-
 
 	; Billing
     billStub			DB "Billing Stub$"
@@ -346,59 +343,61 @@ display_meat_menu PROC
 
 	CALL next_line
 	CALL next_line
-
 display_meat_menu ENDP
 
 ; Login function
 LOGIN PROC
-	;; Show login prompt
-;	CALL next_line
-;	MOV	AH, 09H
-;	LEA DX, strRequestPw
-;	INT 21H
-;
-;	CALL LOGIN_CMP_SETUP
-;	
-;	checkPw:
-;		; Compare each letter
-;		CMP BH, BL
-;		JNE loginFail
-;		
-;		; if no match, ask user to try 
-;		
-;		INC DI
-;		INC SI
-;		
-;		MOV BL, [DI]
-;	    MOV BH, [SI]
-;		
-;		; once reach end, perform final check
-;		CMP BL, '$'
-;		JNE checkPw
-;		CMP BH, 0DH
-;		JNE loginFail
-;		
-;		; If all match, welcome user
-;		CALL next_line
-;		
-;		MOV AH, 09H
-;        LEA DX, strLoginSuccess
-;        INT 21H
-;        
-;        CALL next_line
+	; Show login prompt
+	CALL next_line
+	MOV	AH, 09H
+	LEA DX, strRequestPw
+	INT 21H
+
+	CALL LOGIN_CMP_SETUP
+	
+	checkPw:
+	    ; XOR user PW char in BH
+	    XOR BH, xorKey
+	    
+		; Compare each letter
+		CMP BH, BL
+		
+		; if no match, ask user to try again 
+		JNE loginFail
+		
+		; If match, load the next char
+		INC DI
+		INC SI
+		
+		MOV BL, [DI]
+	    MOV BH, [SI]
+		
+		; once reach end, perform final check
+		CMP BL, '$'
+		JNE checkPw
+		CMP BH, 0DH
+		JNE loginFail
+		
+		; If all match, welcome user
+		CALL next_line
+		
+		MOV AH, 09H
+        LEA DX, strLoginSuccess
+        INT 21H
+        
+        CALL next_line
         RET
-;        
-;
-;    ; Ask user to try again
-;    loginFail:
-;        CALL next_line
-;        MOV AH, 09H
-;        LEA DX, strLoginFail
-;        INT 21H
-;        CALL next_line
-;        
-;        CALL LOGIN_CMP_SETUP
-;        JMP checkPw
+        
+
+    ; Ask user to try again
+    loginFail:
+        CALL next_line
+        MOV AH, 09H
+        LEA DX, strLoginFail
+        INT 21H
+        
+        CALL LOGIN_CMP_SETUP
+        JMP checkPw
          
 LOGIN ENDP
 
