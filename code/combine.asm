@@ -23,11 +23,12 @@
 	; Login
 	strRequestPw 	DB "Please enter password: $"
 	strLoginSuccess DB "User authorized. Welcome!$"
-	strLoginFail 	DB "Incorrect login details. Please try again$"
-	strPw			DB "Password$"
+	strLoginFail 	DB "Incorrect login details. Try again: $"
+	strPw			DB 53,37,22,22,18,85,23,1,"$" ; PW Hash
 	userPw			DB 20           ; Max char
 	                DB ?            ; Num of char entered
 	                DB 20 DUP(0DH)  ; BUffer for Char entered
+	xorKey          DB "e" 
 	
 	; Main menu
 	strMainMenu 	DB "===========================Main Menu===========================",13,10
@@ -53,8 +54,8 @@
 	sumTitle			DB "Summary", 13, 10, "$"
 	taTxt               DB "Total actions: $"    ; UPDATE HERE AFTER EACH LOOP
 	tfTxt			    DB "Total figures: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-	totalActions        DW 0
-	totalFigure         DW 0
+	totalActions        DW 1243
+	totalCash           DW 0
 	operand             DW ?
 	operator            DW ?
 
@@ -285,54 +286,57 @@ display_meat_menu ENDP
 
 ; Login function
 LOGIN PROC
-	;; Show login prompt
-;	CALL next_line
-;	MOV	AH, 09H
-;	LEA DX, strRequestPw
-;	INT 21H
-;
-;	CALL LOGIN_CMP_SETUP
-;	
-;	checkPw:
-;		; Compare each letter
-;		CMP BH, BL
-;		JNE loginFail
-;		
-;		; if no match, ask user to try 
-;		
-;		INC DI
-;		INC SI
-;		
-;		MOV BL, [DI]
-;	    MOV BH, [SI]
-;		
-;		; once reach end, perform final check
-;		CMP BL, '$'
-;		JNE checkPw
-;		CMP BH, 0DH
-;		JNE loginFail
-;		
-;		; If all match, welcome user
-;		CALL next_line
-;		
-;		MOV AH, 09H
-;        LEA DX, strLoginSuccess
-;        INT 21H
-;        
-;        CALL next_line
+	; Show login prompt
+	CALL next_line
+	MOV	AH, 09H
+	LEA DX, strRequestPw
+	INT 21H
+
+	CALL LOGIN_CMP_SETUP
+	
+	checkPw:
+	    ; XOR user PW char in BH
+	    XOR BH, xorKey
+	    
+		; Compare each letter
+		CMP BH, BL
+		
+		; if no match, ask user to try again 
+		JNE loginFail
+		
+		; If match, load the next char
+		INC DI
+		INC SI
+		
+		MOV BL, [DI]
+	    MOV BH, [SI]
+		
+		; once reach end, perform final check
+		CMP BL, '$'
+		JNE checkPw
+		CMP BH, 0DH
+		JNE loginFail
+		
+		; If all match, welcome user
+		CALL next_line
+		
+		MOV AH, 09H
+        LEA DX, strLoginSuccess
+        INT 21H
+        
+        CALL next_line
         RET
-;        
-;
-;    ; Ask user to try again
-;    loginFail:
-;        CALL next_line
-;        MOV AH, 09H
-;        LEA DX, strLoginFail
-;        INT 21H
-;        CALL next_line
-;        
-;        CALL LOGIN_CMP_SETUP
-;        JMP checkPw
+        
+
+    ; Ask user to try again
+    loginFail:
+        CALL next_line
+        MOV AH, 09H
+        LEA DX, strLoginFail
+        INT 21H
+        
+        CALL LOGIN_CMP_SETUP
+        JMP checkPw
          
 LOGIN ENDP
 
@@ -355,7 +359,6 @@ LOGIN_CMP_SETUP PROC
 	
 	RET
 LOGIN_CMP_SETUP ENDP  
-
 
 
 display_msg PROC
@@ -842,9 +845,8 @@ SUMMARY PROC
     INT 21H
 
     ; display al (quotient)
-    MOV AX, totalActions
-    
-    CALL dispax
+    MOV BX, totalActions
+    CALL DISPWORD
     
     CALL next_line
     
@@ -859,18 +861,53 @@ SUMMARY PROC
     INT 21H
     
     ; display al (quotient)
-    MOV AX, totalFigure
+    MOV AX, totalCash
     
-    CALL dispax
+    CALL DISPWORD
     
-    ;  display ".00"
-    MOV AH, 09H
-    LEA DX, CENTS
-    INT 21H 
+    MOV AH, 02H
+    MOV DL, '.'
+    INT 21H
     
     CALL next_line
     CALL next_line
     RET
 SUMMARY ENDP
 
+
+; divides and displays content in a BX register, max is 4 digits.
+DISPWORD PROC
+	MOV DX, 0
+	MOV CX, 4
+	MOV operand, 1000
+	DIVDISPDW:
+		; divide
+		MOV AX, BX
+		DIV operand
+		MOV operator, DX
+		
+		CMP AX, 0
+		JZ CONTDISPWORD
+		
+		MOV DX, AX
+		MOV AH, 02h
+		ADD DL, "0"
+		INT 21h
+		
+		CONTDISPWORD:
+    		MOV AX, operand
+    		MOV DX, 0
+    		DIV TENDW
+    		MOV operand, AX
+    		MOV AX, operator
+    		MOV BX, AX  
+
+		LOOP DIVDISPDW
+		
+		RET
+DISPWORD ENDP
+
+
 END MAIN
+
+
