@@ -224,10 +224,11 @@ LOGIN PROC
 	    
 		; Compare each letter
 		CMP BH, BL
+		
+		; if no match, ask user to try again 
 		JNE loginFail
 		
-		; if no match, ask user to try 
-		
+		; If match, load the next char
 		INC DI
 		INC SI
 		
