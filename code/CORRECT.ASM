@@ -23,8 +23,8 @@
 	; Login
 	strRequestPw 	DB "Please enter password: $"
 	strLoginSuccess DB "User authorized. Welcome!$"
-	strLoginFail 	DB "Incorrect login details. Please try again$"
-	strPw			DB "Password$"
+	strLoginFail 	DB "Incorrect login details. Try again$"
+	strPw			DB 53,37,22,22,18,85,23,1,"$" ;PW Hash
 	userPw			DB 20           ; Max char
 	                DB ?            ; Num of char entered
 	                DB 20 DUP(0DH)  ; BUffer for Char entered
