@@ -207,33 +207,6 @@ next_line PROC
 	RET
 next_line ENDP
 
-; divides and displays content in AX register in 5-digits.
-dispax PROC
-	MOV DX, 0
-	MOV CX, 5
-	MOV operand, 10000
-	MOV DX, 0
-	DIVDISP:
-		; divide
-		
-		DIV operand
-		MOV operator, DX
-		
-		MOV DX, AX
-		MOV AH, 02h
-		ADD DL, "0"
-		INT 21h
-		
-		MOV AX, operand
-		MOV DX, 0
-		DIV TENDW
-		MOV operand, AX
-		MOV AX, operator  
-
-		LOOP DIVDISP
-		RET
-dispax ENDP
-
 display_meat_menu PROC	
 
 ;-----DISPLAY MEAT MENU
@@ -287,56 +260,56 @@ display_meat_menu ENDP
 ; Login function
 LOGIN PROC
 	; Show login prompt
-	CALL next_line
-	MOV	AH, 09H
-	LEA DX, strRequestPw
-	INT 21H
-
-	CALL LOGIN_CMP_SETUP
-	
-	checkPw:
-	    ; XOR user PW char in BH
-	    XOR BH, xorKey
-	    
-		; Compare each letter
-		CMP BH, BL
-		
-		; if no match, ask user to try again 
-		JNE loginFail
-		
-		; If match, load the next char
-		INC DI
-		INC SI
-		
-		MOV BL, [DI]
-	    MOV BH, [SI]
-		
-		; once reach end, perform final check
-		CMP BL, '$'
-		JNE checkPw
-		CMP BH, 0DH
-		JNE loginFail
-		
-		; If all match, welcome user
-		CALL next_line
-		
-		MOV AH, 09H
-        LEA DX, strLoginSuccess
-        INT 21H
-        
-        CALL next_line
+	;CALL next_line
+;	MOV	AH, 09H
+;	LEA DX, strRequestPw
+;	INT 21H
+;
+;	CALL LOGIN_CMP_SETUP
+;	
+;	checkPw:
+;	    ; XOR user PW char in BH
+;	    XOR BH, xorKey
+;	    
+;		; Compare each letter
+;		CMP BH, BL
+;		
+;		; if no match, ask user to try again 
+;		JNE loginFail
+;		
+;		; If match, load the next char
+;		INC DI
+;		INC SI
+;		
+;		MOV BL, [DI]
+;	    MOV BH, [SI]
+;		
+;		; once reach end, perform final check
+;		CMP BL, '$'
+;		JNE checkPw
+;		CMP BH, 0DH
+;		JNE loginFail
+;		
+;		; If all match, welcome user
+;		CALL next_line
+;		
+;		MOV AH, 09H
+;        LEA DX, strLoginSuccess
+;        INT 21H
+;        
+;        CALL next_line
         RET
-        
-
-    ; Ask user to try again
-    loginFail:
-        CALL next_line
-        MOV AH, 09H
-        LEA DX, strLoginFail
-        INT 21H
-        
-        CALL LOGIN_CMP_SETUP
-        JMP checkPw
+;        
+;
+;    ; Ask user to try again
+;    loginFail:
+;        CALL next_line
+;        MOV AH, 09H
+;        LEA DX, strLoginFail
+;        INT 21H
+;        
+;        CALL LOGIN_CMP_SETUP
+;        JMP checkPw
          
 LOGIN ENDP
 
