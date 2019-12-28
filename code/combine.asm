@@ -875,11 +875,11 @@ SUMMARY PROC
 SUMMARY ENDP
 
 
-; divides and displays content in a BX register, max is 4 digits.
+; divides and displays content in a BX register, max is 5 digits (up to 65,535).
 DISPWORD PROC
 	MOV DX, 0
-	MOV CX, 4
-	MOV operand, 1000
+	MOV CX, 5
+	MOV operand, 10000
 	DIVDISPDW:
 		; divide
 		MOV AX, BX
