@@ -103,7 +103,7 @@
     	QUANTITY DB 6 DUP("$")    
 
 
-	WGT DW ?
+	WGT DB ?
     	TEN DB 10  
    	HUNDRED DB 100
     	THOUSAND DW 1000
@@ -347,6 +347,7 @@ display_meat_menu PROC
 	CALL next_line
 	CALL next_line
 
+	RET
 display_meat_menu ENDP
 
 ; Login function
@@ -563,7 +564,7 @@ PURCHASE PROC
         	MOV BL,WEIGHT[DI] 
         	SUB BL,30H
         	MOV BH,0  
-        	MOV WGT,BX
+        	MOV WGT,BL
 
 		CMP WEIGHT[DI],"1"		;COMPARE THE INPUT WITH NUMBER 1
 		JE QUANTITY_INPUT
@@ -673,7 +674,7 @@ PURCHASE PROC
 	;MOV DH,0
 	;MOV DL,MTYPE
 	;MOV SI,DX
-	;MOV WEIGHT1,AX
+	MOV WEIGHT1,AX
 	
 	
 	MOV BX,AX
@@ -724,27 +725,29 @@ BILLING PROC
 	;CALL input_meat_type
 	
 	CALL next_line
+	
+	MOV AH,09H
+	LEA DX,STR2
+	INT 21H
 
 	MOV DH,0
 	MOV DL,MTYPE
 	MOV SI,DX
 	MOV AX,WEIGHT1
 	MUL PRICEPKG[SI]
-
-	;MUL PRICEPKG[SI]
-	;MOV MPRICE,AX
-	;DIV PRICEPKG[SI]
-
+	MOV BH,0
+	MOV BL,PRICEPKG[SI]
+	MUL BX
+                                       
 	MOV BX,AX
 	
-	
 	CALL DISPWORD	
-	
-	RET
-	
-	;CALL display_menu
 
-	CALL next_line
+	MOV AH,09H
+	LEA DX,CENTS
+	INT 21H
+
+	RET
    
 BILLING ENDP
 
