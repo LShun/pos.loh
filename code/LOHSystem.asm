@@ -50,7 +50,7 @@
 	sumTitle			DB "Summary", 13, 10, "$"
 	taTxt               DB "Total actions: $"    ; UPDATE HERE AFTER EACH LOOP
 	tfTxt			    DB "Total figures: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-	totalActions        DW 2
+	totalActions        DW 1243
 	totalCash           DW 2243
 	totalCoins          DB 53
 	operand             DW ?
@@ -146,13 +146,12 @@ next_line PROC
 	INT 	21H
 	RET
 next_line ENDP
-;
-; divides and displays content in a DW/?X register, max is 4 digits.
+
+; divides and displays content in a BX register, max is 4 digits.
 DISPWORD PROC
 	MOV DX, 0
 	MOV CX, 4
 	MOV operand, 1000
-	MOV BX, totalActions
 	DIVDISPDW:
 		; divide
 		MOV AX, BX
@@ -185,7 +184,6 @@ DISPBYTE PROC
 	MOV DX, 0
 	MOV CX, 2
 	MOV operand, 10
-	MOV BL, totalCoins
 	DIVDISPDB:
 		; divide
 		
@@ -325,34 +323,33 @@ SUMMARY PROC
     INT 21H
 
     ; display al (quotient)
-    MOV AX, totalActions
-    
+    MOV BX, totalActions
     CALL DISPWORD
     
     CALL next_line
     
-;    ; Print total figures
-;    MOV AH, 09H
-;    LEA DX, tfTxt
-;    INT 21H
-;    
-;    ;  display "money sign"
-;    MOV AH, 09H
-;    LEA DX, SIGN
-;    INT 21H
-;    
-;    ; display al (quotient)
-;    MOV AX, totalCash
-;    
-;    CALL DISPWORD
-;    
-;    MOV AH, 02H
-;    MOV DL, '.'
-;    INT 21H
-;    
-;    MOV  AL, totalCoins
-;    
-;    CALL DISPBYTE
+    ; Print total figures
+    MOV AH, 09H
+    LEA DX, tfTxt
+    INT 21H
+    
+    ;  display "money sign"
+    MOV AH, 09H
+    LEA DX, SIGN
+    INT 21H
+    
+    ; display al (quotient)
+    MOV AX, totalCash
+    
+    CALL DISPWORD
+    
+    MOV AH, 02H
+    MOV DL, '.'
+    INT 21H
+    
+    MOV BL, totalCoins
+    
+    CALL DISPBYTE
     
     CALL next_line
     CALL next_line
