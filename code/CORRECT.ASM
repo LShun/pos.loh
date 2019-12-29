@@ -1,4 +1,4 @@
-                         .MODEL SMALL
+.MODEL SMALL
 .STACK 100
 .DATA
 	; EXTRA/USEFUL CONSTANTS
@@ -47,23 +47,26 @@
 
 	; PURCHASE
     PURCSTUB			DB "PURCHASE STUB$"
-    DASH DB "           	+----------------------------------------+$"
-    MSG1 DB  "          	|             TYPES OF PORK    		 |$"
+    WEIGHT_TITLE DB "           		      WEIGHT CALCULATOR$"
+    ASTERISK DB "           		      *****************$"
+    DASH DB "           	 +----------------------------------------+$"
+    MSG1 DB  "          	 |             TYPES OF PORK    	  |$"
 
-	MSG2 DB "		    ENTER A NUMBER (1 TO 6): $"
-	ERRORM DB "		    INVALID! PLEASE ENTER AGAIN! $"
-	MSG3 DB "		    ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
-	MSG4 DB "		    ENTER THE QUANTITY: $"
-	MSG5 DB "		    THE TOTAL WEIGHT IS $"
+	MSG2 DB "		     ENTER A NUMBER (1 TO 6): $"
+	ERRORM DB "		     INVALID! PLEASE ENTER AGAIN! $"
+	MSG3 DB "		     ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
+	MSG4 DB "		     ENTER THE QUANTITY: $"
+	MSG5 DB "		     THE TOTAL WEIGHT IS $"
 
 
-	BELLY DB "           	|     1.     PORK BELLY  (BEST SELLING)	 |$"
-	LOIN DB "           	|     2.     PORK LOIN       		 |$"
-	RIB DB "          	|     3.     PORK RIB  (DELICIOUS)	 |$"
-	SHOULDER DB "           	|     4.     PORK SHOULDER   		 |$"
-	HAM DB "           	|     5.     HAM            	 	 |$"
-	QUIT DB "           	|     6.     QUIT            		 |$"
+	BELLY DB "           	 |     1.     PORK BELLY  (BEST SELLING)  |$"
+	LOIN DB "           	 |     2.     PORK LOIN       		  |$"
+	RIB DB "          	 |     3.     PORK RIB  (DELICIOUS)	  |$"
+	SHOULDER DB "           	 |     4.     PORK SHOULDER   		  |$"
+	HAM DB "           	 |     5.     HAM            	 	  |$"
+	QUIT DB "           	 |     6.     QUIT            		  |$"
 
+	
 	TYPE_STR LABEL BYTE    
 	TYPE_MAXN DB 2
 	TYPE_ACTN DB ?
@@ -79,9 +82,10 @@
     QUANTITY_ACTN DB ?
     QUANTITY DB 6 DUP("$")    
 
-
 	WGT DB ?
     TEN DB 10
+	
+
 
 	; SUMMARY
 	SUMTITLE			DB "SUMMARY", 13, 10, "$"
@@ -280,6 +284,18 @@ DISPAX ENDP
 DISPLAY_MEAT_MENU PROC	
 
 ;-----DISPLAY MEAT MENU
+	
+	MOV AH,09H
+	LEA DX,WEIGHT_TITLE
+	INT 21H
+	
+	CALL NEXT_LINE
+	
+	MOV AH,09H
+	LEA DX,ASTERISK
+	INT 21H
+	
+	CALL NEXT_LINE
 	
 	MOV AH,09H
 	LEA DX,DASH
