@@ -113,7 +113,7 @@
     QUANTITY_ACTN DB ?
     QUANTITY DB 5 DUP("$")    
 
-	WGT DB ?
+	WGT DW ?
     TEN DB 10
 
 
@@ -491,7 +491,7 @@ PURCHASE PROC
         	MOV BL,WEIGHT[DI] 
         	SUB BL,30H
         	MOV BH,0  
-        	MOV WGT,BL
+        	MOV WGT,BX
 
 		CMP WEIGHT[DI],"1"		;COMPARE THE INPUT WITH NUMBER 1
 		JE QUANTITY_INPUT
@@ -569,9 +569,10 @@ PURCHASE PROC
 	  
 		        MOV BL,QUANTITY[SI]
 		        SUB BL,30H
-			    ADD AL,BL
-                MUL TEN
-			    INC SI
+			MOV BH,0
+			ADD AX,BX
+                	MUL TEN
+			INC SI
 		
 		    LOOP LP1 
 	    
@@ -580,7 +581,9 @@ PURCHASE PROC
 	          MOV BL,QUANTITY[SI]
 		      SUB BL,30H 
 		      ;MOV AH,0 ;NEW
-	          ADD AL,BL
+	              ;ADD AL,BL
+		      MOV BH,0
+		      ADD AX,BX
 		    
 		MOV QUANT,AX
 	     
