@@ -45,12 +45,13 @@
     billStub			DB "Billing Stub$"
 
 	TITSTR DB "		       | CALCULATE PRICE OF MEAT |$"
-	STR DB "		       Enter weight of meat(KG): $"
+	STR DB "		     Enter weight of meat(KG): $"
 	PATTERN DB "		       ===========================$" 
-	STR1 DB "		       Price of meat bought is RM$"
-	STR2 DB "		       Do you wish to do the payment? (Y=yes,N=no)$"
-	STR3 DB "		       Enter amount for payment: $"
-	STR4 DB "		       Thank you! Change is RM$"
+	STR1 DB "		     Price of meat bought is RM$"
+	STR2 DB "		     Do you wish to do the payment? (Y=yes,N=no)$"
+	STR3 DB "		     Enter amount for payment: $"
+	STR4 DB "		     Thank you! Change is RM$"
+	STR5 DB "		     Please return to purchase function for input to proceed...$"
 
 	MTYPE DB ?
 	WEIGHT1 DW ?
@@ -667,6 +668,22 @@ BILLING PROC
 	;CALL input_meat_type
 	
 	CALL next_line
+
+	CMP WEIGHT1,0
+	JE DISPM
+	
+	JMP PROCEED
+	
+	DISPM:
+		MOV AH,09H
+		LEA DX,STR5
+		INT 21H
+
+		CALL next_line
+		
+		RET
+
+PROCEED:
 	
 	MOV AH,09H
 	LEA DX,STR1
@@ -710,7 +727,8 @@ BILLING PROC
 
 	NEXT: 
 	
-		CALL next_line
+AGAIN:
+		CALL NEXT_LINE		
 
 		MOV AH,09H
 		LEA DX,STR3
@@ -755,6 +773,15 @@ BILLING PROC
 		  ADD AX,BX
 		    
 		MOV AMOUNT,AL
+
+		CMP AX,TPRICE
+		JGE CALCHG
+
+		CALL ERROR
+		JMP AGAIN
+
+	
+	CALCHG:
 		SUB AX,TPRICE
 		MOV BX,AX
 
@@ -763,8 +790,10 @@ BILLING PROC
 		INT 21H		
 
 		CALL DISPWORD
-		
-		
+
+		MOV AH,09H
+		LEA DX,CENTS
+		INT 21H
 
 	RET
    
