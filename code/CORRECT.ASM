@@ -58,6 +58,7 @@
 	MSG4 DB "		     ENTER THE QUANTITY: $"
 	MSG5 DB "		     THE TOTAL WEIGHT IS $"
 	MSG6 DB " KG$"
+	
 
 
 	BELLY DB "           	 |     1.     PORK BELLY  (BEST SELLING)  |$"
@@ -85,6 +86,8 @@
 
 	WGT DB ?
     TEN DB 10
+	
+	
 	
 
 
