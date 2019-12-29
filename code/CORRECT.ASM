@@ -5,7 +5,8 @@
 	stub			DB "Stub$"
 	TENDW           DW 10
 	SIGN            DB "RM $"
-	CENTS           DB ".00$"                      
+	CENTS           DB ".00$" 
+	CONFIRMATION    DB ?
 	
 
     ; Main screen
@@ -45,13 +46,12 @@
     billStub			DB "Billing Stub$"
 
 	TITSTR DB "		       | CALCULATE PRICE OF MEAT |$"
-	STR DB "		     Enter weight of meat(KG): $"
+	STR DB "		       Enter weight of meat(KG): $"
 	PATTERN DB "		       ===========================$" 
-	STR1 DB "		     Price of meat bought is RM$"
-	STR2 DB "		     Do you wish to do the payment? (Y=yes,N=no)$"
-	STR3 DB "		     Enter amount for payment: $"
-	STR4 DB "		     Thank you! Change is RM$"
-	STR5 DB "		     Please return to purchase function for input to proceed...$"
+	STR1 DB "		       Price of meat bought is RM$"
+	STR2 DB "		       Do you wish to do the payment? (Y=yes,N=no)$"
+	STR3 DB "		       Enter amount for payment: $"
+	STR4 DB "		       Thank you! Your balance is RM $"
 
 	MTYPE DB ?
 	WEIGHT1 DW ?
@@ -61,12 +61,7 @@
 	QTY DB ?
 	PRICE DW ?
     	COUNTS DB ?
-	PRICEPKG DB 20,18,18,15,21	;ARRAY FOR MEAT PRICE
-
-	INPUT_CHOICE LABEL BYTE    
-    	INPUT_MAXN DB 2
-    	INPUT_ACTN DB ?
-    	INPUT DB 3 DUP("$") 
+	PRICEPKG DB 9,10,11,13,8	;ARRAY FOR MEAT PRICE
 
 	INPUT_AMNT LABEL BYTE    
     	AMNT_MAXN DB 6
@@ -88,8 +83,8 @@
 	MSG4 DB "		     ENTER THE QUANTITY: $"
 	MSG5 DB "		     THE TOTAL WEIGHT IS $"
 	MSG6 DB " KG$"
+	MSG7 DB "		 	 DO YOU WANT TO CONTINUE? (Y-YES) $"
 	
-
 
 	BELLY DB "           	 |     1.     PORK BELLY  (BEST SELLING)  |$"
 	LOIN DB "           	 |     2.     PORK LOIN       		  |$"
@@ -115,6 +110,7 @@
     QUANTITY DB 5 DUP("$")    
 
 	WGT DW ?
+	TOTAL_WEIGHT DW 0
 
 
 	; Summary
@@ -127,14 +123,6 @@
 	operator            DW ?
 
 	QUANT DW ?
-
-	;JR
-	
-	
-
-	;Shannen
-	
-	
     
 .CODE
 MAIN PROC
@@ -606,6 +594,8 @@ PURCHASE PROC
 	;MOV DL,MTYPE
 	;MOV SI,DX
 	MOV WEIGHT1,AX
+	ADD TOTAL_WEIGHT,AX
+	MOV AX,TOTAL_WEIGHT
 	
 	
 	MOV BX,AX
@@ -621,6 +611,7 @@ PURCHASE PROC
 	
 	CALL DISPWORD
 
+	
 	;MOV AH,02H
 	;MOV DL,QUANT
 	;ADD DL,30H
@@ -637,6 +628,27 @@ PURCHASE PROC
 
 	CALL NEXT_LINE
 
+	MOV AH,09H
+	LEA DX,MSG7
+	INT 21H
+	
+	MOV AH,01H
+	INT 21H
+	MOV CONFIRMATION,AL
+	
+	CMP CONFIRMATION,"Y"
+	JE YES
+	CALL MAIN
+	
+	YES:
+	    CALL CLEAR_SCREEN
+	    CALL PURCHASE
+	
+	
+	
+	
+	
+	CALL NEXT_LINE
 	
     RET
 PURCHASE ENDP
@@ -668,22 +680,6 @@ BILLING PROC
 	;CALL input_meat_type
 	
 	CALL next_line
-
-	CMP WEIGHT1,0
-	JE DISPM
-	
-	JMP PROCEED
-	
-	DISPM:
-		MOV AH,09H
-		LEA DX,STR5
-		INT 21H
-
-		CALL next_line
-		
-		RET
-
-PROCEED:
 	
 	MOV AH,09H
 	LEA DX,STR1
@@ -712,23 +708,20 @@ PROCEED:
 	LEA DX,STR2
 	INT 21H	
 
-	MOV AH,0AH
-	LEA DX,INPUT_CHOICE		;INPUT CHOICE
-	INT 21H
+	MOV AH,01H
+	INT 21H		;INPUT CHOICE
+	MOV CONFIRMATION,AL
 	
 	CALL next_line
 	
-	MOV DI,0	
-
-	CMP INPUT[DI],"Y"
+	CMP CONFIRMATION,"Y"
 	JE NEXT
 
 	RET	
 
 	NEXT: 
 	
-AGAIN:
-		CALL NEXT_LINE		
+		CALL next_line
 
 		MOV AH,09H
 		LEA DX,STR3
@@ -748,20 +741,19 @@ AGAIN:
 	    MOV SI,0     
 	    JE CALP  
 	         
-	         MOV CH,0 
-	         MOV CL,AMNT_ACTN 
-	         DEC CL
-	         MOV AL,0
-	        LP2:
-	  
-		        MOV BL,AMNT[SI]
-		        SUB BL,30H
-				;ADD AL,BL
-				MOV BH,0
-				ADD AX,BX
-                	MUL TENDW
-		INC SI
-		
+		MOV CH,0 
+		MOV CL,AMNT_ACTN 
+		DEC CL
+		MOV AL,0
+		LP2:
+			MOV BL,AMNT[SI]
+			SUB BL,30H
+			;ADD AL,BL
+			MOV BH,0
+			ADD AX,BX
+			MUL TENDW
+			INC SI
+
 		LOOP LP2 
 	    
 	    
@@ -773,15 +765,6 @@ AGAIN:
 		  ADD AX,BX
 		    
 		MOV AMOUNT,AL
-
-		CMP AX,TPRICE
-		JGE CALCHG
-
-		CALL ERROR
-		JMP AGAIN
-
-	
-	CALCHG:
 		SUB AX,TPRICE
 		MOV BX,AX
 
@@ -790,10 +773,8 @@ AGAIN:
 		INT 21H		
 
 		CALL DISPWORD
-
-		MOV AH,09H
-		LEA DX,CENTS
-		INT 21H
+		
+		
 
 	RET
    
