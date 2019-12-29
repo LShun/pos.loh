@@ -1,57 +1,57 @@
 .MODEL SMALL
 .STACK 100
 .DATA
-	; Extra/Useful Constants
-	stub			DB "Stub$"
+	; EXTRA/USEFUL CONSTANTS
+	STUB			DB "STUB$"
 	TENDW           DW 10
 	SIGN            DB "RM $"
 	CENTS           DB ".00$" 
 	CONFIRMATION    DB ?
 	
 
-    ; Main screen
-	logo			DB " __         ______     __  __     ______   ______     ______", 13, 10
+    ; MAIN SCREEN
+	LOGO			DB " __         ______     __  __     ______   ______     ______", 13, 10
 					DB "/\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\", 13, 10
 					DB "\ \ \____  \ \ \/\ \  \ \  __ \  \ \  _-/ \ \ \/\ \  \ \___  \", 13, 10
 					DB " \ \_____\  \ \_____\  \ \_\ \_\  \ \_\    \ \_____\  \/\_____\", 13, 10
 					DB "  \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____/", 13, 10, "$"
 
-	strSeparator	DB "===============================================================", 13, 10, "$"
-	strWelcome		DB "               Welcome to LOH Pork Sales System", 13, 10, "$"
-	strMainWarn		DB " AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW", 13, 10, "$"
-	userMenuChoice  DB ?
+	STRSEPARATOR	DB "===============================================================", 13, 10, "$"
+	STRWELCOME		DB "               WELCOME TO LOH PORK SALES SYSTEM", 13, 10, "$"
+	STRMAINWARN		DB " AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW", 13, 10, "$"
+	USERMENUCHOICE  DB ?
 
-	; Login
-	strRequestPw 	DB "Please enter password: $"
-	strLoginSuccess DB "User authorized. Welcome!$"
-	strLoginFail 	DB "Incorrect login details. Please try again$"
-	strPw			DB "Password$"
-	userPw			DB 20           ; Max char
-	                DB ?            ; Num of char entered
-	                DB 20 DUP(0DH)  ; BUffer for Char entered
+	; LOGIN
+	STRREQUESTPW 	DB "PLEASE ENTER PASSWORD: $"
+	STRLOGINSUCCESS DB "USER AUTHORIZED. WELCOME!$"
+	STRLOGINFAIL 	DB "INCORRECT LOGIN DETAILS. PLEASE TRY AGAIN$"
+	STRPW			DB "PASSWORD$"
+	USERPW			DB 20           ; MAX CHAR
+	                DB ?            ; NUM OF CHAR ENTERED
+	                DB 20 DUP(0DH)  ; BUFFER FOR CHAR ENTERED
 	
-	; Main menu
-	strMainMenu 	DB "===========================Main Menu===========================",13,10
-	                DB "1.     Purchase",13,10
-	                DB "2.     Billing",13,10
-	                DB "3.     Summary",13,10
-	                DB "4. 	   Exit",13,10
-					DB "Enter your choice: (1-4): ",'$'
+	; MAIN MENU
+	STRMAINMENU 	DB "===========================MAIN MENU===========================",13,10
+	                DB "1.     PURCHASE",13,10
+	                DB "2.     BILLING",13,10
+	                DB "3.     SUMMARY",13,10
+	                DB "4. 	   EXIT",13,10
+					DB "ENTER YOUR CHOICE: (1-4): ",'$'
 
-	; Login
-	loginStub			DB "Login Stub$"
+	; LOGIN
+	LOGINSTUB			DB "LOGIN STUB$"
 
 
-	; Billing
-    billStub			DB "Billing Stub$"
+	; BILLING
+    BILLSTUB			DB "BILLING STUB$"
 
 	TITSTR DB "		       | CALCULATE PRICE OF MEAT |$"
-	STR DB "		       Enter weight of meat(KG): $"
+	STR DB "		       ENTER WEIGHT OF MEAT(KG): $"
 	PATTERN DB "		       ===========================$" 
-	STR1 DB "		       Price of meat bought is RM$"
-	STR2 DB "		       Do you wish to do the payment? (Y=yes,N=no)$"
-	STR3 DB "		       Enter amount for payment: $"
-	STR4 DB "		       Thank you! Your balance is RM $"
+	STR1 DB "		       PRICE OF MEAT BOUGHT IS RM$"
+	STR2 DB "		       DO YOU WISH TO DO THE PAYMENT? (Y=YES,N=NO)$"
+	STR3 DB "		       ENTER AMOUNT FOR PAYMENT: $"
+	STR4 DB "		       THANK YOU! YOUR BALANCE IS RM $"
 
 	MTYPE DB ?
 	WEIGHT1 DW ?
@@ -69,7 +69,7 @@
     	AMNT DB 7 DUP("$") 
 
 
-	; Purchase
+	; PURCHASE
    
 	 PURCSTUB			DB "PURCHASE STUB$"
     WEIGHT_TITLE DB "           		      WEIGHT CALCULATOR$"
@@ -113,14 +113,14 @@
 	TOTAL_WEIGHT DW 0
 
 
-	; Summary
-	sumTitle			DB "Summary", 13, 10, "$"
-	taTxt               DB "Total actions: $"    ; UPDATE HERE AFTER EACH LOOP
-	tfTxt			    DB "Total figures: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-	totalActions        DW 0
-	totalFigure         DW 0
-	operand             DW ?
-	operator            DW ?
+	; SUMMARY
+	SUMTITLE			DB "SUMMARY", 13, 10, "$"
+	TATXT               DB "TOTAL ACTIONS: $"    ; UPDATE HERE AFTER EACH LOOP
+	TFTXT			    DB "TOTAL FIGURES: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	TOTALACTIONS        DW 0
+	TOTALFIGURE         DW 0
+	OPERAND             DW ?
+	OPERATOR            DW ?
 
 	QUANT DW ?
     
@@ -130,68 +130,68 @@ MAIN PROC
     MOV DS,AX
 
     MOV AH, 09H
-	LEA DX, logo
+	LEA DX, LOGO
 	INT 21H
 	
-	LEA DX, strSeparator
+	LEA DX, STRSEPARATOR
 	INT 21H
 	
-    LEA DX, strWelcome
+    LEA DX, STRWELCOME
     INT 21H
     
-    LEA DX, strSeparator
+    LEA DX, STRSEPARATOR
 	INT 21H
     
-    CALL next_line
+    CALL NEXT_LINE
 	
 	MOV AH, 09H
-    LEA DX, strMainWarn
+    LEA DX, STRMAINWARN
     INT 21H
     
-    CALL next_line	
+    CALL NEXT_LINE	
 	
 	CALL LOGIN
 	
 	MENU:
 	
-	CALL next_line
-		CALL display_menu
+	CALL NEXT_LINE
+		CALL DISPLAY_MENU
 		
-		; check Purchase
-		chkPurc:
-			CMP userMenuChoice, '1'
-			JZ purc
-			JNZ chkBill
+		; CHECK PURCHASE
+		CHKPURC:
+			CMP USERMENUCHOICE, '1'
+			JZ PURC
+			JNZ CHKBILL
 			
-			purc:
+			PURC:
 				CALL CLEAR_SCREEN
 				CALL PURCHASE
-		; check Bill
-		chkBill:
-			CMP userMenuChoice, '2'
-			JZ bill
-			JNZ chkSum
+		; CHECK BILL
+		CHKBILL:
+			CMP USERMENUCHOICE, '2'
+			JZ BILL
+			JNZ CHKSUM
 			
-			bill:
+			BILL:
 				CALL CLEAR_SCREEN
 				CALL BILLING
-		; check Sum
-		chkSum:
-			CMP userMenuChoice, '3'
-			JZ sum
-			JNZ chkExit
-			sum:
+		; CHECK SUM
+		CHKSUM:
+			CMP USERMENUCHOICE, '3'
+			JZ SUM
+			JNZ CHKEXIT
+			SUM:
 				CALL SUMMARY
 			
-		; end program
-		chkExit:
-			CMP userMenuChoice, '4'
-			JZ exit
-			JNZ continue
-			exit:
+		; END PROGRAM
+		CHKEXIT:
+			CMP USERMENUCHOICE, '4'
+			JZ EXIT
+			JNZ CONTINUE
+			EXIT:
 				MOV AX,4C00H
 				INT 21H
-		continue:
+		CONTINUE:
 			LOOP 	MENU
     
 MAIN ENDP
@@ -199,27 +199,27 @@ MAIN ENDP
 DISPWORD PROC
 	MOV DX, 0
 	MOV CX, 5
-	MOV operand, 10000
+	MOV OPERAND, 10000
 	DIVDISPDW:
-		; divide
+		; DIVIDE
 		MOV AX, BX
-		DIV operand
-		MOV operator, DX
+		DIV OPERAND
+		MOV OPERATOR, DX
 
 		CMP AX, 0
 		JZ CONTDISPWORD
 		
 		MOV DX, AX
-		MOV AH, 02h
+		MOV AH, 02H
 		ADD DL, "0"
-		INT 21h
+		INT 21H
 		
 		CONTDISPWORD:
-    		MOV AX, operand
+    		MOV AX, OPERAND
     		MOV DX, 0
     		DIV TENDW
-    		MOV operand, AX
-    		MOV AX, operator
+    		MOV OPERAND, AX
+    		MOV AX, OPERATOR
     		MOV BX, AX  
 
 		LOOP DIVDISPDW
@@ -227,60 +227,60 @@ DISPWORD PROC
 		RET
 DISPWORD ENDP
 
-; display main-menu function
-display_menu PROC
-	; Display menu
-	MOV	DX, OFFSET strMainMenu
+; DISPLAY MAIN-MENU FUNCTION
+DISPLAY_MENU PROC
+	; DISPLAY MENU
+	MOV	DX, OFFSET STRMAINMENU
 	MOV	AH, 9
 	INT	21H
-	; Ask for choice
-	MOV	AH, 01H ; Ask for input
-	INT	21H     ; Store in AL
-	MOV userMenuChoice, AL
+	; ASK FOR CHOICE
+	MOV	AH, 01H ; ASK FOR INPUT
+	INT	21H     ; STORE IN AL
+	MOV USERMENUCHOICE, AL
 	RET
-display_menu ENDP
+DISPLAY_MENU ENDP
 
-; display next-line function
-next_line PROC
+; DISPLAY NEXT-LINE FUNCTION
+NEXT_LINE PROC
 	MOV 	AH, 02H
 	MOV		DL, 0DH		; CR
 	INT		21H
 	MOV		DL, 0AH		; LF
 	INT 	21H
 	RET
-next_line ENDP
+NEXT_LINE ENDP
 
-; divides and displays content in AX register in 5-digits.
-dispax PROC
+; DIVIDES AND DISPLAYS CONTENT IN AX REGISTER IN 5-DIGITS.
+DISPAX PROC
 	MOV DX, 0
 	MOV CX, 5
-	MOV operand, 10000
+	MOV OPERAND, 10000
 	MOV DX, 0
 	DIVDISP:
-		; divide
+		; DIVIDE
 		
-		DIV operand
-		MOV operator, DX
+		DIV OPERAND
+		MOV OPERATOR, DX
 		
 		MOV DX, AX
-		MOV AH, 02h
+		MOV AH, 02H
 		ADD DL, "0"
-		INT 21h
+		INT 21H
 		
-		MOV AX, operand
+		MOV AX, OPERAND
 		MOV DX, 0
 		DIV TENDW
-		MOV operand, AX
-		MOV AX, operator  
+		MOV OPERAND, AX
+		MOV AX, OPERATOR  
 
 		LOOP DIVDISP
 		RET
-dispax ENDP
+DISPAX ENDP
 
-display_meat_menu PROC	
+DISPLAY_MEAT_MENU PROC	
 
 ;-----DISPLAY MEAT MENU
-	CALL next_line
+	CALL NEXT_LINE
 	
 	MOV AH,09H
 	LEA DX,DASH
@@ -344,24 +344,24 @@ display_meat_menu PROC
 	CALL NEXT_LINE
 
 	RET
-display_meat_menu ENDP
+DISPLAY_MEAT_MENU ENDP
 
-; Login function
+; LOGIN FUNCTION
 LOGIN PROC
-	;; Show login prompt
-;	CALL next_line
+	;; SHOW LOGIN PROMPT
+;	CALL NEXT_LINE
 ;	MOV	AH, 09H
-;	LEA DX, strRequestPw
+;	LEA DX, STRREQUESTPW
 ;	INT 21H
 ;
 ;	CALL LOGIN_CMP_SETUP
 ;	
-;	checkPw:
-;		; Compare each letter
+;	CHECKPW:
+;		; COMPARE EACH LETTER
 ;		CMP BH, BL
-;		JNE loginFail
+;		JNE LOGINFAIL
 ;		
-;		; if no match, ask user to try 
+;		; IF NO MATCH, ASK USER TO TRY 
 ;		
 ;		INC DI
 ;		INC SI
@@ -369,49 +369,49 @@ LOGIN PROC
 ;		MOV BL, [DI]
 ;	    MOV BH, [SI]
 ;		
-;		; once reach end, perform final check
+;		; ONCE REACH END, PERFORM FINAL CHECK
 ;		CMP BL, '$'
-;		JNE checkPw
+;		JNE CHECKPW
 ;		CMP BH, 0DH
-;		JNE loginFail
+;		JNE LOGINFAIL
 ;		
-;		; If all match, welcome user
-;		CALL next_line
+;		; IF ALL MATCH, WELCOME USER
+;		CALL NEXT_LINE
 ;		
 ;		MOV AH, 09H
-;        LEA DX, strLoginSuccess
+;        LEA DX, STRLOGINSUCCESS
 ;        INT 21H
 ;        
-;        CALL next_line
+;        CALL NEXT_LINE
         RET
 ;        
 ;
-;    ; Ask user to try again
-;    loginFail:
-;        CALL next_line
+;    ; ASK USER TO TRY AGAIN
+;    LOGINFAIL:
+;        CALL NEXT_LINE
 ;        MOV AH, 09H
-;        LEA DX, strLoginFail
+;        LEA DX, STRLOGINFAIL
 ;        INT 21H
-;        CALL next_line
+;        CALL NEXT_LINE
 ;        
 ;        CALL LOGIN_CMP_SETUP
-;        JMP checkPw
+;        JMP CHECKPW
          
 LOGIN ENDP
 
 LOGIN_CMP_SETUP PROC
-    ; Overwrite buffer
+    ; OVERWRITE BUFFER
     
     
-    ; Get password
+    ; GET PASSWORD
 	MOV AH, 0AH
-	LEA DX, userPw
+	LEA DX, USERPW
 	INT 21H
 
-	; Compare the string with actual PW, char by char
-	LEA DI, strPw
-	MOV SI, OFFSET userPw + 2
-	CALL next_line
+	; COMPARE THE STRING WITH ACTUAL PW, CHAR BY CHAR
+	LEA DI, STRPW
+	MOV SI, OFFSET USERPW + 2
+	CALL NEXT_LINE
 	
 	MOV BL, [DI]
 	MOV BH, [SI]
@@ -419,7 +419,7 @@ LOGIN_CMP_SETUP PROC
 	RET
 LOGIN_CMP_SETUP ENDP  
 
-; Purchase function
+; PURCHASE FUNCTION
 PURCHASE PROC
 	CALL DISPLAY_MEAT_MENU
     
@@ -653,33 +653,33 @@ PURCHASE PROC
     RET
 PURCHASE ENDP
 
-; Billing function
+; BILLING FUNCTION
 BILLING PROC 
-	CALL next_line
+	CALL NEXT_LINE
 
-	CALL display_meat_menu
+	CALL DISPLAY_MEAT_MENU
 	
 	MOV AH,09H		;PRINT PATTERN
 	LEA DX,PATTERN
 	INT 21H
 
-	CALL next_line
+	CALL NEXT_LINE
 	
 	MOV AH,09H		;PRINT TITLE
 	LEA DX,TITSTR
 	INT 21H
 
-	CALL next_line
+	CALL NEXT_LINE
 	
 	MOV AH,09H		;PRINT PATTERN
 	LEA DX,PATTERN
 	INT 21H
 
-	CALL next_line
+	CALL NEXT_LINE
 
-	;CALL input_meat_type
+	;CALL INPUT_MEAT_TYPE
 	
-	CALL next_line
+	CALL NEXT_LINE
 	
 	MOV AH,09H
 	LEA DX,STR1
@@ -702,7 +702,7 @@ BILLING PROC
 	LEA DX,CENTS
 	INT 21H
 
-	CALL next_line
+	CALL NEXT_LINE
 
 	MOV AH,09H		;CONTINUE FOR PAYMENT?
 	LEA DX,STR2
@@ -712,7 +712,7 @@ BILLING PROC
 	INT 21H		;INPUT CHOICE
 	MOV CONFIRMATION,AL
 	
-	CALL next_line
+	CALL NEXT_LINE
 	
 	CMP CONFIRMATION,"Y"
 	JE NEXT
@@ -721,7 +721,7 @@ BILLING PROC
 
 	NEXT: 
 	
-		CALL next_line
+		CALL NEXT_LINE
 
 		MOV AH,09H
 		LEA DX,STR3
@@ -731,7 +731,7 @@ BILLING PROC
 		LEA DX,INPUT_AMNT		
 		INT 21H
 
-		CALL next_line
+		CALL NEXT_LINE
 
 		MOV BH,AMNT_ACTN
 	        
@@ -780,57 +780,57 @@ BILLING PROC
    
 BILLING ENDP
 
-; Summary function
+; SUMMARY FUNCTION
 SUMMARY PROC
-	CALL next_line
+	CALL NEXT_LINE
 	
-	; Print title	
+	; PRINT TITLE	
 	MOV	AH, 09H
-    LEA DX, sumTitle
+    LEA DX, SUMTITLE
     INT 21H
     
-    CALL next_line
+    CALL NEXT_LINE
     
-    ; Print total actions
+    ; PRINT TOTAL ACTIONS
     MOV	AH, 09H
-    LEA DX, taTxt
+    LEA DX, TATXT
     INT 21H
 
-    ; display al (quotient)
-    MOV AX, totalActions
+    ; DISPLAY AL (QUOTIENT)
+    MOV AX, TOTALACTIONS
     
-    CALL dispax
+    CALL DISPAX
     
-    CALL next_line
+    CALL NEXT_LINE
     
-    ; Print total figures
+    ; PRINT TOTAL FIGURES
     MOV AH, 09H
-    LEA DX, tfTxt
+    LEA DX, TFTXT
     INT 21H
     
-    ;  display "money sign"
+    ;  DISPLAY "MONEY SIGN"
     MOV AH, 09H
     LEA DX, SIGN
     INT 21H
     
-    ; display al (quotient)
-    MOV AX, totalFigure
+    ; DISPLAY AL (QUOTIENT)
+    MOV AX, TOTALFIGURE
     
-    CALL dispax
+    CALL DISPAX
     
-    ;  display ".00"
+    ;  DISPLAY ".00"
     MOV AH, 09H
     LEA DX, CENTS
     INT 21H 
     
-    CALL next_line
-    CALL next_line
+    CALL NEXT_LINE
+    CALL NEXT_LINE
     RET
 SUMMARY ENDP 
 
 
 ERROR PROC
-    CALL next_line
+    CALL NEXT_LINE
 
 	MOV AH,09H
 	LEA DX,ERRORM
@@ -851,10 +851,8 @@ CLEAR_SCREEN PROC
     MOV DX,184FH    ;ENDING COORDINATES
     INT 10H        ;FOR VIDEO DISPLAY
   
-    
     RET  
-    
-    
+     
 CLEAR_SCREEN ENDP    
 
 
