@@ -114,7 +114,6 @@
     QUANTITY DB 5 DUP("$")    
 
 	WGT DW ?
-    TEN DB 10
 
 
 	; Summary
@@ -571,7 +570,7 @@ PURCHASE PROC
 		        SUB BL,30H
 			MOV BH,0
 			ADD AX,BX
-                	MUL TEN
+                	MUL TENDW
 			INC SI
 		
 		    LOOP LP1 
@@ -735,21 +734,25 @@ BILLING PROC
 	         MOV CL,AMNT_ACTN 
 	         DEC CL
 	         MOV AL,0
-	         LP2:
+	        LP2:
 	  
 		        MOV BL,AMNT[SI]
 		        SUB BL,30H
-			ADD AL,BL
-                	MUL TEN
-			INC SI
+				;ADD AL,BL
+				MOV BH,0
+				ADD AX,BX
+                	MUL TENDW
+		INC SI
 		
-		    LOOP LP2 
+		LOOP LP2 
 	    
 	    
 	   CALP:
 	          MOV BL,AMNT[SI]
 		  SUB BL,30H 
-	          ADD AL,BL
+	          ;ADD AL,BL
+		  MOV BH,0
+		  ADD AX,BX
 		    
 		MOV AMOUNT,AL
 		SUB AX,TPRICE
