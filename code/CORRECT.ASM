@@ -32,10 +32,10 @@
 	
 	; MAIN MENU
 	STRMAINMENU 	DB "===========================MAIN MENU===========================",13,10
-	                DB "1.     PURCHASE",13,10
-	                DB "2.     BILLING",13,10
-	                DB "3.     SUMMARY",13,10
-	                DB "4. 	   EXIT",13,10
+	                DB "1.	PURCHASE",13,10
+	                DB "2.	BILLING",13,10
+	                DB "3.	SUMMARY",13,10
+	                DB "4.	EXIT",13,10
 					DB "ENTER YOUR CHOICE: (1-4): ",'$'
 
 	; LOGIN
@@ -49,7 +49,7 @@
 	STR DB "		       ENTER WEIGHT OF MEAT(KG): $"
 	PATTERN DB "		       ===========================$" 
 	STR1 DB "		       PRICE OF MEAT BOUGHT IS RM$"
-	STR2 DB "		       DO YOU WISH TO DO THE PAYMENT? (Y=YES,N=NO)$"
+	STR2 DB "		       DO YOU WISH TO MAKE PAYMENT? (Y-YES)$"
 	STR3 DB "		       ENTER AMOUNT FOR PAYMENT: $"
 	STR4 DB "		       THANK YOU! YOUR BALANCE IS RM $"
 
@@ -83,7 +83,7 @@
 	MSG4 DB "		     ENTER THE QUANTITY: $"
 	MSG5 DB "		     THE TOTAL WEIGHT IS $"
 	MSG6 DB " KG$"
-	MSG7 DB "		 	 DO YOU WANT TO CONTINUE? (Y-YES) $"
+	MSG7 DB "		     DO YOU WANT TO CONTINUE? (Y-YES) $"
 	
 
 	BELLY DB "           	 |     1.     PORK BELLY  (BEST SELLING)  |$"
@@ -129,32 +129,16 @@ MAIN PROC
     MOV AX,@DATA
     MOV DS,AX
 
-    MOV AH, 09H
-	LEA DX, LOGO
-	INT 21H
+	CALL CLEAR_SCREEN
 	
-	LEA DX, STRSEPARATOR
-	INT 21H
-	
-    LEA DX, STRWELCOME
-    INT 21H
-    
-    LEA DX, STRSEPARATOR
-	INT 21H
-    
-    CALL NEXT_LINE
-	
-	MOV AH, 09H
-    LEA DX, STRMAINWARN
-    INT 21H
-    
-    CALL NEXT_LINE	
+    CALL PRINT_LOGO
+    	
 	
 	CALL LOGIN
 	
 	MENU:
-	
-	CALL NEXT_LINE
+			
+		CALL NEXT_LINE
 		CALL DISPLAY_MENU
 		
 		; CHECK PURCHASE
@@ -716,6 +700,8 @@ BILLING PROC
 	
 	CMP CONFIRMATION,"Y"
 	JE NEXT
+	
+	CALL CLEAR_SCREEN
 
 	RET	
 
@@ -775,7 +761,10 @@ BILLING PROC
 		CALL DISPWORD
 		
 		
-
+	CALL CLEAR_SCREEN
+	
+	CALL PRINT_LOGO
+	
 	RET
    
 BILLING ENDP
@@ -851,9 +840,35 @@ CLEAR_SCREEN PROC
     MOV DX,184FH    ;ENDING COORDINATES
     INT 10H        ;FOR VIDEO DISPLAY
   
+    
     RET  
-     
+    
+    
 CLEAR_SCREEN ENDP    
 
+PRINT_LOGO PROC
+	MOV AH, 09H
+	LEA DX, LOGO
+	INT 21H
+	
+	LEA DX, STRSEPARATOR
+	INT 21H
+	
+    LEA DX, STRWELCOME
+    INT 21H
+    
+    LEA DX, STRSEPARATOR
+	INT 21H
+	
+	CALL NEXT_LINE
+	
+	MOV AH, 09H
+    LEA DX, STRMAINWARN
+    INT 21H
+    
+    CALL NEXT_LINE
+	
+	RET
 
+PRINT_LOGO ENDP
 END MAIN
