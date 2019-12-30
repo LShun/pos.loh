@@ -777,11 +777,36 @@ AGAIN:
 		LEA DX,STR3
 		INT 21H
 
+	
 		MOV AH,0AH
 		LEA DX,INPUT_AMNT		
 		INT 21H
 
+		MOV CH,0
+		MOV CL,AMNT_ACTN
+		MOV SI,0
+	
 		CALL NEXT_LINE
+
+		CHECK_INPUT:
+		    
+		    CMP AMNT[SI],47
+		    JL FALSE
+
+		    CMP AMNT[SI],58
+		    JG FALSE
+		
+		    INC SI
+	    	LOOP CHECK_INPUT
+	    JMP CONT
+	    
+	    FALSE:
+
+		CALL ERROR_LIM
+	           JNE AGAIN
+
+		CALL NEXT_LINE
+	CONT:
 
 		MOV BH,AMNT_ACTN
 	        
