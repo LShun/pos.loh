@@ -91,11 +91,11 @@
 	MSG11 DB "			 PLEASE ENTER A NUMBER (1-3) :"
 	EDIT_NUM DB ?
 	
-	BELLY DB "              |     1.     PORK BELLY  			|     9     |$"
-	LOIN DB "              |     2.     PORK LOIN       		|    10     |$"
-	RIB DB "              |     3.     PORK RIB  		        |    11     |$"
-	SHOULDER DB "              |     4.     PORK SHOULDER   	 	|    13     |$"
-	HAM DB "              |     5.     HAM            	        |     8     |$"
+	BELLY DB "              |     1.     PORK BELLY  			|       9.00|$"
+	LOIN DB "              |     2.     PORK LOIN       		|      10.00|$"
+	RIB DB "              |     3.     PORK RIB  		        |      11.00|$"
+	SHOULDER DB "              |     4.     PORK SHOULDER   	 	|       13.00|$"
+	HAM DB "              |     5.     HAM            	        |        8.00|$"
 	QUIT DB "              |     6.     QUIT            		  	    |$"
 
 	
