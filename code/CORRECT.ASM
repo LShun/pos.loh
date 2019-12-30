@@ -80,7 +80,10 @@
 	MSG4 DB "		     ENTER THE QUANTITY: $"
 	MSG5 DB "		     THE TOTAL WEIGHT IS $"
 	MSG6 DB " KG$"
-	MSG7 DB "		     DO YOU WANT TO CONTINUE? (Y-YES) $"
+	MSG7 DB "		     DO YOU WANT TO EDIT YOUR CHOICE? (Y-YES) $"
+	MSG8 DB "			 1.		TYPE$"
+	MSG9 DB "			 2. 	WEIGHT$"
+	MSG10 DB "			  3.	 QUANTITY$"
 	
 
 	BELLY DB "           	 |     1.     PORK BELLY  (BEST SELLING)  |$"
