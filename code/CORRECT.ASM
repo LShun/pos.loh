@@ -730,7 +730,7 @@ PROCEED:
 	MOV BH,0
 	MOV BL,PRICEPKG[SI]
 	MUL BX
-	MOV TPRICE,AX
+	MOV TPRICE,AX	;TOTAL PRICE
                                        
 	MOV BX,AX
 	
