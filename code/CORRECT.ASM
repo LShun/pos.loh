@@ -183,8 +183,8 @@ DISPWORD PROC
 	MOV DX, 0
 	MOV CX, 5 ; 5 digits, change along with operand
 	MOV operand, 10000
-	MOV BL, 1
-	MOV leadZeroFlag, BL 
+	MOV AL, 1
+	MOV leadZeroFlag, AL
 	
 	DWDIVDISP:
 		; divide
