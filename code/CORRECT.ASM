@@ -22,13 +22,14 @@
 	USERMENUCHOICE  DB ?
 
 	; LOGIN
-	STRREQUESTPW 	DB "PLEASE ENTER PASSWORD: $"
-	STRLOGINSUCCESS DB "USER AUTHORIZED. WELCOME!$"
-	STRLOGINFAIL 	DB "INCORRECT LOGIN DETAILS. PLEASE TRY AGAIN$"
-	STRPW			DB "PASSWORD$"
-	USERPW			DB 20           ; MAX CHAR
-	                DB ?            ; NUM OF CHAR ENTERED
-	                DB 20 DUP(0DH)  ; BUFFER FOR CHAR ENTERED
+	strRequestPw 	DB "Please enter password: $"
+	strLoginSuccess DB "User authorized. Welcome!$"
+	strLoginFail 	DB "Incorrect login details. Try again: $"
+	strPw			DB 53,37,22,22,18,85,23,1,"$" ; PW Hash
+	userPw			DB 20           ; Max char
+	                DB ?            ; Num of char entered
+	                DB 20 DUP(0DH)  ; BUffer for Char entered
+	xorKey          DB "e"
 	
 	; MAIN MENU
 	STRMAINMENU 	DB "===========================MAIN MENU===========================",13,10
@@ -37,10 +38,6 @@
 	                DB "3.	SUMMARY",13,10
 	                DB "4.	EXIT",13,10
 					DB "ENTER YOUR CHOICE: (1-4): ",'$'
-
-	; LOGIN
-	LOGINSTUB			DB "LOGIN STUB$"
-
 
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
@@ -112,6 +109,8 @@
 	WGT DW ?
 	TOTAL_WEIGHT DW 0
 
+	; DISPWORD
+	leadZeroFlag DB ?
 
 	; SUMMARY
 	SUMTITLE			DB "SUMMARY", 13, 10, "$"
@@ -182,31 +181,44 @@ MAIN ENDP
 
 DISPWORD PROC
 	MOV DX, 0
-	MOV CX, 5
-	MOV OPERAND, 10000
-	DIVDISPDW:
-		; DIVIDE
+	MOV CX, 5 ; 5 digits, change along with operand
+	MOV operand, 10000
+	MOV BL, 1
+	MOV leadZeroFlag, BL 
+	
+	DWDIVDISP:
+		; divide
 		MOV AX, BX
-		DIV OPERAND
-		MOV OPERATOR, DX
-
+		DIV operand
+		MOV operator, DX
+        
+        ; Check if leading zero
+	    CMP leadZeroFlag, 0
+	    JE  DWPRINTNUM
+	    ; Check if zero
 		CMP AX, 0
-		JZ CONTDISPWORD
+		JZ  DWCONTDISPWORD
+		; set not leading zero
+		MOV BL, 0
+	    MOV leadZeroFlag, BL
 		
-		MOV DX, AX
-		MOV AH, 02H
-		ADD DL, "0"
-		INT 21H
+		; print number
+		DWPRINTNUM:
+		    MOV DX, AX
+		    MOV AH, 02h
+		    ADD DL, "0"
+		    INT 21h
 		
-		CONTDISPWORD:
-    		MOV AX, OPERAND
+		; ready for next print
+		DWCONTDISPWORD:
+    		MOV AX, operand
     		MOV DX, 0
     		DIV TENDW
     		MOV OPERAND, AX
     		MOV AX, OPERATOR
     		MOV BX, AX  
 
-		LOOP DIVDISPDW
+		LOOP DWDIVDISP
 		
 		RET
 DISPWORD ENDP
