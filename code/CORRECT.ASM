@@ -42,9 +42,9 @@
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
 
-	TITSTR DB "		       | CALCULATE PRICE OF MEAT |$"
+	TITSTR DB "		      	CALCULATE PRICE OF MEAT$"
 	STR DB "		       ENTER WEIGHT OF MEAT(KG): $"
-	PATTERN DB "		       ===========================$" 
+	PATTERN DB "			============================$" 
 	STR1 DB "		       PRICE OF MEAT BOUGHT IS RM$"
 	STR2 DB "		       DO YOU WISH TO MAKE PAYMENT? (Y-YES)$"
 	STR3 DB "		       ENTER AMOUNT FOR PAYMENT: $"
@@ -72,31 +72,30 @@
 	; PURCHASE
    
 	 PURCSTUB			DB "PURCHASE STUB$"
-    WEIGHT_TITLE DB "           		      WEIGHT CALCULATOR$"
-    ASTERISK DB "           		      *****************$"
-    DASH DB  "              +-----------------------------------------+-----------+$"
-    MSG1 DB  "              |             TYPES OF PORK    	        | PRICE(RM) |$"
+    WEIGHT_TITLE DB "           		  CALCULATE WEIGHT OF MEAT$"
+    DASH DB  "            +-----------------------------------------+-----------+$"
+    MSG1 DB  "            |             TYPES OF PORK    	      | PRICE(RM) |$"
 
 
-	MSG2 DB "		     ENTER A NUMBER (1 TO 6): $"
-	ERRORM DB "		     INVALID! PLEASE ENTER AGAIN! $"
-	MSG3 DB "		     ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
-	MSG4 DB "		     ENTER THE QUANTITY: $"
-	MSG5 DB "		     THE TOTAL WEIGHT IS $"
+	MSG2 DB "	     ENTER A NUMBER (1 TO 6): $"
+	ERRORM DB "	     INVALID! PLEASE ENTER AGAIN! $"
+	MSG3 DB "             ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
+	MSG4 DB "             ENTER THE QUANTITY: $"
+	MSG5 DB "             THE TOTAL WEIGHT IS $"
 	MSG6 DB " .00 KG$"
-	MSG7 DB "		     DO YOU WANT TO EDIT YOUR CHOICE? (Y-YES) $"
+	MSG7 DB "        DO YOU WANT TO EDIT YOUR CHOICE? (Y-YES) $"
 	MSG8 DB "			 1.		TYPE$"
 	MSG9 DB "			 2. 	WEIGHT$"
 	MSG10 DB "			  3.	 QUANTITY$"
 	MSG11 DB "			 PLEASE ENTER A NUMBER (1-3) :"
 	EDIT_NUM DB ?
 	
-	BELLY DB "              |     1.     PORK BELLY  			|       9.00|$"
-	LOIN DB "              |     2.     PORK LOIN       		|      10.00|$"
-	RIB DB "              |     3.     PORK RIB  		        |      11.00|$"
-	SHOULDER DB "              |     4.     PORK SHOULDER   	 	|       13.00|$"
-	HAM DB "              |     5.     HAM            	        |        8.00|$"
-	QUIT DB "              |     6.     QUIT            		  	    |$"
+	BELLY DB "            |     1.     PORK BELLY  		      |       9.00|$"
+	LOIN DB "            |     2.     PORK LOIN       	      |      10.00|$"
+	RIB DB "            |     3.     PORK RIB  		      |      11.00|$"
+	SHOULDER DB "            |     4.     PORK SHOULDER   	      |      13.00|$"
+	HAM DB "            |     5.     HAM            	      |       8.00|$"
+	QUIT DB "            |     6.     QUIT            		  	  |$"
 
 	
 	TYPE_STR LABEL BYTE    
@@ -432,18 +431,26 @@ LOGIN_CMP_SETUP PROC
 LOGIN_CMP_SETUP ENDP  
 
 ; PURCHASE FUNCTION
-PURCHASE PROC
-	MOV AH,09H
-	LEA DX,WEIGHT_TITLE		; WEIGHT CALCULATOR
-	INT 21H
+PURCHASE PROC	
+	CALL DISPLAY_MEAT_MENU
 	
+	MOV AH,09H		;PRINT PATTERN
+	LEA DX,PATTERN
+	INT 21H
+
 	CALL NEXT_LINE
 	
-	MOV AH,09H
-	LEA DX,ASTERISK
+	MOV AH,09H		;PRINT TITLE
+	LEA DX,WEIGHT_TITLE
 	INT 21H
+
+	CALL NEXT_LINE
 	
-	CALL DISPLAY_MEAT_MENU
+	MOV AH,09H		;PRINT PATTERN
+	LEA DX,PATTERN
+	INT 21H
+
+	CALL NEXT_LINE
     
     
     MEAT_TYPE_INPUT:
