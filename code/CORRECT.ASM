@@ -74,8 +74,9 @@
 	 PURCSTUB			DB "PURCHASE STUB$"
     WEIGHT_TITLE DB "           		      WEIGHT CALCULATOR$"
     ASTERISK DB "           		      *****************$"
-    DASH DB "           	 +----------------------------------------+$"
-    MSG1 DB  "          	 |             TYPES OF PORK    	  |$"
+    DASH DB  "              +-----------------------------------------+-----------+$"
+    MSG1 DB  "              |             TYPES OF PORK    	        | PRICE(RM) |$"
+
 
 	MSG2 DB "		     ENTER A NUMBER (1 TO 6): $"
 	ERRORM DB "		     INVALID! PLEASE ENTER AGAIN! $"
@@ -90,13 +91,12 @@
 	MSG11 DB "			 PLEASE ENTER A NUMBER (1-3) :"
 	EDIT_NUM DB ?
 	
-
-	BELLY DB "           	 |     1.     PORK BELLY  (BEST SELLING)  |$"
-	LOIN DB "           	 |     2.     PORK LOIN       		  |$"
-	RIB DB "          	 |     3.     PORK RIB  (DELICIOUS)	  |$"
-	SHOULDER DB "           	 |     4.     PORK SHOULDER   		  |$"
-	HAM DB "           	 |     5.     HAM            	 	  |$"
-	QUIT DB "           	 |     6.     QUIT            		  |$"
+	BELLY DB "              |     1.     PORK BELLY  			|     9     |$"
+	LOIN DB "              |     2.     PORK LOIN       		|    10     |$"
+	RIB DB "              |     3.     PORK RIB  		        |    11     |$"
+	SHOULDER DB "              |     4.     PORK SHOULDER   	 	|    13     |$"
+	HAM DB "              |     5.     HAM            	        |     8     |$"
+	QUIT DB "              |     6.     QUIT            		  	    |$"
 
 	
 	TYPE_STR LABEL BYTE    
@@ -335,6 +335,12 @@ DISPLAY_MEAT_MENU PROC
 	CALL NEXT_LINE
 
 	MOV AH,09H
+	LEA DX,DASH
+	INT 21H
+	
+	CALL NEXT_LINE
+
+	MOV AH,09H
 	LEA DX,QUIT
 	INT 21H
 		
@@ -346,6 +352,8 @@ DISPLAY_MEAT_MENU PROC
 
 	CALL NEXT_LINE
 	CALL NEXT_LINE
+
+	RET
 
 	RET
 DISPLAY_MEAT_MENU ENDP
