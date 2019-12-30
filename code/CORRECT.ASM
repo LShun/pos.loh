@@ -50,6 +50,8 @@
 	STR3 DB "		       ENTER AMOUNT FOR PAYMENT: $"
 	STR4 DB "		       THANK YOU! YOUR BALANCE IS RM $"
 
+	STR5 DB "		   Please return to PURCHASE function for input to proceed...$"
+
 	MTYPE DB ?
 	WEIGHT1 DW ?
 	MPRICE DW ?
@@ -690,7 +692,23 @@ BILLING PROC
 	;CALL INPUT_MEAT_TYPE
 	
 	CALL NEXT_LINE
+
+	CMP WEIGHT1,0
+	JE DISPM
 	
+	JMP PROCEED
+
+	DISPM:
+		MOV AH,09H
+		LEA DX,STR5
+		INT 21H
+
+		CALL next_line
+		
+		;CALL CLEAR_SCREEN
+		;RET
+
+PROCEED:	
 	MOV AH,09H
 	LEA DX,STR1
 	INT 21H
@@ -737,6 +755,7 @@ BILLING PROC
 
 	NEXT: 
 	
+AGAIN:
 		CALL NEXT_LINE
 
 		MOV AH,09H
@@ -762,14 +781,15 @@ BILLING PROC
 		DEC CL
 		MOV AL,0
 		LP2:
-			MOV BL,AMNT[SI]
-			SUB BL,30H
-			;ADD AL,BL
-			MOV BH,0
-			ADD AX,BX
-			MUL TENDW
-			INC SI
-
+	  
+		        MOV BL,AMNT[SI]
+		        SUB BL,30H
+				;ADD AL,BL
+				MOV BH,0
+				ADD AX,BX
+                	MUL TENDW
+		INC SI
+		
 		LOOP LP2 
 	    
 	    
@@ -781,6 +801,15 @@ BILLING PROC
 		  ADD AX,BX
 		    
 		MOV AMOUNT,AL
+
+		CMP AX,TPRICE
+		JGE CALCHG
+
+		CALL ERROR
+		JMP AGAIN
+
+	
+	CALCHG:
 		SUB AX,TPRICE
 		MOV BX,AX
 
@@ -789,11 +818,15 @@ BILLING PROC
 		INT 21H		
 
 		CALL DISPWORD
+
+		MOV AH,09H
+		LEA DX,CENTS
+		INT 21H
 		
 		
 	CALL CLEAR_SCREEN
 	
-	CALL PRINT_LOGO
+	;CALL PRINT_LOGO
 	
 	RET
    
