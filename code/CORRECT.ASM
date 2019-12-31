@@ -137,7 +137,8 @@
 	TOTALACTIONS        DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
-	PRESSKEYCONT        DB "                         <<Press any key to continue>>                         $"
+	THANKYOU            DB "                                  Thank you!                                   $"
+	PRESSKEYCONT        DB "                         <<Press any key to continue>>                         $"   
 
 	QUANT DW ?
     
@@ -173,7 +174,7 @@ MAIN PROC
 			BILL:
 				CALL CLEAR_SCREEN
 				CALL BILLING
-				INC TOTALACTIONS
+				INC TOTALACTIONS ; MOVE THIS TO INSIDE BILLING LATER FOR SUCCESSFUL ONLY
 
 		; CHECK SUM
 		CHKSUM:
@@ -189,6 +190,7 @@ MAIN PROC
 			JZ EXIT
 			JNZ CONTINUE
 			EXIT:
+			    CALL SUMMARY
 				MOV AX,4C00H
 				INT 21H
 		CONTINUE:
@@ -952,6 +954,20 @@ SUMMARY PROC
     CALL DISPWORD
     
     CALL next_line
+    CALL next_line
+    
+    ; display thank you note
+   
+    MOV AH, 09H
+    LEA DX, PATTERN
+    INT 21H
+    
+    CALL next_line
+    
+    MOV AH, 09H
+    LEA DX, THANKYOU
+    INT 21H
+    
     ; Press any key to continue
     MOV AH, 09H
     LEA DX, PRESSKEYCONT
