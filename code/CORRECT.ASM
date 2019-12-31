@@ -139,7 +139,7 @@
 	OPERATOR            DW ?
 	THANKYOU            DB "                                  Thank you!                                   $"
 	PRESSKEYCONT        DB "                         <<Press any key to continue>>                         $"   
-
+    STRVERTBAR          DB "                    +--------------------------------------+                   $"
 	QUANT DW ?
     
 .CODE
@@ -959,7 +959,7 @@ SUMMARY PROC
     ; display thank you note
    
     MOV AH, 09H
-    LEA DX, PATTERN
+    LEA DX, STRVERTBAR
     INT 21H
     
     CALL next_line
