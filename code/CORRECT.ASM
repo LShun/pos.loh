@@ -10,20 +10,20 @@
 	
 
     ; MAIN SCREEN
-	LOGO			DB " __         ______     __  __     ______   ______     ______", 13, 10
-					DB "/\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\", 13, 10
-					DB "\ \ \____  \ \ \/\ \  \ \  __ \  \ \  _-/ \ \ \/\ \  \ \___  \", 13, 10
-					DB " \ \_____\  \ \_____\  \ \_\ \_\  \ \_\    \ \_____\  \/\_____\", 13, 10
-					DB "  \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____/", 13, 10, "$"
+	LOGO			DB "          __         ______     __  __     ______   ______     ______", 13, 10
+					DB "         /\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\", 13, 10
+					DB "         \ \ \____  \ \ \/\ \  \ \  __ \  \ \  _-/ \ \ \/\ \  \ \___  \", 13, 10
+					DB "          \ \_____\  \ \_____\  \ \_\ \_\  \ \_\    \ \_____\  \/\_____\", 13, 10
+					DB "           \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____", 13, 10, "$"
 
-	STRSEPARATOR	DB "===============================================================", 13, 10, "$"
-	STRWELCOME		DB "               WELCOME TO LOH PORK SALES SYSTEM", 13, 10, "$"
+	STRSEPARATOR	DB "================================================================================", 13, 10, "$"
+	STRWELCOME		DB "                        WELCOME TO LOH PORK SALES SYSTEM", 13, 10, "$"
 	STRMAINWARN		DB "          AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW", 13, 10, "$"
 	USERMENUCHOICE  DB ?
 
 	; LOGIN
 	    
-	strRequestPw 	DB "Please enter password: $"
+	strRequestPw 	DB "   Please enter password: $"
 	strLoginSuccess DB "               User authorized. Welcome!$"
 	strLoginFail 	DB "Incorrect login details. Try again: $"
 	strPw			DB 53,37,22,22,18,85,23,1,"$" ; PW Hash
@@ -33,12 +33,13 @@
 	xorKey          DB "e"
 	
 	; MAIN MENU
-	STRMAINMENU 	DB "===========================MAIN MENU===========================",13,10
-	                DB "1.	PURCHASE",13,10
-	                DB "2.	BILLING",13,10
-	                DB "3.	SUMMARY",13,10
-	                DB "4.	EXIT",13,10
-					DB "ENTER YOUR CHOICE: (1-4): ",'$'
+	STRMAINMENU 	DB "                    ===============MAIN MENU================                    ",13,10
+	                DB "                    |             1.  PURCHASE             |                    ",13,10
+	                DB "                    |             2.  BILLING              |                    ",13,10
+	                DB "                    |             3.  SUMMARY              |                    ",13,10
+	                DB "                    |             4.  EXIT                 |                    ",13,10
+					DB "                    ========================================                    ",13,10
+					DB "                    ENTER YOUR CHOICE, (1-4): ",'$'
 
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
