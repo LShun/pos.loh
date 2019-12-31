@@ -137,7 +137,7 @@
 	TOTALACTIONS        DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
-	PRESSKEYCONT        DB "Press any key to continue...$"
+	PRESSKEYCONT        DB "                         <<Press any key to continue>>                         $"
 
 	QUANT DW ?
     
