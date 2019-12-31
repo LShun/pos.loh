@@ -59,10 +59,20 @@
 	STR5 DB "	   Please return to PURCHASE function for input to proceed...$"
 	STR6 DB "		       ENTER TO CONTINUE...$"
 
+	CURRENCYMENU DB "			+--------------------------------------+        ",13,10
+		     DB "			|		CURRENCY	       |	",13,10
+		     DB "			+--------------------------------------+        ",13,10
+		     DB "			|	1. RINGGIT MALAYSIA(MYR)       |	",13,10
+		     DB "			|       2. US DOLLAR (USD)	       |	",13,10
+		     DB "			+--------------------------------------+        $",13,10
+		     
+	CURMSG DB "				ENTER CHOICE FOR CURRENCRY(1-2): ",'$'
+
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
 	TAB DB "		       $"
 
+	PRICEPKG DB 9,10,11,13,8	;ARRAY FOR MEAT PRICE
 	MTYPE DB ?
 	WEIGHT1 DW ?
 	MPRICE DW ?
@@ -71,7 +81,8 @@
 	QTY DB ?
 	PRICE DW ?
     	COUNTS DB ?
-	PRICEPKG DB 9,10,11,13,8	;ARRAY FOR MEAT PRICE
+	CURRENCY DB ?
+	
 
 	INPUT_AMNT LABEL BYTE    
     	AMNT_MAXN DB 6
@@ -82,13 +93,13 @@
 	; PURCHASE
    
 	PURCSTUB			DB "PURCHASE STUB$"
-    WEIGHT_TITLE DB "           		  CALCULATE WEIGHT OF MEAT$"
+    WEIGHT_TITLE DB "           		  CALCULATE WEIGHTA OF MEAT$"
     DASH DB  "            +-----------------------------------------+-----------+$"
     MSG1 DB  "            |             TYPES OF PORK    	      | PRICE(RM) |$"
 
 
 	MSG2 DB "	     ENTER A NUMBER (1 TO 6): $"
-	ERRORM DB "	     INVALID! PLEASE ENTER AGAIN! $"
+	ERRORM DB "	     	INVALID! PLEASE ENTER AGAIN! $"
 	MSG3 DB "             ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
 	MSG4 DB "             ENTER THE QUANTITY: $"
 	MSG5 DB "             ~~DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
@@ -824,11 +835,41 @@ PROCEED:
 
 	NEXT: 
 	
-AGAIN:
+
 		CALL NEXT_LINE
 
 		MOV AH,09H
-		LEA DX,STR3
+		LEA DX,CURRENCYMENU
+		INT 21H
+
+	AGAIN:	MOV AH,09H
+		LEA DX,CURMSG
+		INT 21H
+
+		MOV AH,01H
+		INT 21H
+		MOV CURRENCY,AL
+
+		CMP CURRENCY,"1"
+       		JL FALSE2
+
+        	CMP CURRENCY,"2"
+	    	JG FALSE2
+
+		CALL NEXT_LINE        
+
+        	JMP AMOUNT_INPUT
+
+	    	FALSE2:
+		    	CALL ERROR_LIM
+		JMP AGAIN
+		
+		CALL NEXT_LINE
+
+AMOUNT_INPUT:
+		
+		MOV AH,09H
+		LEA DX,STR3		;PROMPT USER TO INPUT AMOUNT
 		INT 21H
 
 	
@@ -857,7 +898,7 @@ AGAIN:
 	    FALSE:
 
 		CALL ERROR_LIM
-	           JNE AGAIN
+	           JNE AMOUNT_INPUT
 
 		CALL NEXT_LINE
 	CONT:
@@ -900,7 +941,7 @@ AGAIN:
 		JGE CALCHG
 
 		CALL ERROR_LIM
-		JMP AGAIN
+		JMP AMOUNT_INPUT
 
 	
 	CALCHG:
@@ -1096,8 +1137,8 @@ EDITING PROC
 		
 		;QTY_INPUT1:
 		MOV AH,0AH              ;INPUT STRING
-        LEA DX,QUANTITY_STR
-        INT 21H
+        	LEA DX,QUANTITY_STR
+        	INT 21H
 		CALL NEXT_LINE
 	    CALL CHECK_QUANTITY_DIGIT
 
