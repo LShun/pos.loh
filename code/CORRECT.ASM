@@ -251,9 +251,7 @@ DISPLAY_MENU PROC
 	RET
 DISPLAY_MENU ENDP
 
-; Usage: General-purpose
-; Purpose: Print a new line
-; Requirements: None
+; DISPLAY NEXT-LINE FUNCTION
 NEXT_LINE PROC
 	MOV 	AH, 02H
 	MOV		DL, 0DH		; CR
@@ -1156,4 +1154,26 @@ ENTER_QUANTITY PROC
 	RET
 
 ENTER_QUANTITY ENDP
+
+push_all PROC
+   PUSH AX
+   PUSH CX
+   PUSH DX
+   PUSH BX
+   ;NOTE: Missing SP
+   PUSH BP
+   PUSH SI
+   PUSH DI
+push_all ENDP
+
+pop_all PROC
+   POP DI
+   POP SI
+   POP BP
+   ;NOTE: Missing SP
+   POP BX
+   POP DX
+   POP CX
+   POP AX
+pop_all ENDP
 END MAIN
