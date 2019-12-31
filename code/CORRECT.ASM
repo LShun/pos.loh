@@ -75,7 +75,7 @@
 
 	; PURCHASE
    
-	 PURCSTUB			DB "PURCHASE STUB$"
+	PURCSTUB			DB "PURCHASE STUB$"
     WEIGHT_TITLE DB "           		  CALCULATE WEIGHT OF MEAT$"
     DASH DB  "            +-----------------------------------------+-----------+$"
     MSG1 DB  "            |             TYPES OF PORK    	      | PRICE(RM) |$"
@@ -134,7 +134,7 @@
 	QUANT DW ?
     
 .CODE
-MAIN PROC
+MAIN PROC FAR
     MOV AX,@DATA
     MOV DS,AX
 
@@ -189,7 +189,13 @@ MAIN PROC
     
 MAIN ENDP
 
+; Usage: General purpose
+; Purpose: Display 5 digit integers (up to 65,535)
+; Requirements: Digit store in BX
 DISPWORD PROC
+    ;Setup
+    CALL push_all
+    ; Main process
 	MOV DX, 0
 	MOV CX, 5 ; 5 digits, change along with operand
 	MOV operand, 10000
@@ -230,10 +236,16 @@ DISPWORD PROC
 
 		LOOP DWDIVDISP
 		
-		RET
+		
+		
+    ; Cleanup
+    CALL push_all
+    RET
 DISPWORD ENDP
 
-; DISPLAY MAIN-MENU FUNCTION
+; Usage: Control
+; Purpose: Display main menu & ask user to select function
+; Requirements: None
 DISPLAY_MENU PROC
 	; DISPLAY MENU
 	MOV	DX, OFFSET STRMAINMENU
@@ -255,33 +267,6 @@ NEXT_LINE PROC
 	INT 	21H
 	RET
 NEXT_LINE ENDP
-
-; DIVIDES AND DISPLAYS CONTENT IN AX REGISTER IN 5-DIGITS.
-DISPAX PROC
-	MOV DX, 0
-	MOV CX, 5
-	MOV OPERAND, 10000
-	MOV DX, 0
-	DIVDISP:
-		; DIVIDE
-		
-		DIV OPERAND
-		MOV OPERATOR, DX
-		
-		MOV DX, AX
-		MOV AH, 02H
-		ADD DL, "0"
-		INT 21H
-		
-		MOV AX, OPERAND
-		MOV DX, 0
-		DIV TENDW
-		MOV OPERAND, AX
-		MOV AX, OPERATOR  
-
-		LOOP DIVDISP
-		RET
-DISPAX ENDP
 
 DISPLAY_MEAT_MENU PROC	
 
@@ -931,51 +916,28 @@ AGAIN:
    
 BILLING ENDP
 
-; SUMMARY FUNCTION
+; Summary function
 SUMMARY PROC
-	CALL NEXT_LINE
+	CALL next_line
 	
-	; PRINT TITLE	
+	; Print title	
 	MOV	AH, 09H
-    	LEA DX, SUMTITLE
-    	INT 21H
+    LEA DX, sumTitle
+    INT 21H
     
-    CALL NEXT_LINE
+    CALL next_line
     
-    ; PRINT TOTAL ACTIONS
+    ; Print total actions
     MOV	AH, 09H
-    LEA DX, TATXT
+    LEA DX, taTxt
     INT 21H
 
-    ; DISPLAY AL (QUOTIENT)
-    MOV AX, TOTALACTIONS
+    ; display al (quotient)
+    MOV BX, totalActions
+    CALL DISPWORD
     
-    CALL DISPAX
-    
-    CALL NEXT_LINE
-    
-    ; PRINT TOTAL FIGURES
-    MOV AH, 09H
-    LEA DX, TFTXT
-    INT 21H
-    
-    ;  DISPLAY "MONEY SIGN"
-    MOV AH, 09H
-    LEA DX, SIGN
-    INT 21H
-    
-    ; DISPLAY AL (QUOTIENT)
-    MOV AX, TOTALFIGURE
-    
-    CALL DISPAX
-    
-    ;  DISPLAY ".00"
-    MOV AH, 09H
-    LEA DX, CENTS
-    INT 21H 
-    
-    CALL NEXT_LINE
-    CALL NEXT_LINE
+    CALL next_line
+    CALL next_line
     RET
 SUMMARY ENDP 
 
@@ -1309,4 +1271,26 @@ CHECK_QUANTITY_DIGIT PROC
 
 
 CHECK_QUANTITY_DIGIT ENDP
+
+push_all PROC
+   PUSH AX
+   PUSH CX
+   PUSH DX
+   PUSH BX
+   ;NOTE: Missing SP
+   PUSH BP
+   PUSH SI
+   PUSH DI
+push_all ENDP
+
+pop_all PROC
+   POP DI
+   POP SI
+   POP BP
+   ;NOTE: Missing SP
+   POP BX
+   POP DX
+   POP CX
+   POP AX
+pop_all ENDP
 END MAIN
