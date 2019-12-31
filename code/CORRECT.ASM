@@ -8,6 +8,29 @@
 	CENTS           DB ".00$" 
 	CONFIRMATION    DB ?
 	
+	; MACROS
+	push_all MACRO
+       PUSH AX
+       PUSH CX
+       PUSH DX
+       PUSH BX
+       ;NOTE: Missing SP, cause bugs
+       PUSH BP
+       PUSH SI
+       PUSH DI
+    push_all ENDM
+    
+    pop_all MACRO
+       POP DI
+       POP SI
+       POP BP
+       ;NOTE: Missing SP, cause bugs
+       POP BX
+       POP DX
+       POP CX
+       POP AX
+    pop_all ENDM
+	
 
     ; MAIN SCREEN
 	LOGO			DB " __         ______     __  __     ______   ______     ______", 13, 10
@@ -190,7 +213,7 @@ MAIN PROC
 MAIN ENDP
 
 DISPWORD PROC
-    PUSHA
+    push_all
 	MOV DX, 0
 	MOV CX, 5 ; 5 digits, change along with operand
 	MOV operand, 10000
@@ -231,8 +254,8 @@ DISPWORD PROC
 
 		LOOP DWDIVDISP
 		
-		POPA
-		RET
+	pop_all
+	RET
 DISPWORD ENDP
 
 ; DISPLAY MAIN-MENU FUNCTION
@@ -1202,3 +1225,4 @@ ENTER_QUANTITY PROC
 
 ENTER_QUANTITY ENDP
 END MAIN
+
