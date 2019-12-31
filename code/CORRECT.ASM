@@ -48,23 +48,22 @@
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
 
-	TITSTR DB "		      	  CALCULATE PRICE OF MEAT$"
-	STR DB "		       ENTER WEIGHT OF MEAT(KG): $"
-	PATTERN DB "			============================$" 
+	TITSTR DB "                         =======================",13,10
+		   DB "                         CALCULATE PRICE OF MEAT",13,10
+		   DB "                         =======================$",13,10
 	STR1 DB "		       PRICE OF MEAT BOUGHT IS RM $"
-	STR2 DB "		       DO YOU WISH TO MAKE PAYMENT? (Y-YES)$"
+	STR2 DB "		       DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
 	STR3 DB "		       ENTER AMOUNT FOR PAYMENT: $"
 	STR4 DB "		       THANK YOU! YOUR BALANCE IS RM $"
 
 	STR5 DB "	   Please return to PURCHASE function for input to proceed...$"
-	STR6 DB "		       ENTER TO CONTINUE...$"
 
-	CURRENCYMENU DB "			+--------------------------------------+        ",13,10
-		     DB "			|		CURRENCY	       |	",13,10
-		     DB "			+--------------------------------------+        ",13,10
-		     DB "			|	1. RINGGIT MALAYSIA(MYR)       |	",13,10
-		     DB "			|       2. US DOLLAR (USD)	       |	",13,10
-		     DB "			+--------------------------------------+        $",13,10
+	CURRENCYMENU DB "			+--------------------------------+",13,10
+		         DB "			|		    CURRENCY	         |",13,10
+		         DB "			+--------------------------------+",13,10
+		         DB "			|	 1. RINGGIT MALAYSIA(MYR)    |",13,10
+		         DB "			|    2. US DOLLAR       (USD)	 |",13,10
+		         DB "			+--------------------------------+$",13,10
 		     
 	CURMSG DB "				ENTER CHOICE FOR CURRENCRY(1-2): ",'$'
 
@@ -93,31 +92,33 @@
 	; PURCHASE
    
 	PURCSTUB			DB "PURCHASE STUB$"
-    WEIGHT_TITLE DB "           		  CALCULATE WEIGHTA OF MEAT$"
-    DASH DB  "            +-----------------------------------------+-----------+$"
-    MSG1 DB  "            |             TYPES OF PORK    	      | PRICE(RM) |$"
 
-
-	MSG2 DB "	     ENTER A NUMBER (1 TO 6): $"
-	ERRORM DB "	     	INVALID! PLEASE ENTER AGAIN! $"
-	MSG3 DB "             ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
-	MSG4 DB "             ENTER THE QUANTITY: $"
-	MSG5 DB "             ~DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
-	MSG6 DB ".00 KG$"
-	MSG7 DB "             DO YOU WANT TO EDIT YOUR CHOICE? (Y-YES)? $"
-	MSG8 DB "                            * 1.  WEIGHT   *  $    "
-	MSG9 DB "                            * 2.  QUANTITY *$"
-	MSG10 DB "             PLEASE ENTER A NUMBER (1-2) : $"
+	MSG2   DB "            ENTER A NUMBER (6 TO QUIT): $"
+	ERRORM DB "            INVALID! PLEASE ENTER AGAIN! $"
+	MSG3   DB "            ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
+	MSG4   DB "            ENTER THE QUANTITY: $"
+	MSG5   DB "            ~DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
+	MSG6   DB ".00 KG$"
+	MSG7   DB "            DO YOU WANT TO EDIT YOUR CHOICE (Y-YES)? $"
+	MSG8   DB "                        ****************            ",13,10
+	       DB "                        * 1.  WEIGHT   *",13,10
+	       DB "                        * 2.  QUANTITY *",13,10
+		   DB "                        ****************$"
+	MSG10  DB "            PLEASE ENTER A NUMBER (1-2) : $"
 	EDIT_NUM DB ?
-	ASTERISK DB "                            ****************$"
-	
-	BELLY DB "            |     1.     PORK BELLY  		      |       9.00|$"
-	LOIN DB "            |     2.     PORK LOIN       	      |      10.00|$"
-	RIB DB "            |     3.     PORK RIB  		      |      11.00|$"
-	SHOULDER DB "            |     4.     PORK SHOULDER   	      |      13.00|$"
-	HAM DB "            |     5.     HAM            	      |       8.00|$"
-	QUIT DB "            |     6.     QUIT            		  	  |$"
 
+	MEAT_MENU     DB "            +-----------------------------------+------------+",10,13
+				  DB "            |           TYPES OF PORK           | PRICE (RM) |",10,13
+			      DB "            +-----------------------------------+------------+",10,13
+			      DB "            |     1.     PORK BELLY             |        9.00|",10,13
+	              DB "            |     2.     PORK LOIN              |       10.00|",10,13
+	              DB "            |     3.     PORK RIB               |       11.00|",10,13
+	              DB "            |     4.     PORK SHOULDER          |       13.00|",10,13
+	              DB "            |     5.     HAM                    |        8.00|",10,13
+	              DB "            +-----------------------------------+-----------+$",10,13
+	WEIGHT_TITLE  DB "                         ========================",13,10
+				  DB "                         CALCULATE WEIGHT OF MEAT",13,10
+				  DB "                         ========================$",13,10
 	
 	TYPE_STR LABEL BYTE    
 	TYPE_MAXN DB 2
@@ -135,7 +136,6 @@
     QUANTITY DB 5 DUP("$")    
 
 	WGT DW ?
-	EDIT DW 8 DUP("$")
 
 	; DISPWORD
 	leadZeroFlag DB ?
@@ -153,7 +153,7 @@
 	PRESSKEYCONT        DB "                         <<Press any key to continue>>                         $"   
     STRVERTBAR          DB "                    +--------------------------------------+                   $"
 	QUANT DW ?
-    
+    COUNT_PURCHARSE DB 0
 .CODE
 MAIN PROC FAR
     MOV AX,@DATA
@@ -301,69 +301,9 @@ DISPLAY_MEAT_MENU PROC
 	CALL NEXT_LINE
 	
 	MOV AH,09H
-	LEA DX,DASH
+	LEA DX,MEAT_MENU
 	INT 21H
 	
-	CALL NEXT_LINE
-	
-	MOV AH,09H
-	LEA DX,MSG1
-	INT 21H
-
-	CALL NEXT_LINE
-
-	MOV AH,09H
-	LEA DX,DASH
-	INT 21H
-
-	CALL NEXT_LINE
-	
-	MOV AH,09H
-	LEA DX,BELLY
-	INT 21H
-
-	CALL NEXT_LINE
-
-	MOV AH,09H
-	LEA DX,LOIN
-	INT 21H
-
-	CALL NEXT_LINE
-
-	MOV AH,09H
-	LEA DX,RIB
-	INT 21H
-
-	CALL NEXT_LINE
-
-	MOV AH,09H
-	LEA DX,SHOULDER
-	INT 21H
-
-	CALL NEXT_LINE
-
-	MOV AH,09H
-	LEA DX,HAM
-	INT 21H 
-	
-	CALL NEXT_LINE
-
-	MOV AH,09H
-	LEA DX,DASH
-	INT 21H
-	
-	CALL NEXT_LINE
-
-	MOV AH,09H
-	LEA DX,QUIT
-	INT 21H
-		
-	CALL NEXT_LINE
-
-	MOV AH,09H
-	LEA DX,DASH
-	INT 21H
-
 	CALL NEXT_LINE
 	CALL NEXT_LINE
 
@@ -452,20 +392,8 @@ LOGIN_CMP_SETUP ENDP
 PURCHASE PROC	
 	CALL DISPLAY_MEAT_MENU
 	
-	MOV AH,09H		;PRINT PATTERN
-	LEA DX,PATTERN
-	INT 21H
-
-	CALL NEXT_LINE
-	
 	MOV AH,09H		;PRINT TITLE
 	LEA DX,WEIGHT_TITLE
-	INT 21H
-
-	CALL NEXT_LINE
-	
-	MOV AH,09H		;PRINT PATTERN
-	LEA DX,PATTERN
 	INT 21H
 
 	CALL NEXT_LINE
@@ -506,15 +434,7 @@ PURCHASE PROC
 	WEIGHT_INPUT: 
 		MOV BH,CHOICE[DI]
 		MOV MTYPE,BH
-		;MOV EDIT[DI],BX
 		SUB MTYPE,30H
-		;DEC MTYPE
-		
-		MOV AH,0
-		MOV AL,MTYPE
-		MOV EDIT[DI],AX
-		;DEC MTYPE
-
 
 	;-----ALLOW USER TO ENTER THE WEIGHT OF MEAT
 	INPUT_WEIGHT_AGAIN:			
@@ -674,9 +594,6 @@ PURCHASE PROC
     LEA DX, MSG6		;DISPLAY UNIT (KG)
     INT 21H	
 	
-	;MOV SI,0
-	;MOV EDIT[SI],CHOICE
-	
 	CALL NEXT_LINE
 	CALL NEXT_LINE
 
@@ -705,23 +622,10 @@ PURCHASE ENDP
 ; BILLING FUNCTION
 BILLING PROC 
 	CALL NEXT_LINE
-
 	CALL DISPLAY_MEAT_MENU
-	
-	MOV AH,09H		;PRINT PATTERN
-	LEA DX,PATTERN
-	INT 21H
 
-	CALL NEXT_LINE
-	
 	MOV AH,09H		;PRINT TITLE
 	LEA DX,TITSTR
-	INT 21H
-
-	CALL NEXT_LINE
-	
-	MOV AH,09H		;PRINT PATTERN
-	LEA DX,PATTERN
 	INT 21H
 
 	CALL NEXT_LINE
@@ -753,8 +657,6 @@ PROCEED:
 	MOV DH,0
 	MOV DL,MTYPE		;ORIGINAL
 		
-	;MOV DX,EDIT[0]
-	
 	MOV SI,DX
 	DEC SI
 	MOV AX,WEIGHT1
@@ -832,19 +734,19 @@ PROCEED:
 	
 	CMP CONFIRMATION,"Y"
 	JE NEXT
-
+	
+	
 	CALL NEXT_LINE
 
-	CALL ENTER_TO_CON
+	CALL PRESS_KEY_CON
 	RET	
 
 	NEXT: 
-	
-
 		CALL NEXT_LINE
 
 		MOV AH,09H
 		LEA DX,CURRENCYMENU
+		INC COUNT_PURCHARSE
 		INT 21H
 
 	AGAIN:	MOV AH,09H
@@ -934,7 +836,7 @@ AMOUNT_INPUT:
 	    
 	    
 	   CALP:
-	          MOV BL,AMNT[SI]
+	      MOV BL,AMNT[SI]
 		  SUB BL,30H 
 	          ;ADD AL,BL
 		  MOV BH,0
@@ -965,18 +867,15 @@ AMOUNT_INPUT:
 		
 		CALL NEXT_LINE
 
-		MOV AH,09H
-		LEA DX,STR6
-		INT 21H
+		CALL PRESS_KEY_CON
+	
+	CMP COUNT_PURCHARSE,0
+	JE ACTION 
+	
+	MOV WEIGHT1,0
 
-		MOV AH,01H
-		INT 21H
-		
-	CALL CLEAR_SCREEN
-	
-	;CALL PRINT_LOGO
-	
-	RET
+	ACTION:
+		RET
    
 BILLING ENDP
 
@@ -1015,12 +914,7 @@ SUMMARY PROC
     INT 21H
     
     ; Press any key to continue
-    MOV AH, 09H
-    LEA DX, PRESSKEYCONT
-    INT 21H
-    
-    MOV AH, 01H
-    INT 21H
+    CALL PRESS_KEY_CON
     
     RET
 SUMMARY ENDP 
@@ -1080,27 +974,11 @@ PRINT_LOGO PROC
 
 PRINT_LOGO ENDP
 
-EDITING PROC
-	MOV AH,09H
-	LEA DX,ASTERISK	;PROMPT MESSAGE
-	INT 21H
-	
+EDITING PROC	
 	CALL NEXT_LINE
 	
 	MOV AH,09H
 	LEA DX,MSG8		;EDIT WEIGHT
-	INT 21H
-		
-	CALL NEXT_LINE
-
-	MOV AH,09H
-	LEA DX,MSG9	;EDIT QUANTITY
-	INT 21H
-	
-	CALL NEXT_LINE
-	
-	MOV AH,09H
-	LEA DX,ASTERISK	;PROMPT MESSAGE
 	INT 21H
 	
 	CALL NEXT_LINE
@@ -1202,7 +1080,7 @@ HI2 PROC
 	
 	CALL NEXT_LINE
 	
-	CALL ENTER_TO_CON
+	CALL PRESS_KEY_CON
 	
 	CALL NEXT_LINE
 	;CALL HI
@@ -1233,7 +1111,7 @@ HI PROC
 	
 	
 	
-	CALL ENTER_TO_CON
+	CALL PRESS_KEY_CON
 	
 	CALL NEXT_LINE
 	;CALL HI
@@ -1263,11 +1141,11 @@ TEMP PROC
 
 TEMP ENDP
 
-ENTER_TO_CON PROC
+PRESS_KEY_CON PROC
 	CALL NEXT_LINE
 	
 	MOV AH,09H
-	LEA DX,STR6
+	LEA DX,PRESSKEYCONT
 	INT 21H
 
 	MOV AH,01H
@@ -1278,7 +1156,7 @@ ENTER_TO_CON PROC
 	RET
 
 
-ENTER_TO_CON ENDP
+PRESS_KEY_CON ENDP
 
 CHECK_QUANTITY_DIGIT PROC
 	MOV CH,0
@@ -1383,5 +1261,7 @@ pop_all PROC
    POP CX
    POP AX
 pop_all ENDP
+
+
 
 END MAIN
