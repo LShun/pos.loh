@@ -133,7 +133,7 @@
                         DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
 	TATXT			    DB "                    +--------------------------------------+                   ",13,10
-	                    DB "                          TOTAL ACTIONS:$"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	                    DB "                           TRANSACTIONS:$"    ; UPDATE HERE AFTER EACH TRANSACTIONS
 	TOTALACTIONS        DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
@@ -173,6 +173,8 @@ MAIN PROC
 			BILL:
 				CALL CLEAR_SCREEN
 				CALL BILLING
+				INC TOTALACTIONS
+
 		; CHECK SUM
 		CHKSUM:
 			CMP USERMENUCHOICE, '3'
