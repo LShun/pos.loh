@@ -145,8 +145,8 @@
                         DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
 	TATXT			    DB "                    +--------------------------------------+                   ",13,10
-	                    DB "                           TRANSACTIONS:$"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-	TOTALACTIONS        DW 0
+	                    DB "                           TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	TRANSACTS        DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
 	THANKYOU            DB "                                  Thank you!                                   $"
@@ -186,7 +186,7 @@ MAIN PROC
 			BILL:
 				CALL CLEAR_SCREEN
 				CALL BILLING
-				INC TOTALACTIONS ; MOVE THIS TO INSIDE BILLING LATER FOR SUCCESSFUL ONLY
+				INC TRANSACTS ; MOVE THIS TO INSIDE BILLING LATER FOR SUCCESSFUL ONLY
 
 		; CHECK SUM
 		CHKSUM:
@@ -993,7 +993,7 @@ SUMMARY PROC
     INT 21H
 
     ; display al (quotient)
-    MOV BX, totalActions
+    MOV BX, TRANSACTS
     CALL DISPWORD
     
     CALL next_line
