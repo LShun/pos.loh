@@ -149,8 +149,7 @@
 	SUMTITLE			DB "SUMMARY", 13, 10, "$"
 	TATXT               DB "TOTAL ACTIONS: $"    ; UPDATE HERE AFTER EACH LOOP
 	TFTXT			    DB "TOTAL FIGURES: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-	TOTALACTIONS        DW 0
-	TOTALFIGURE         DW 0
+	TOTALACTIONS        DW 120
 	OPERAND             DW ?
 	OPERATOR            DW ?
 
@@ -865,51 +864,28 @@ AGAIN:
    
 BILLING ENDP
 
-; SUMMARY FUNCTION
+; Summary function
 SUMMARY PROC
-	CALL NEXT_LINE
+	CALL next_line
 	
-	; PRINT TITLE	
+	; Print title	
 	MOV	AH, 09H
-    	LEA DX, SUMTITLE
-    	INT 21H
+    LEA DX, sumTitle
+    INT 21H
     
-    CALL NEXT_LINE
+    CALL next_line
     
-    ; PRINT TOTAL ACTIONS
+    ; Print total actions
     MOV	AH, 09H
-    LEA DX, TATXT
+    LEA DX, taTxt
     INT 21H
 
-    ; DISPLAY AL (QUOTIENT)
-    MOV AX, TOTALACTIONS
+    ; display al (quotient)
+    MOV BX, totalActions
+    CALL DISPWORD
     
-    CALL DISPAX
-    
-    CALL NEXT_LINE
-    
-    ; PRINT TOTAL FIGURES
-    MOV AH, 09H
-    LEA DX, TFTXT
-    INT 21H
-    
-    ;  DISPLAY "MONEY SIGN"
-    MOV AH, 09H
-    LEA DX, SIGN
-    INT 21H
-    
-    ; DISPLAY AL (QUOTIENT)
-    MOV AX, TOTALFIGURE
-    
-    CALL DISPAX
-    
-    ;  DISPLAY ".00"
-    MOV AH, 09H
-    LEA DX, CENTS
-    INT 21H 
-    
-    CALL NEXT_LINE
-    CALL NEXT_LINE
+    CALL next_line
+    CALL next_line
     RET
 SUMMARY ENDP 
 
