@@ -43,6 +43,7 @@
 	                DB "                    |             4.  EXIT                 |                   ",13,10
 					DB "                    +--------------------------------------+                   ",13,10
 					DB "                    ENTER YOUR CHOICE, (1-4): ",'$'
+	
 
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
@@ -128,11 +129,12 @@
 	leadZeroFlag DB ?
 
 	; SUMMARY
-	SUMTITLE			DB "SUMMARY", 13, 10, "$"
-	TATXT               DB "TOTAL ACTIONS: $"    ; UPDATE HERE AFTER EACH LOOP
-	TFTXT			    DB "TOTAL FIGURES: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	SUMTITLE			DB "                           __                 __                               ",13,10
+                        DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
+                        DB "                          __)\__/|  ||  |/--\| \  |                            $"
+	TATXT			    DB "                    +--------------------------------------+                   ",13,10
+	                    DB "                          TOTAL ACTIONS:$"    ; UPDATE HERE AFTER EACH TRANSACTIONS
 	TOTALACTIONS        DW 0
-	TOTALFIGURE         DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
 	PRESSKEYCONT        DB "Press any key to continue...$"
@@ -144,13 +146,12 @@ MAIN PROC
     MOV AX,@DATA
     MOV DS,AX
 	
-    CALL CLEAR_SCREEN
-    
     CALL PRINT_LOGO
 	
 	CALL LOGIN
 	
 	MENU:
+		CALL CLEAR_SCREEN	
 		CALL NEXT_LINE
 		CALL DISPLAY_MENU
 		
@@ -924,9 +925,8 @@ BILLING ENDP
 
 ; Summary function
 SUMMARY PROC
-	CALL next_line
-	
-	; Print title	
+	; Print title
+	CALL next_line	
 	MOV	AH, 09H
     LEA DX, sumTitle
     INT 21H
