@@ -22,6 +22,7 @@
 	USERMENUCHOICE  DB ?
 
 	; LOGIN
+	    
 	strRequestPw 	DB "Please enter password: $"
 	strLoginSuccess DB "User authorized. Welcome!$"
 	strLoginFail 	DB "Incorrect login details. Try again: $"
@@ -134,7 +135,7 @@
 	QUANT DW ?
     
 .CODE
-MAIN PROC FAR
+MAIN PROC
     MOV AX,@DATA
     MOV DS,AX
 
@@ -347,55 +348,58 @@ DISPLAY_MEAT_MENU ENDP
 
 ; LOGIN FUNCTION
 LOGIN PROC
-	;; SHOW LOGIN PROMPT
-;	CALL NEXT_LINE
+;	; Show login prompt
+;	;CALL next_line
 ;	MOV	AH, 09H
-;	LEA DX, STRREQUESTPW
+;	LEA DX, strRequestPw
 ;	INT 21H
 ;
 ;	CALL LOGIN_CMP_SETUP
 ;	
-;	CHECKPW:
-;		; COMPARE EACH LETTER
+;	checkPw:
+;	    ; XOR user PW char in BH
+;	    XOR BH, xorKey
+;	    
+;		; Compare each letter
 ;		CMP BH, BL
-;		JNE LOGINFAIL
 ;		
-;		; IF NO MATCH, ASK USER TO TRY 
+;		; if no match, ask user to try again 
+;		JNE loginFail
 ;		
+;		; If match, load the next char
 ;		INC DI
 ;		INC SI
 ;		
 ;		MOV BL, [DI]
 ;	    MOV BH, [SI]
 ;		
-;		; ONCE REACH END, PERFORM FINAL CHECK
+;		; once reach end, perform final check
 ;		CMP BL, '$'
-;		JNE CHECKPW
+;		JNE checkPw
 ;		CMP BH, 0DH
-;		JNE LOGINFAIL
+;		JNE loginFail
 ;		
-;		; IF ALL MATCH, WELCOME USER
-;		CALL NEXT_LINE
+;		; If all match, welcome user
+;		CALL next_line
 ;		
 ;		MOV AH, 09H
-;        LEA DX, STRLOGINSUCCESS
+;        LEA DX, strLoginSuccess
 ;        INT 21H
 ;        
-;        CALL NEXT_LINE
+;        CALL next_line
         RET
 ;        
 ;
-;    ; ASK USER TO TRY AGAIN
-;    LOGINFAIL:
-;        CALL NEXT_LINE
+;    ; Ask user to try again
+;    loginFail:
+;        CALL next_line
 ;        MOV AH, 09H
-;        LEA DX, STRLOGINFAIL
+;        LEA DX, strLoginFail
 ;        INT 21H
-;        CALL NEXT_LINE
 ;        
 ;        CALL LOGIN_CMP_SETUP
-;        JMP CHECKPW
-         
+;        JMP checkPw
+;         
 LOGIN ENDP
 
 LOGIN_CMP_SETUP PROC
@@ -1273,15 +1277,14 @@ CHECK_QUANTITY_DIGIT PROC
 CHECK_QUANTITY_DIGIT ENDP
 
 push_all PROC
-   PUSH AX 
-   PUSH CX 
+   PUSH AX
+   PUSH CX
    PUSH DX
    PUSH BX
    ;NOTE: Missing SP
    PUSH BP
    PUSH SI
    PUSH DI
-   RET
 push_all ENDP
 
 pop_all PROC
@@ -1293,6 +1296,5 @@ pop_all PROC
    POP DX
    POP CX
    POP AX
-   RET
 pop_all ENDP
 END MAIN
