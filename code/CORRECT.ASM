@@ -12,7 +12,7 @@
     ; MAIN SCREEN
 	LOGO			DB "          __         ______     __  __     ______   ______     ______", 13, 10
 					DB "         /\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\", 13, 10
-					DB "         \ \ \____  \ \ \/\ \     \ \  __ \  \ \  _-/ \ \ \/\ \  \ \___  \", 13, 10
+					DB "         \ \ \____  \ \ \/\ \    \ \  _\  \ \  _-/ \ \ \/\ \  \ \___  \", 13, 10
 					DB "          \ \_____\  \ \_____\  \ \_\ \_\  \ \_\    \ \_____\  \/\_____\", 13, 10
 					DB "           \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____", 13, 10, "$"
 
@@ -207,12 +207,21 @@ DISPWORD PROC
 	MOV AL, 1
 	MOV leadZeroFlag, AL
 	
+	; Check if AX is 0 to begin with
+    CMP BX, 0
+    JNZ DWDIVDISP
+    ; If so, print 0
+	MOV AH, 02h
+	MOV DL, "0"
+	INT 21h
+	JMP ENDDISPWORD
+	
 	DWDIVDISP:
 		; divide
 		MOV AX, BX
 		DIV operand
 		MOV operator, DX
-        
+		
         ; Check if leading zero
 	    CMP leadZeroFlag, 0
 	    JE  DWPRINTNUM
@@ -240,11 +249,9 @@ DISPWORD PROC
     		MOV BX, AX  
 
 		LOOP DWDIVDISP
-		
-		
-		
     ; Cleanup
-    RET
+    ENDDISPWORD:
+        RET
 DISPWORD ENDP
 
 ; Usage: Control
@@ -1300,4 +1307,5 @@ pop_all PROC
    POP CX
    POP AX
 pop_all ENDP
+
 END MAIN
