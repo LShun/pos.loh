@@ -156,7 +156,9 @@
 	QUANT DW ?
     
 .CODE
+
 MAIN PROC
+    
     MOV AX,@DATA
     MOV DS,AX
 
@@ -211,6 +213,9 @@ MAIN PROC
     
 MAIN ENDP
 
+; Usage: General purpose
+; Purpose: Display 5 digit integers (up to 65,535)
+; Requirements: Digit store in BX 
 DISPWORD PROC
     push_all
 	MOV DX, 0
@@ -257,27 +262,34 @@ DISPWORD PROC
 	RET
 DISPWORD ENDP
 
-; DISPLAY MAIN-MENU FUNCTION
+; Usage: Control
+; Purpose: Display main menu & ask user to select function
+; Requirements: None
 DISPLAY_MENU PROC
-	; DISPLAY MENU
+	; Display menu
 	MOV	DX, OFFSET STRMAINMENU
 	MOV	AH, 9
 	INT	21H
-	; ASK FOR CHOICE
-	MOV	AH, 01H ; ASK FOR INPUT
-	INT	21H     ; STORE IN AL
+
+	; Ask for choice
+	MOV	AH, 01H
+	INT	21H
 	MOV USERMENUCHOICE, AL
 	RET
 DISPLAY_MENU ENDP
 
-; DISPLAY NEXT-LINE FUNCTION
+; Usage: General-purpose
+; Purpose: Print a new line
+; Requirements: None
 NEXT_LINE PROC
+    ; main program
 	MOV 	AH, 02H
 	MOV		DL, 0DH		; CR
 	INT		21H
 	MOV		DL, 0AH		; LF
 	INT 	21H
 	RET
+	
 NEXT_LINE ENDP
 
 ; DIVIDES AND DISPLAYS CONTENT IN AX REGISTER IN 5-DIGITS.
