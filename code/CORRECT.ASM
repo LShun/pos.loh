@@ -193,6 +193,9 @@ MAIN ENDP
 ; Purpose: Display 5 digit integers (up to 65,535)
 ; Requirements: Digit store in BX
 DISPWORD PROC
+    ;Setup
+    CALL push_all
+    ; Main process
 	MOV DX, 0
 	MOV CX, 5 ; 5 digits, change along with operand
 	MOV operand, 10000
@@ -233,7 +236,11 @@ DISPWORD PROC
 
 		LOOP DWDIVDISP
 		
-		RET
+		
+		
+    ; Cleanup
+    CALL push_all
+    RET
 DISPWORD ENDP
 
 ; Usage: Control
