@@ -189,6 +189,9 @@ MAIN PROC FAR
     
 MAIN ENDP
 
+; Usage: General purpose
+; Purpose: Display 5 digit integers (up to 65,535)
+; Requirements: Digit store in BX
 DISPWORD PROC
 	MOV DX, 0
 	MOV CX, 5 ; 5 digits, change along with operand
@@ -233,7 +236,9 @@ DISPWORD PROC
 		RET
 DISPWORD ENDP
 
-; DISPLAY MAIN-MENU FUNCTION
+; Usage: Control
+; Purpose: Display main menu & ask user to select function
+; Requirements: None
 DISPLAY_MENU PROC
 	; DISPLAY MENU
 	MOV	DX, OFFSET STRMAINMENU
@@ -246,7 +251,9 @@ DISPLAY_MENU PROC
 	RET
 DISPLAY_MENU ENDP
 
-; DISPLAY NEXT-LINE FUNCTION
+; Usage: General-purpose
+; Purpose: Print a new line
+; Requirements: None
 NEXT_LINE PROC
 	MOV 	AH, 02H
 	MOV		DL, 0DH		; CR
