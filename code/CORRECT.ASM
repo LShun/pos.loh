@@ -132,6 +132,7 @@
 	TOTALFIGURE         DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
+	PRESSKEYCONT        DB "Press any key to continue...$"
 
 	QUANT DW ?
     
@@ -940,7 +941,14 @@ SUMMARY PROC
     CALL DISPWORD
     
     CALL next_line
-    CALL next_line
+    ; Press any key to continue
+    MOV AH, 09H
+    LEA DX, PRESSKEYCONT
+    INT 21H
+    
+    MOV AH, 01H
+    INT 21H
+    
     RET
 SUMMARY ENDP 
 
