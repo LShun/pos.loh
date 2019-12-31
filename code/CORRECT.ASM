@@ -8,29 +8,6 @@
 	CENTS           DB ".00$" 
 	CONFIRMATION    DB ?
 	
-	; MACROS
-	push_all MACRO
-       PUSH AX
-       PUSH CX
-       PUSH DX
-       PUSH BX
-       ;NOTE: Missing SP, cause bugs
-       PUSH BP
-       PUSH SI
-       PUSH DI
-    push_all ENDM
-    
-    pop_all MACRO
-       POP DI
-       POP SI
-       POP BP
-       ;NOTE: Missing SP, cause bugs
-       POP BX
-       POP DX
-       POP CX
-       POP AX
-    pop_all ENDM
-	
 
     ; MAIN SCREEN
 	LOGO			DB " __         ______     __  __     ______   ______     ______", 13, 10
@@ -149,16 +126,15 @@
 	SUMTITLE			DB "SUMMARY", 13, 10, "$"
 	TATXT               DB "TOTAL ACTIONS: $"    ; UPDATE HERE AFTER EACH LOOP
 	TFTXT			    DB "TOTAL FIGURES: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-	TOTALACTIONS        DW 120
+	TOTALACTIONS        DW 0
+	TOTALFIGURE         DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
 
 	QUANT DW ?
     
 .CODE
-
 MAIN PROC
-    
     MOV AX,@DATA
     MOV DS,AX
 
@@ -213,11 +189,7 @@ MAIN PROC
     
 MAIN ENDP
 
-; Usage: General purpose
-; Purpose: Display 5 digit integers (up to 65,535)
-; Requirements: Digit store in BX 
 DISPWORD PROC
-    push_all
 	MOV DX, 0
 	MOV CX, 5 ; 5 digits, change along with operand
 	MOV operand, 10000
@@ -258,39 +230,58 @@ DISPWORD PROC
 
 		LOOP DWDIVDISP
 		
-	pop_all
-	RET
+		RET
 DISPWORD ENDP
 
-; Usage: Control
-; Purpose: Display main menu & ask user to select function
-; Requirements: None
+; DISPLAY MAIN-MENU FUNCTION
 DISPLAY_MENU PROC
-	; Display menu
+	; DISPLAY MENU
 	MOV	DX, OFFSET STRMAINMENU
 	MOV	AH, 9
 	INT	21H
-
-	; Ask for choice
-	MOV	AH, 01H
-	INT	21H
+	; ASK FOR CHOICE
+	MOV	AH, 01H ; ASK FOR INPUT
+	INT	21H     ; STORE IN AL
 	MOV USERMENUCHOICE, AL
 	RET
 DISPLAY_MENU ENDP
 
-; Usage: General-purpose
-; Purpose: Print a new line
-; Requirements: None
+; DISPLAY NEXT-LINE FUNCTION
 NEXT_LINE PROC
-    ; main program
 	MOV 	AH, 02H
 	MOV		DL, 0DH		; CR
 	INT		21H
 	MOV		DL, 0AH		; LF
 	INT 	21H
 	RET
-	
 NEXT_LINE ENDP
+
+; DIVIDES AND DISPLAYS CONTENT IN AX REGISTER IN 5-DIGITS.
+DISPAX PROC
+	MOV DX, 0
+	MOV CX, 5
+	MOV OPERAND, 10000
+	MOV DX, 0
+	DIVDISP:
+		; DIVIDE
+		
+		DIV OPERAND
+		MOV OPERATOR, DX
+		
+		MOV DX, AX
+		MOV AH, 02H
+		ADD DL, "0"
+		INT 21H
+		
+		MOV AX, OPERAND
+		MOV DX, 0
+		DIV TENDW
+		MOV OPERAND, AX
+		MOV AX, OPERATOR  
+
+		LOOP DIVDISP
+		RET
+DISPAX ENDP
 
 DISPLAY_MEAT_MENU PROC	
 
@@ -849,28 +840,51 @@ AGAIN:
    
 BILLING ENDP
 
-; Summary function
+; SUMMARY FUNCTION
 SUMMARY PROC
-	CALL next_line
+	CALL NEXT_LINE
 	
-	; Print title	
+	; PRINT TITLE	
 	MOV	AH, 09H
-    LEA DX, sumTitle
-    INT 21H
+    	LEA DX, SUMTITLE
+    	INT 21H
     
-    CALL next_line
+    CALL NEXT_LINE
     
-    ; Print total actions
+    ; PRINT TOTAL ACTIONS
     MOV	AH, 09H
-    LEA DX, taTxt
+    LEA DX, TATXT
     INT 21H
 
-    ; display al (quotient)
-    MOV BX, totalActions
-    CALL DISPWORD
+    ; DISPLAY AL (QUOTIENT)
+    MOV AX, TOTALACTIONS
     
-    CALL next_line
-    CALL next_line
+    CALL DISPAX
+    
+    CALL NEXT_LINE
+    
+    ; PRINT TOTAL FIGURES
+    MOV AH, 09H
+    LEA DX, TFTXT
+    INT 21H
+    
+    ;  DISPLAY "MONEY SIGN"
+    MOV AH, 09H
+    LEA DX, SIGN
+    INT 21H
+    
+    ; DISPLAY AL (QUOTIENT)
+    MOV AX, TOTALFIGURE
+    
+    CALL DISPAX
+    
+    ;  DISPLAY ".00"
+    MOV AH, 09H
+    LEA DX, CENTS
+    INT 21H 
+    
+    CALL NEXT_LINE
+    CALL NEXT_LINE
     RET
 SUMMARY ENDP 
 
@@ -1186,4 +1200,3 @@ ENTER_QUANTITY PROC
 
 ENTER_QUANTITY ENDP
 END MAIN
-
