@@ -155,7 +155,7 @@
 	QUANT DW ?
     
 .CODE
-MAIN PROC
+MAIN PROC FAR
     MOV AX,@DATA
     MOV DS,AX
 	
@@ -490,10 +490,13 @@ PURCHASE PROC
 
         CMP CHOICE[DI],"6"
 	    JG INVALID
-
-
-        
-        JMP WEIGHT_INPUT
+		
+		CMP CHOICE[DI],"6"
+		JNE CONTPURCH
+		RET
+		
+		CONTPURCH:
+			JMP WEIGHT_INPUT
 
 	    	INVALID:
 		    	CALL ERROR_LIM
