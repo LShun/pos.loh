@@ -292,9 +292,6 @@ NEXT_LINE PROC
 	
 NEXT_LINE ENDP
 
-; Usage: In Billing & Purchase
-; Purpose: Display meat menu
-; Requirements: None
 DISPLAY_MEAT_MENU PROC	
 
 ;-----DISPLAY MEAT MENU
@@ -372,10 +369,7 @@ DISPLAY_MEAT_MENU PROC
 	RET
 DISPLAY_MEAT_MENU ENDP
 
-
-; Usage: Main Program
-; Purpose: Login function main function
-; Requirements: None
+; LOGIN FUNCTION
 LOGIN PROC
 	;; SHOW LOGIN PROMPT
 ;	CALL NEXT_LINE
@@ -428,10 +422,6 @@ LOGIN PROC
          
 LOGIN ENDP
 
-
-; Usage: In Login
-; Purpose: Helper function, setup Login
-; Requirements: None
 LOGIN_CMP_SETUP PROC
     ; OVERWRITE BUFFER
     
@@ -452,9 +442,7 @@ LOGIN_CMP_SETUP PROC
 	RET
 LOGIN_CMP_SETUP ENDP  
 
-; Usage: Main Program
-; Purpose: Purchase function
-; Requirements: None
+; PURCHASE FUNCTION
 PURCHASE PROC	
 	CALL DISPLAY_MEAT_MENU
 	
@@ -613,9 +601,7 @@ PURCHASE PROC
     RET
 PURCHASE ENDP
 
-; Usage: Main Program
-; Purpose: Billing function
-; Requirements: None
+; BILLING FUNCTION
 BILLING PROC 
 	CALL NEXT_LINE
 
@@ -863,9 +849,7 @@ AGAIN:
    
 BILLING ENDP
 
-; Usage: Main Program
-; Purpose: Summary function
-; Requirements: None
+; Summary function
 SUMMARY PROC
 	CALL next_line
 	
@@ -885,14 +869,12 @@ SUMMARY PROC
     MOV BX, totalActions
     CALL DISPWORD
     
-    CALL next_line                                                       
+    CALL next_line
     CALL next_line
     RET
 SUMMARY ENDP 
 
-; Usage: Billing & Purchase
-; Purpose: Summary function
-; Requirements: None
+
 ERROR_LIM PROC
     CALL NEXT_LINE
 
@@ -906,10 +888,6 @@ ERROR_LIM PROC
     
 ERROR_LIM ENDP
 
-
-; Usage: General purpose
-; Purpose: Clear the screen
-; Requirements: None
 CLEAR_SCREEN PROC
     
     MOV AH,00H    ;06 TO SCROLL & 00 FOR FULLJ SCREEN
@@ -921,12 +899,10 @@ CLEAR_SCREEN PROC
   
     
     RET  
-       
+    
+    
 CLEAR_SCREEN ENDP    
 
-; Usage: General purpose
-; Purpose: Print POS.LOH main logo
-; Requirements: None
 PRINT_LOGO PROC
 	MOV AH, 09H
 	LEA DX, LOGO
@@ -953,9 +929,6 @@ PRINT_LOGO PROC
 
 PRINT_LOGO ENDP
 
-; Usage: Helper for Purchase function
-; Purpose: Allows editing of purchase details
-; Requirements: None
 EDITING PROC
 	MOV AH,09H
 	LEA DX,MSG8		;EDIT WEIGHT
