@@ -190,6 +190,7 @@ MAIN PROC
 MAIN ENDP
 
 DISPWORD PROC
+    PUSHA
 	MOV DX, 0
 	MOV CX, 5 ; 5 digits, change along with operand
 	MOV operand, 10000
@@ -230,6 +231,7 @@ DISPWORD PROC
 
 		LOOP DWDIVDISP
 		
+		POPA
 		RET
 DISPWORD ENDP
 
