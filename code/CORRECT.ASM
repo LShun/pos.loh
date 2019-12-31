@@ -18,13 +18,13 @@
 
 	STRSEPARATOR	DB "===============================================================", 13, 10, "$"
 	STRWELCOME		DB "               WELCOME TO LOH PORK SALES SYSTEM", 13, 10, "$"
-	STRMAINWARN		DB " AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW", 13, 10, "$"
+	STRMAINWARN		DB "          AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW", 13, 10, "$"
 	USERMENUCHOICE  DB ?
 
 	; LOGIN
 	    
 	strRequestPw 	DB "Please enter password: $"
-	strLoginSuccess DB "User authorized. Welcome!$"
+	strLoginSuccess DB "               User authorized. Welcome!$"
 	strLoginFail 	DB "Incorrect login details. Try again: $"
 	strPw			DB 53,37,22,22,18,85,23,1,"$" ; PW Hash
 	userPw			DB 20           ; Max char
@@ -195,7 +195,6 @@ MAIN ENDP
 ; Requirements: Digit store in BX
 DISPWORD PROC
     ;Setup
-    CALL push_all
     ; Main process
 	MOV DX, 0
 	MOV CX, 5 ; 5 digits, change along with operand
@@ -240,7 +239,6 @@ DISPWORD PROC
 		
 		
     ; Cleanup
-    CALL push_all
     RET
 DISPWORD ENDP
 
@@ -1282,15 +1280,9 @@ push_all PROC
    PUSH DX
    PUSH BX
    ;NOTE: Missing SP
-   PUSH BP
-   PUSH SI
-   PUSH DI
 push_all ENDP
 
 pop_all PROC
-   POP DI
-   POP SI
-   POP BP
    ;NOTE: Missing SP
    POP BX
    POP DX
