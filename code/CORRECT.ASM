@@ -10,20 +10,20 @@
 	
 
     ; MAIN SCREEN
-	LOGO			DB " __         ______     __  __     ______   ______     ______", 13, 10
-					DB "/\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\", 13, 10
-					DB "\ \ \____  \ \ \/\ \  \ \  __ \  \ \  _-/ \ \ \/\ \  \ \___  \", 13, 10
-					DB " \ \_____\  \ \_____\  \ \_\ \_\  \ \_\    \ \_____\  \/\_____\", 13, 10
-					DB "  \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____/", 13, 10, "$"
+	LOGO			DB "          __         ______     __  __     ______   ______     ______", 13, 10
+					DB "         /\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\", 13, 10
+					DB "         \ \ \____  \ \ \/\ \    \ \  _\  \ \  _-/ \ \ \/\ \  \ \___  \", 13, 10
+					DB "          \ \_____\  \ \_____\  \ \_\ \_\  \ \_\    \ \_____\  \/\_____\", 13, 10
+					DB "           \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____", 13, 10, "$"
 
-	STRSEPARATOR	DB "===============================================================", 13, 10, "$"
-	STRWELCOME		DB "               WELCOME TO LOH PORK SALES SYSTEM", 13, 10, "$"
+	STRSEPARATOR	DB "================================================================================", 13, 10, "$"
+	STRWELCOME		DB "                        WELCOME TO LOH PORK SALES SYSTEM", 13, 10, "$"
 	STRMAINWARN		DB "          AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW", 13, 10, "$"
 	USERMENUCHOICE  DB ?
 
 	; LOGIN
 	    
-	strRequestPw 	DB "Please enter password: $"
+	strRequestPw 	DB "   Please enter password: $"
 	strLoginSuccess DB "               User authorized. Welcome!$"
 	strLoginFail 	DB "Incorrect login details. Try again: $"
 	strPw			DB 53,37,22,22,18,85,23,1,"$" ; PW Hash
@@ -33,12 +33,17 @@
 	xorKey          DB "e"
 	
 	; MAIN MENU
-	STRMAINMENU 	DB "===========================MAIN MENU===========================",13,10
-	                DB "1.	PURCHASE",13,10
-	                DB "2.	BILLING",13,10
-	                DB "3.	SUMMARY",13,10
-	                DB "4.	EXIT",13,10
-					DB "ENTER YOUR CHOICE: (1-4): ",'$'
+	STRMAINMENU 	DB "                                            __                                 ",13,10
+                    DB "                        |\/| /\ ||\ |  |\/||_ |\ |/  \                         ",13,10
+                    DB "                        |  |/--\|| \|  |  ||__| \|\__/                         ",13,10
+	                DB "                    +--------------------------------------+                   ",13,10
+	                DB "                    |             1.  PURCHASE             |                   ",13,10
+	                DB "                    |             2.  BILLING              |                   ",13,10
+	                DB "                    |             3.  SUMMARY              |                   ",13,10
+	                DB "                    |             4.  EXIT                 |                   ",13,10
+					DB "                    +--------------------------------------+                   ",13,10
+					DB "                    ENTER YOUR CHOICE, (1-4): ",'$'
+	
 
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
@@ -54,10 +59,20 @@
 	STR5 DB "	   Please return to PURCHASE function for input to proceed...$"
 	STR6 DB "		       ENTER TO CONTINUE...$"
 
+	CURRENCYMENU DB "			+--------------------------------------+        ",13,10
+		     DB "			|		CURRENCY	       |	",13,10
+		     DB "			+--------------------------------------+        ",13,10
+		     DB "			|	1. RINGGIT MALAYSIA(MYR)       |	",13,10
+		     DB "			|       2. US DOLLAR (USD)	       |	",13,10
+		     DB "			+--------------------------------------+        $",13,10
+		     
+	CURMSG DB "				ENTER CHOICE FOR CURRENCRY(1-2): ",'$'
+
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
 	TAB DB "		       $"
 
+	PRICEPKG DB 9,10,11,13,8	;ARRAY FOR MEAT PRICE
 	MTYPE DB ?
 	WEIGHT1 DW ?
 	MPRICE DW ?
@@ -66,7 +81,8 @@
 	QTY DB ?
 	PRICE DW ?
     	COUNTS DB ?
-	PRICEPKG DB 9,10,11,13,8	;ARRAY FOR MEAT PRICE
+	CURRENCY DB ?
+	
 
 	INPUT_AMNT LABEL BYTE    
     	AMNT_MAXN DB 6
@@ -77,13 +93,13 @@
 	; PURCHASE
    
 	PURCSTUB			DB "PURCHASE STUB$"
-    WEIGHT_TITLE DB "           		  CALCULATE WEIGHT OF MEAT$"
+    WEIGHT_TITLE DB "           		  CALCULATE WEIGHTA OF MEAT$"
     DASH DB  "            +-----------------------------------------+-----------+$"
     MSG1 DB  "            |             TYPES OF PORK    	      | PRICE(RM) |$"
 
 
 	MSG2 DB "	     ENTER A NUMBER (1 TO 6): $"
-	ERRORM DB "	     INVALID! PLEASE ENTER AGAIN! $"
+	ERRORM DB "	     	INVALID! PLEASE ENTER AGAIN! $"
 	MSG3 DB "             ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
 	MSG4 DB "             ENTER THE QUANTITY: $"
 	MSG5 DB "             ~DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
@@ -125,28 +141,30 @@
 	leadZeroFlag DB ?
 
 	; SUMMARY
-	SUMTITLE			DB "SUMMARY", 13, 10, "$"
-	TATXT               DB "TOTAL ACTIONS: $"    ; UPDATE HERE AFTER EACH LOOP
-	TFTXT			    DB "TOTAL FIGURES: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	SUMTITLE			DB "                           __                 __                               ",13,10
+                        DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
+                        DB "                          __)\__/|  ||  |/--\| \  |                            $"
+	TATXT			    DB "                    +--------------------------------------+                   ",13,10
+	                    DB "                           TRANSACTIONS:$"    ; UPDATE HERE AFTER EACH TRANSACTIONS
 	TOTALACTIONS        DW 0
-	TOTALFIGURE         DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
-
+	THANKYOU            DB "                                  Thank you!                                   $"
+	PRESSKEYCONT        DB "                         <<Press any key to continue>>                         $"   
+    STRVERTBAR          DB "                    +--------------------------------------+                   $"
 	QUANT DW ?
     
 .CODE
 MAIN PROC
     MOV AX,@DATA
     MOV DS,AX
-
-	CALL CLEAR_SCREEN
 	
     CALL PRINT_LOGO
 	
 	CALL LOGIN
-	
-	MENU:	
+		
+	MENU:
+		CALL CLEAR_SCREEN	
 		CALL NEXT_LINE
 		CALL DISPLAY_MENU
 		
@@ -168,6 +186,8 @@ MAIN PROC
 			BILL:
 				CALL CLEAR_SCREEN
 				CALL BILLING
+				INC TOTALACTIONS ; MOVE THIS TO INSIDE BILLING LATER FOR SUCCESSFUL ONLY
+
 		; CHECK SUM
 		CHKSUM:
 			CMP USERMENUCHOICE, '3'
@@ -182,6 +202,7 @@ MAIN PROC
 			JZ EXIT
 			JNZ CONTINUE
 			EXIT:
+			    CALL SUMMARY
 				MOV AX,4C00H
 				INT 21H
 		CONTINUE:
@@ -202,12 +223,21 @@ DISPWORD PROC
 	MOV AL, 1
 	MOV leadZeroFlag, AL
 	
+	; Check if AX is 0 to begin with
+    CMP BX, 0
+    JNZ DWDIVDISP
+    ; If so, print 0
+	MOV AH, 02h
+	MOV DL, "0"
+	INT 21h
+	JMP ENDDISPWORD
+	
 	DWDIVDISP:
 		; divide
 		MOV AX, BX
 		DIV operand
 		MOV operator, DX
-        
+		
         ; Check if leading zero
 	    CMP leadZeroFlag, 0
 	    JE  DWPRINTNUM
@@ -235,11 +265,9 @@ DISPWORD PROC
     		MOV BX, AX  
 
 		LOOP DWDIVDISP
-		
-		
-		
     ; Cleanup
-    RET
+    ENDDISPWORD:
+        RET
 DISPWORD ENDP
 
 ; Usage: Control
@@ -809,11 +837,41 @@ PROCEED:
 
 	NEXT: 
 	
-AGAIN:
+
 		CALL NEXT_LINE
 
 		MOV AH,09H
-		LEA DX,STR3
+		LEA DX,CURRENCYMENU
+		INT 21H
+
+	AGAIN:	MOV AH,09H
+		LEA DX,CURMSG
+		INT 21H
+
+		MOV AH,01H
+		INT 21H
+		MOV CURRENCY,AL
+
+		CMP CURRENCY,"1"
+       		JL FALSE2
+
+        	CMP CURRENCY,"2"
+	    	JG FALSE2
+
+		CALL NEXT_LINE        
+
+        	JMP AMOUNT_INPUT
+
+	    	FALSE2:
+		    	CALL ERROR_LIM
+		JMP AGAIN
+		
+		CALL NEXT_LINE
+
+AMOUNT_INPUT:
+		
+		MOV AH,09H
+		LEA DX,STR3		;PROMPT USER TO INPUT AMOUNT
 		INT 21H
 
 	
@@ -842,7 +900,7 @@ AGAIN:
 	    FALSE:
 
 		CALL ERROR_LIM
-	           JNE AGAIN
+	           JNE AMOUNT_INPUT
 
 		CALL NEXT_LINE
 	CONT:
@@ -885,7 +943,7 @@ AGAIN:
 		JGE CALCHG
 
 		CALL ERROR_LIM
-		JMP AGAIN
+		JMP AMOUNT_INPUT
 
 	
 	CALCHG:
@@ -921,9 +979,8 @@ BILLING ENDP
 
 ; Summary function
 SUMMARY PROC
-	CALL next_line
-	
-	; Print title	
+	; Print title
+	CALL next_line	
 	MOV	AH, 09H
     LEA DX, sumTitle
     INT 21H
@@ -941,6 +998,27 @@ SUMMARY PROC
     
     CALL next_line
     CALL next_line
+    
+    ; display thank you note
+   
+    MOV AH, 09H
+    LEA DX, STRVERTBAR
+    INT 21H
+    
+    CALL next_line
+    
+    MOV AH, 09H
+    LEA DX, THANKYOU
+    INT 21H
+    
+    ; Press any key to continue
+    MOV AH, 09H
+    LEA DX, PRESSKEYCONT
+    INT 21H
+    
+    MOV AH, 01H
+    INT 21H
+    
     RET
 SUMMARY ENDP 
 
@@ -1073,8 +1151,8 @@ EDITING PROC
 		
 		;QTY_INPUT1:
 		MOV AH,0AH              ;INPUT STRING
-        LEA DX,QUANTITY_STR
-        INT 21H
+        	LEA DX,QUANTITY_STR
+        	INT 21H
 		CALL NEXT_LINE
 	    CALL CHECK_QUANTITY_DIGIT
 
@@ -1302,4 +1380,5 @@ pop_all PROC
    POP CX
    POP AX
 pop_all ENDP
+
 END MAIN
