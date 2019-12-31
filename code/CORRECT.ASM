@@ -1,4 +1,4 @@
-.MODEL SMALL
+                                            .MODEL SMALL
 .STACK 100
 .DATA
 	; EXTRA/USEFUL CONSTANTS
@@ -540,100 +540,8 @@ PURCHASE PROC
 	    CALL NEXT_LINE
 		CALL NEXT_LINE
 	    
-	    MOV AH,09H
-		LEA DX,MSG4
-		INT 21H
+	    CALL ENTER_QUANTITY
 		
-		;QTY_INPUT1:
-		MOV AH,0AH              ;INPUT STRING
-        LEA DX,QUANTITY_STR
-        INT 21H
-	
-	    MOV CH,0
-	    MOV CL,QUANTITY_ACTN
-	    MOV SI,0
-	    
-	    CHECK_DIGIT:
-		    
-		    CMP QUANTITY[SI],47
-		    JL INVALID2
-
-		    CMP QUANTITY[SI],58
-		    JG INVALID2
-		
-		    INC SI
-		   
-
-	    LOOP CHECK_DIGIT
-	    JMP RESUME
-	    
-	    INVALID2:
-
-			   CALL ERROR_LIM
-	           JNE QUANTITY_INPUT
-	        
-	    
-	    ;CALL ERROR
-	
-	; LOAD CHAR COUNT INTO VAR 
-	   RESUME:
-	    MOV BH,QUANTITY_ACTN
-	        
-	; CHECK IF ONLY 1 NUMBER LEFT   
-	    CMP BH,1
-	    MOV AX,0
-	    MOV SI,0     
-	    JE CALQ  
-	         
-	         MOV CH,0 
-	         MOV CL,QUANTITY_ACTN 
-	         DEC CL
-	         ;MOV AL,0
-	         LP1:
-	  
-		        MOV BL,QUANTITY[SI]
-		        SUB BL,30H
-			MOV BH,0
-			ADD AX,BX
-                	MUL TENDW
-			INC SI
-		
-		    LOOP LP1 
-	    
-	    
-	   CALQ:
-	          MOV BL,QUANTITY[SI]
-		      SUB BL,30H 
-		      ;MOV AH,0 ;NEW
-	              ;ADD AL,BL
-		      MOV BH,0
-		      ADD AX,BX
-		    
-		MOV QUANT,AX
-	     
-	    
-	    ; IF NO, LOOP CALCULATION TILL ONLY LEFT 1 NUMBER 
-	    
-	    
-	        ; ADD NUMBER TO AX
-	        ; MULT BX BY 10
-	        ; CONTINUE
-	    ; ELSE, LOAD LAST NUMBER INTO BX
-	
-	; STORE INTO QUANT
-	
-	;MOV QUANT,AX     
-	
-	
-	MUL WGT
-	;MOV DH,0
-	;MOV DL,MTYPE
-	;MOV SI,DX
-	MOV WEIGHT1,AX
-
-
-	
-	MOV BX,AX
 	
 	CALL NEXT_LINE	
 	CALL NEXT_LINE
@@ -1068,8 +976,8 @@ EDITING PROC
 	JE CHANGE_WEIGHT
 	
 	CMP EDIT_NUM,"2"
-	JE CHANGE_QUANTITY
-	
+	JE CHANGE_QUANTITY		; CAN BE REMOVED
+
 	;PROCESS FOR EDITING WEIGHT 
 	CHANGE_WEIGHT:
 		CALL TEMP		
@@ -1121,12 +1029,15 @@ EDITING PROC
 			CALL HI
 			JMP TEST1	
 			
-	CHANGE_QUANTITY:	
+	CHANGE_QUANTITY:			; CAN BE REMOVED
+	
+		CALL ENTER_QUANTITY	
+		JMP TEST1
 			
 	ERROR2:
 		CALL ERROR_LIM
 		CALL NEXT_LINE
-		CALL EDITING
+		CALL EDITING		
 
 				
 
@@ -1187,6 +1098,105 @@ ENTER_TO_CON PROC
 	
 	RET
 
-
 ENTER_TO_CON ENDP
+
+ENTER_QUANTITY PROC
+	MOV AH,09H
+		LEA DX,MSG4		;PROMPT MESSAGE FOR QUANTITY
+		INT 21H
+		
+		;QTY_INPUT1:
+		MOV AH,0AH              ;INPUT STRING
+        LEA DX,QUANTITY_STR
+        INT 21H
+	
+	    MOV CH,0
+	    MOV CL,QUANTITY_ACTN
+	    MOV SI,0
+	    
+	    CHECK_DIGIT:
+		    
+		    CMP QUANTITY[SI],47
+		    JL INVALID2
+
+		    CMP QUANTITY[SI],58
+		    JG INVALID2
+		
+		    INC SI
+		   
+
+	    LOOP CHECK_DIGIT
+	    JMP RESUME
+	    
+	    INVALID2:
+
+			   CALL ERROR_LIM
+	           JNE QUANTITY_INPUT
+	        
+	    
+	    ;CALL ERROR
+	
+	; LOAD CHAR COUNT INTO VAR 
+	   RESUME:
+	    MOV BH,QUANTITY_ACTN
+	        
+	; CHECK IF ONLY 1 NUMBER LEFT   
+	    CMP BH,1
+	    MOV AX,0
+	    MOV SI,0     
+	    JE CALQ  
+	         
+	         MOV CH,0 
+	         MOV CL,QUANTITY_ACTN 
+	         DEC CL
+	         ;MOV AL,0
+	         LP1:
+	  
+		        MOV BL,QUANTITY[SI]
+		        SUB BL,30H
+			MOV BH,0
+			ADD AX,BX
+                	MUL TENDW
+			INC SI
+		
+		    LOOP LP1 
+	    
+	    
+	   CALQ:
+	          MOV BL,QUANTITY[SI]
+		      SUB BL,30H 
+		      ;MOV AH,0 ;NEW
+	              ;ADD AL,BL
+		      MOV BH,0
+		      ADD AX,BX
+		    
+		MOV QUANT,AX
+	     
+	    
+	    ; IF NO, LOOP CALCULATION TILL ONLY LEFT 1 NUMBER 
+	    
+	    
+	        ; ADD NUMBER TO AX
+	        ; MULT BX BY 10
+	        ; CONTINUE
+	    ; ELSE, LOAD LAST NUMBER INTO BX
+	
+	; STORE INTO QUANT
+	
+	;MOV QUANT,AX     
+	
+	
+	MUL WGT
+	;MOV DH,0
+	;MOV DL,MTYPE
+	;MOV SI,DX
+	MOV WEIGHT1,AX
+
+
+	
+	MOV BX,AX
+	
+	RET
+
+ENTER_QUANTITY ENDP
 END MAIN
