@@ -1281,6 +1281,7 @@ push_all PROC
    PUSH BP
    PUSH SI
    PUSH DI
+   RET
 push_all ENDP
 
 pop_all PROC
@@ -1292,5 +1293,6 @@ pop_all PROC
    POP DX
    POP CX
    POP AX
+   RET
 pop_all ENDP
 END MAIN
