@@ -63,7 +63,7 @@
 	                DB "                    |             3.  SUMMARY              |                   ",13,10
 	                DB "                    |             4.  EXIT                 |                   ",13,10
 					DB "                    +--------------------------------------+                   ",13,10,'$'
-	MMENUCHTXT	    DB "                    ENTER YOUR CHOICE (1-4): ",'$'
+	MMENUCHTXT	    DB "                     ENTER YOUR CHOICE (1-4): ",'$'
 	MMENUCHTXTLEN   DW 45
 	MMENUCOLOR      DB 0EH
 
@@ -531,7 +531,8 @@ PURCHASE PROC
 
 	    	INVALID:
 		    	CALL DISP_ERROR
-    
+				CALL NEXT_LINE
+				
         JMP MEAT_TYPE_INPUT
 
 	WEIGHT_INPUT: 
@@ -575,10 +576,10 @@ PURCHASE PROC
 
 	JMP INPUT_WEIGHT_AGAIN
 	
+	CALL NEXT_LINE
 	
 	QUANTITY_INPUT:	
 	    
-	    CALL NEXT_LINE
 		CALL NEXT_LINE
 	    
 	    MOV AH,09H
