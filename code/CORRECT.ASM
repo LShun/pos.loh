@@ -74,10 +74,12 @@
 		   DB "           |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
 		   DB "           |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
 
-	STR1 DB 13,10,"                     PRICE OF MEAT BOUGHT IS RM $"
+	MYRSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
+	USDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS USD $"
 	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
 	STR3 DB "                   ENTER AMOUNT FOR PAYMENT : $"
-	STR4 DB "                   THANK YOU! YOUR BALANCE IS RM $"
+	MYRBAL DB "             		THANK YOU! YOUR BALANCE IS RM $"
+	USDBAL DB "             		THANK YOU! YOUR BALANCE IS USD $"
 	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
 
 	CURRENCYMENU DB "                   +---------------------------------+",13,10
@@ -92,6 +94,7 @@
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
 	TAB DB "		       $"
+	FOUR DW 4
 
 	PRICEPKG DB 9,10,11,13,8	;ARRAY FOR MEAT PRICE
 	MTYPE DB ?
@@ -101,9 +104,10 @@
 	AMOUNT DB ?
 	QTY DB ?
 	PRICE DW ?
-    COUNTS DB ?
+    	COUNTS DB ?
 	CURRENCY DB ?
-	
+	USPRICE DW ?
+	USREM DW ?
 
 	INPUT_AMNT LABEL BYTE    
     	AMNT_MAXN DB 6
@@ -825,7 +829,7 @@ PROCEED:
 	CALL NEXT_LINE
 	
 	MOV AH,09H
-	LEA DX,STR1
+	LEA DX,MYRSTR
 	INT 21H
 
 	MOV BX,TPRICE
@@ -857,23 +861,58 @@ PROCEED:
         	CMP CURRENCY,"2"
 	    	JG FALSE2
 
-		CALL NEXT_LINE        
+		CMP CURRENCY,"1"
+		JE AMOUNT_INPUT
+
+		CMP CURRENCY,"2"
+		JE USD
+
+		USD:
+			MOV AX,TPRICE
+			MOV DX,1
+			MUL DX
+			DIV FOUR
+			
+			MOV USPRICE,AX
+			MOV USREM,DX
+
+			CMP USREM,2
+			JGE ROUNDUP
+			JMP NEXT
+	
+			ROUNDUP:
+				INC USPRICE
+
+			NEXT:
+				MOV AH,09H
+				LEA DX,USDSTR
+				INT 21H
+				
+				MOV BX,USPRICE
+				CALL DISPWORD
+
+				CALL NEXT_LINE
+
+				MOV BX,USPRICE
+				MOV TPRICE,BX
+				
+				JMP AMOUNT_INPUT
+		     
 
         	JMP AMOUNT_INPUT
 
 	    	FALSE2:
 		    	CALL DISP_ERROR
 		JMP AGAIN
-		
-		CALL NEXT_LINE
 
 AMOUNT_INPUT:
-		
+		CALL NEXT_LINE
+		CALL NEXT_LINE
+
 		MOV AH,09H
 		LEA DX,STR3		;PROMPT USER TO INPUT AMOUNT
 		INT 21H
 
-	
 		MOV AH,0AH
 		LEA DX,INPUT_AMNT		
 		INT 21H
@@ -931,8 +970,7 @@ AMOUNT_INPUT:
 	    
 	   CALP:
 	      MOV BL,AMNT[SI]
-		  SUB BL,30H 
-	          ;ADD AL,BL
+		  SUB BL,30H
 		  MOV BH,0
 		  ADD AX,BX
 		    
@@ -944,15 +982,25 @@ AMOUNT_INPUT:
 		CALL DISP_ERROR
 		JMP AMOUNT_INPUT
 
-	
 	CALCHG:
 		SUB AX,TPRICE
 		MOV BX,AX
 
+		CMP CURRENCY,"1"
+		JE PRINTMSG
+		
 		MOV AH,09H
-		LEA DX,STR4
+		LEA DX,USDBAL
+		INT 21H	
+		JMP PRINTPRICE
+		
+
+	PRINTMSG:
+		MOV AH,09H
+		LEA DX,MYRBAL
 		INT 21H		
 
+	PRINTPRICE:
 		CALL DISPWORD
 
 		MOV AH,09H
