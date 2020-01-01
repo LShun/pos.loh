@@ -41,7 +41,7 @@
 	                DB "                    |             3.  SUMMARY              |                   ",13,10
 	                DB "                    |             4.  EXIT                 |                   ",13,10
 					DB "                    +--------------------------------------+                   ",13,10
-					DB "                     ENTER YOUR CHOICE (1-4): ",'$'
+					DB "                     ENTER YOUR CHOICE (1-4) : $"
 	
 
 	; BILLING
@@ -52,18 +52,18 @@
 		   DB "                         =======================$",13,10
 	STR1 DB 13,10,"             PRICE OF MEAT BOUGHT IS RM $"
 	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
-	STR3 DB "             ENTER AMOUNT FOR PAYMENT: $"
+	STR3 DB "             ENTER AMOUNT FOR PAYMENT : $"
 	STR4 DB "             THANK YOU! YOUR BALANCE IS RM $"
 	STR5 DB "      Please return to PURCHASE function for input to proceed...$"
 
-	CURRENCYMENU DB "                 +--------------------------------+",13,10
-		         DB "                 |           CURRENCY             |",13,10
-		         DB "                 +--------------------------------+",13,10
-		         DB "                 |    1. RINGGIT MALAYSIA(MYR)    |",13,10
-		         DB "                 |    2. US DOLLAR       (USD)    |",13,10
-		         DB "                 +--------------------------------+$",13,10
+	CURRENCYMENU DB "                 +---------------------------------+",13,10
+		         DB "                 |           CURRENCY              |",13,10
+		         DB "                 +---------------------------------+",13,10
+		         DB "                 |    1. RINGGIT MALAYSIA (MYR)    |",13,10
+		         DB "                 |    2. US DOLLAR        (USD)    |",13,10
+		         DB "                 +---------------------------------+$",13,10
 		     
-	CURMSG       DB 13,10,"            ENTER CHOICE FOR CURRENCRY(1-2): $"
+	CURMSG       DB 13,10,"             ENTER CHOICE FOR CURRENCY(1-2) : $"
 
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
@@ -77,7 +77,7 @@
 	AMOUNT DB ?
 	QTY DB ?
 	PRICE DW ?
-    	COUNTS DB ?
+    COUNTS DB ?
 	CURRENCY DB ?
 	
 
@@ -91,10 +91,10 @@
    
 	PURCSTUB			DB "PURCHASE STUB$"
 
-	MSG1          DB "             ENTER A NUMBER (6 TO QUIT): $"
+	MSG1          DB "             ENTER A NUMBER (6 TO QUIT) : $"
 	ERRORM        DB "             INVALID! PLEASE ENTER AGAIN! $"
-	MSG2          DB "             ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
-	MSG3          DB "             ENTER THE QUANTITY (MAX 3 DIGIT): $"
+	MSG2          DB "             ENTER THE WEIGHT (1KG,3KG OR 5KG) : $"
+	MSG3          DB "             ENTER THE QUANTITY (MAX 3 DIGIT) : $"
 	MSG4          DB "             DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
 	MSG5          DB ".00 KG$"
 	MSG6          DB "             DO YOU WANT TO EDIT YOUR CHOICE (Y-YES)? $"
@@ -103,8 +103,8 @@
 	              DB "                        * 2.  QUANTITY *",13,10
 		          DB "                        ****************$"
 	MSG8          DB "             ENTER A NUMBER (1-2) : $"
-	MSG9          DB "             ENTER NEW WEIGHT (1KG,3KG OR 5KG): $"
-	MSG10         DB "             ENTER NEW QUANTITY (MAX 3 DIGIT): $"
+	MSG9          DB "             ENTER NEW WEIGHT (1KG,3KG OR 5KG) : $"
+	MSG10         DB "             ENTER NEW QUANTITY (MAX 3 DIGIT) : $"
 	EDIT_NUM      DB ?
 	WGT           DW ?
 	MEAT_MENU     DB "            +-----------------------------------+------------+",10,13
@@ -119,6 +119,8 @@
 	WEIGHT_TITLE  DB "                         ========================",13,10
 				  DB "                         CALCULATE WEIGHT OF MEAT",13,10
 				  DB "                         ========================$",13,10
+	PREVIO_WEIGHT DB "             PREVIOUS WEIGHT ENTERED: $"			  
+	PREVIO_QUAN   DB "             PREVIOUS QUANTITY ENTERED: $"
 	
 	TYPE_STR      LABEL BYTE    
 	TYPE_MAXN     DB 2
@@ -1004,6 +1006,16 @@ EDITING PROC
 	CALL NEXT_LINE
 	
 	MOV AH,09H
+    LEA DX,PREVIO_QUAN
+    INT 21H 
+   
+    MOV AH,09H
+    LEA DX,QUANTITY				;YOU WEN TI
+    INT 21H 
+   
+    CALL NEXT_LINE
+		   
+	MOV AH,09H
 	LEA DX,MSG10				;ENTER NEW QUANTITY
 	INT 21H
 	
@@ -1016,10 +1028,6 @@ EDITING PROC
 	CALL CHECK_QUANTITY_DIGIT
 	
 	;CALL NEXT_LINE
-	MOV AH,09H
-	LEA DX,MSG5
-	INT 21H
-	
 	CALL NEXT_LINE
 	
 	CALL PRESS_KEY_CON
@@ -1028,7 +1036,7 @@ EDITING PROC
 	
 	
 	;PROCESS FOR EDITING WEIGHT 
-	CHANGE_WEIGHT:
+	CHANGE_WEIGHT:		
 		CALL TEMP		
 		CMP WEIGHT[DI],"1"		;COMPARE THE INPUT WITH NUMBER 1
 		JE OUTPUT
@@ -1045,7 +1053,7 @@ EDITING PROC
 		JMP CHANGE_WEIGHT
 		
 		OUTPUT:
-			CALL HI2
+			CALL DISP_TOT_WGT
 			JMP TEST1	
 					
 	ERROR2:
@@ -1058,7 +1066,7 @@ EDITING PROC
 EDITING ENDP
 
 
-HI2 PROC 
+DISP_TOT_WGT PROC 
 	MOV DH,0
 	MOV DL,MTYPE
 	
@@ -1093,7 +1101,7 @@ HI2 PROC
 	;CALL HI
 	
 	RET
-HI2 ENDP
+DISP_TOT_WGT ENDP
 
 
 ;SHANNEN CAN USE THIS(OPTIONAL)
@@ -1128,8 +1136,23 @@ TEMP PROC
 	CALL DISPLAY_MEAT_MENU
 	CALL NEXT_LINE
 	
+	MOV AH,09H
+	LEA DX,PREVIO_WEIGHT
+	INT 21H
+	
+	MOV AH,02H
+	MOV DX,WGT
+	ADD DX,30H
+	INT 21H
+	
+	MOV AH,09H
+	LEA DX,MSG5	;UNIT (KG)
+	INT 21H
+	
+	CALL NEXT_LINE
+	
 	MOV AH,09H	
-	LEA DX,MSG9		;PROMPT MESSAGE FOR WEIGHT
+	LEA DX,MSG9		;PROMPT MESSAGE FOR NEW WEIGHT
 	INT 21H		
 
 	MOV AH,0AH     ;INPUT STRING
@@ -1189,6 +1212,16 @@ CHECK_QUANTITY_DIGIT PROC
 		   CALL NEXT_LINE
 		   CALL NEXT_LINE
 			
+		   MOV AH,09H
+		   LEA DX,PREVIO_QUAN
+		   INT 21H 
+		   
+		   MOV AH,09H
+		   LEA DX,QUANTITY				;YOU WEN TI
+		   INT 21H 
+		   
+		   CALL NEXT_LINE
+		   
 		   MOV AH,09H
 		   LEA DX,MSG10
 		   INT 21H
@@ -1255,6 +1288,10 @@ CHECK_QUANTITY_DIGIT PROC
 	INT 21H
 	
 	CALL DISPWORD
+	
+	MOV AH,09H
+	LEA DX,MSG5
+	INT 21H
 	RET
 
 
