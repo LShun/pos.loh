@@ -74,8 +74,8 @@
 		     DB "            |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
 		     DB "            |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
 
-	MYRSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
-	USDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS USD $"
+	MYRSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS RM $"
+	USDSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS USD $"
 	SGDSTR DB 13,10,"                   PRICE OF MEAT BOUGHT IS SGD $"
 	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
 	STR3 DB "                   ENTER AMOUNT FOR PAYMENT : $"
@@ -92,7 +92,7 @@
 			     DB "                   |    3. SINGAPORE DOLLAR (SGD)    |",13,10
 		         DB "                   +---------------------------------+$",13,10
 		     
-	CURMSG       DB 13,10,"                   ENTER CHOICE FOR CURRENCY(1-3) : $"
+	CURMSG       DB 13,10,"                    ENTER CHOICE FOR CURRENCY(1-3) : $"
 
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
