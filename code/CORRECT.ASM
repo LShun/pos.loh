@@ -175,7 +175,7 @@
 	SUMTITLE			DB "                           __                 __                               ",13,10
                         DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
-	TATXT			    DB "                           TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	TATXT			    DB "                              TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
 	TATXTLEN			DW 41
 	TATXTCLR			DB 0AH
 	TRANSACTS        	DW 0
