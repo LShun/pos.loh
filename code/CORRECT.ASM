@@ -10,12 +10,11 @@
 	
 
     ; MAIN SCREEN
-	LOGO			DB "          __         ______     __  __     ______   ______     ______", 13, 10
-					DB "         /\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\", 13, 10
-					DB "         \ \ \____  \ \ \/\ \    \ \  _\  \ \  _-/ \ \ \/\ \  \ \___  \", 13, 10
-					DB "          \ \_____\  \ \_____\  \ \_\ \_\  \ \_\    \ \_____\  \/\_____\", 13, 10
-					DB "           \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____", 13, 10, "$"
-
+	LOGO			DB "          __         ______     __  __     ______   ______     ______          ", 13, 10
+					DB "         /\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\         ", 13, 10
+					DB "         \ \ \____  \ \ \/\ \    \ \  _\  \ \  _-/ \ \ \/\ \  \ \___  \        ", 13, 10
+					DB "           \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____\       ", 13, 10, "$"
+    
 	STRSEPARATOR	DB "================================================================================", 13, 10, "$"
 	STRWELCOME		DB "                        WELCOME TO LOH PORK SALES SYSTEM", 13, 10, "$"
 	STRMAINWARN		DB "          AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW", 13, 10, "$"
@@ -1267,6 +1266,7 @@ push_all PROC
    PUSH DX
    PUSH BX
    ;NOTE: Missing SP
+   RET
 push_all ENDP
 
 pop_all PROC
@@ -1275,6 +1275,7 @@ pop_all PROC
    POP DX
    POP CX
    POP AX
+   RET
 pop_all ENDP
 
 END MAIN
