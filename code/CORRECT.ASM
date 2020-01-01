@@ -74,6 +74,7 @@
 		     DB "            |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
 		     DB "            |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
 
+<<<<<<< HEAD
 	MYRSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
 	USDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS USD $"
 	SGDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS SGD $"
@@ -82,6 +83,8 @@
 	MYRBAL DB "             		THANK YOU! YOUR BALANCE IS RM $"
 	USDBAL DB "             		THANK YOU! YOUR BALANCE IS USD $"
 	SGDBAL DB "             		THANK YOU! YOUR BALANCE IS SGD $"
+=======
+>>>>>>> a67bea23eee2842ae969410e4d897ca08326b869
 	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
 
 	CURRENCYMENU DB "                   +---------------------------------+",13,10
@@ -181,7 +184,6 @@
 	SUMTITLE			DB "                           __                 __                               ",13,10
                         DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
-	TATXT			    DB "                           TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
 	TATXTLEN			DW 41
 	TATXTCLR			DB 0AH
 	TRANSACTS        	DW 0
@@ -594,8 +596,6 @@ PURCHASE PROC
 		INT 21H
 
 	JMP INPUT_WEIGHT_AGAIN
-	
-	CALL NEXT_LINE
 	
 	QUANTITY_INPUT:	
 	    
