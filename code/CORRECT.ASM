@@ -47,9 +47,10 @@
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
 
-	TITSTR DB "                         =======================",13,10
-		   DB "                         CALCULATE PRICE OF MEAT",13,10
-		   DB "                         =======================$",13,10
+	TITSTR DB 10,13,"            __  __   __ __   __        __          ___ __  __ ",10,13
+		   DB "           |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
+		   DB "           |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
+
 	STR1 DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
 	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
 	STR3 DB "			ENTER AMOUNT FOR PAYMENT : $"
@@ -116,9 +117,10 @@
 	              DB "            |     4.     PORK SHOULDER          |       13.00|",10,13
 	              DB "            |     5.     HAM                    |        8.00|",10,13
 	              DB "            +-----------------------------------+-----------+$",10,13
-	WEIGHT_TITLE  DB "                         ========================",13,10
-				  DB "                         CALCULATE WEIGHT OF MEAT",13,10
-				  DB "                         ========================$",13,10
+	WEIGHT_TITLE  DB 13,10,"               __  __     ___   __        __          ___ __  __ ",13,10
+				  DB "          |  ||_ |/ _ |__| |   /   /\ |  /  /  \|   /\ | /  \|__)",13,10 
+				  DB "          |/\||__|\__)|  | |   \__/--\|__\__\__/|__/--\| \__/| \$",13,10
+ 
 	PREVIO_WEIGHT DB "             PREVIOUS WEIGHT ENTERED: $"			  
 	PREVIO_QUAN   DB "             PREVIOUS QUANTITY ENTERED: $"
 	
@@ -301,6 +303,7 @@ DISPLAY_MEAT_MENU PROC
 
 ;-----DISPLAY MEAT MENU
 	CALL NEXT_LINE
+	CALL NEXT_LINE
 	
 	MOV AH,09H
 	LEA DX,MEAT_MENU
@@ -392,18 +395,18 @@ LOGIN_CMP_SETUP ENDP
 
 ; PURCHASE FUNCTION
 PURCHASE PROC	
-	CALL DISPLAY_MEAT_MENU
-	
 	MOV AX,0600H
-	MOV BH,10001100B
-	MOV CX,0A14H			;BLINKING
-	MOV DX,0E30H
+	MOV BH,10001110B
+	MOV CX,0100H			;BLINKING
+	MOV DX,0379H
 	INT 10H
-	
+
 	MOV AH,09H		;PRINT TITLE
 	LEA DX,WEIGHT_TITLE
 	INT 21H
 
+	CALL DISPLAY_MEAT_MENU
+	
 	CALL NEXT_LINE
     
     MEAT_TYPE_INPUT:
@@ -629,17 +632,19 @@ PURCHASE ENDP
 
 ; BILLING FUNCTION
 BILLING PROC 
-	CALL NEXT_LINE
-	CALL DISPLAY_MEAT_MENU
-
+	MOV AX,0600H
+	MOV BH,10001010B
+	MOV CX,0100H			;BLINKING
+	MOV DX,0379H
+	INT 10H
+	
 	MOV AH,09H		;PRINT TITLE
 	LEA DX,TITSTR
 	INT 21H
+	
+	CALL DISPLAY_MEAT_MENU
 
 	CALL NEXT_LINE
-
-	;CALL INPUT_MEAT_TYPE
-	
 	CALL NEXT_LINE
 
 	CMP WEIGHT1,0
@@ -983,7 +988,7 @@ EDITING PROC
 	
 	CMP EDIT_NUM,"2"
 	JA ERROR2		;COMPARE IF THE INPUT IS 1 OR 2
-	;CALL DISPLAY_MEAT_MENU			
+		
 	CMP EDIT_NUM,"1"
 	JE CHANGE_WEIGHT
 	
