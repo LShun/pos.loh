@@ -63,7 +63,7 @@
 	                DB "                    |             3.  SUMMARY              |                   ",13,10
 	                DB "                    |             4.  EXIT                 |                   ",13,10
 					DB "                    +--------------------------------------+                   ",13,10,'$'
-	MMENUCHTXT	    DB "                     ENTER YOUR CHOICE (1-4): ",'$'
+	MMENUCHTXT	    DB "                     ENTER YOUR CHOICE (1-4) : ",'$'
 	MMENUCHTXTLEN   DW 45
 	MMENUCOLOR      DB 0EH
 
@@ -76,12 +76,12 @@
 
 	MYRSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
 	USDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS USD $"
-	SGDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS SGD $"
+	SGDSTR DB 13,10,"                   PRICE OF MEAT BOUGHT IS SGD $"
 	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
 	STR3 DB "                   ENTER AMOUNT FOR PAYMENT : $"
 	MYRBAL DB "             		THANK YOU! YOUR BALANCE IS RM $"
 	USDBAL DB "             		THANK YOU! YOUR BALANCE IS USD $"
-	SGDBAL DB "             		THANK YOU! YOUR BALANCE IS SGD $"
+	SGDBAL DB "                     THANK YOU! YOUR BALANCE IS SGD $"
 	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
 
 	CURRENCYMENU DB "                   +---------------------------------+",13,10
@@ -89,7 +89,7 @@
 		         DB "                   +---------------------------------+",13,10
 		         DB "                   |    1. RINGGIT MALAYSIA (MYR)    |",13,10
 		         DB "                   |    2. US DOLLAR        (USD)    |",13,10
-			 DB "                   |    3. SINGAPORE DOLLAR (SGD)    |",13,10
+			     DB "                   |    3. SINGAPORE DOLLAR (SGD)    |",13,10
 		         DB "                   +---------------------------------+$",13,10
 		     
 	CURMSG       DB 13,10,"                   ENTER CHOICE FOR CURRENCY(1-3) : $"
@@ -132,10 +132,12 @@
 	MSG4          DB "             DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
 	MSG5          DB ".00 KG$"
 	MSG6          DB "             DO YOU WANT TO EDIT YOUR CHOICE (Y-YES)? $"
-	MSG7          DB "                        ****************",13,10
-	              DB "                        * 1.  WEIGHT   *",13,10
-	              DB "                        * 2.  QUANTITY *",13,10
-		          DB "                        ****************$"
+	MSG7          DB "                        +--------------+",13,10
+				  DB "                        |    CHOICE    |",13,10
+				  DB "                        +--------------+",13,10
+	              DB "                        | 1.  WEIGHT   |",13,10
+	              DB "                        | 2.  QUANTITY |",13,10
+		          DB "                        +--------------+$"
 	MSG8          DB "             ENTER A NUMBER (1-2) : $"
 	MSG9          DB "             ENTER NEW WEIGHT (1KG,3KG OR 5KG) : $"
 	MSG10         DB "             ENTER NEW QUANTITY (MAX 3 DIGIT) : $"
@@ -595,12 +597,13 @@ PURCHASE PROC
 
 	JMP INPUT_WEIGHT_AGAIN
 	
-	CALL NEXT_LINE
+	
 	
 	QUANTITY_INPUT:	
 	    
 		CALL NEXT_LINE
-	    
+	    CALL NEXT_LINE
+		
 	    MOV AH,09H
 		LEA DX,MSG3
 		INT 21H
