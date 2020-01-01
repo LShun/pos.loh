@@ -51,20 +51,20 @@
 		   DB "           |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
 		   DB "           |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
 
-	STR1 DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
+	STR1 DB 13,10,"                     PRICE OF MEAT BOUGHT IS RM $"
 	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
-	STR3 DB "			ENTER AMOUNT FOR PAYMENT : $"
-	STR4 DB "             		THANK YOU! YOUR BALANCE IS RM $"
-	STR5 DB "      Please return to PURCHASE function for input to proceed...$"
+	STR3 DB "                   ENTER AMOUNT FOR PAYMENT : $"
+	STR4 DB "                   THANK YOU! YOUR BALANCE IS RM $"
+	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
 
-	CURRENCYMENU DB "                      +---------------------------------+",13,10
-		         DB "                      |           CURRENCY              |",13,10
-		         DB "                      +---------------------------------+",13,10
-		         DB "                      |    1. RINGGIT MALAYSIA (MYR)    |",13,10
-		         DB "                      |    2. US DOLLAR        (USD)    |",13,10
-		         DB "                      +---------------------------------+$",13,10
+	CURRENCYMENU DB "                   +---------------------------------+",13,10
+		         DB "                   |           CURRENCY              |",13,10
+		         DB "                   +---------------------------------+",13,10
+		         DB "                   |    1. RINGGIT MALAYSIA (MYR)    |",13,10
+		         DB "                   |    2. US DOLLAR        (USD)    |",13,10
+		         DB "                   +---------------------------------+$",13,10
 		     
-	CURMSG       DB 13,10,"             		ENTER CHOICE FOR CURRENCY(1-2) : $"
+	CURMSG       DB 13,10,"                   ENTER CHOICE FOR CURRENCY(1-2) : $"
 
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
@@ -310,11 +310,8 @@ DISPLAY_MEAT_MENU PROC
 	INT 21H
 	
 	CALL NEXT_LINE
-	CALL NEXT_LINE
-
 	RET
 
-	RET
 DISPLAY_MEAT_MENU ENDP
 
 ; LOGIN FUNCTION
@@ -396,7 +393,7 @@ LOGIN_CMP_SETUP ENDP
 ; PURCHASE FUNCTION
 PURCHASE PROC	
 	MOV AX,0600H
-	MOV BH,10001110B
+	MOV BH,00001110B
 	MOV CX,0100H			;BLINKING
 	MOV DX,0379H
 	INT 10H
@@ -411,7 +408,6 @@ PURCHASE PROC
     
     MEAT_TYPE_INPUT:
 	;-----DISPLAY THE INPUT MESSAGE
-	CALL NEXT_LINE
 	MOV AH,09H	
 	LEA DX,MSG1		;ENTER THE MEAT TYPE
 	INT 21H
@@ -633,7 +629,7 @@ PURCHASE ENDP
 ; BILLING FUNCTION
 BILLING PROC 
 	MOV AX,0600H
-	MOV BH,10001010B
+	MOV BH,00001010B
 	MOV CX,0100H			;BLINKING
 	MOV DX,0379H
 	INT 10H
