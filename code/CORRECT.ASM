@@ -145,17 +145,8 @@
                         DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
 	TATXT			    DB "                    +--------------------------------------+                   ",13,10
-	                    DB "                          TRANSACTIONS:$"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-	
-	SUMTXT              DB "                    +--------------------------------------+"
-	                    DB "                    | TYPE OF MEAT      | TOTAL SALES (QTY)$"
-	                    DB "                    | 1. Belly          |                  $"
-	                    DB "                    | 2. Loin           |                  $"
-	                    DB "                    | 3. Ribs           |                  $"
-	                    DB "                    | 4. Shoulder       |                  $"
-	                    DB "                    | 5. Ham            |                  $"
-	
-	TRANSACTS           DW 0
+	                    DB "                           TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	TRANSACTS        DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
 	THANKYOU            DB "                                  Thank you!                                   $"
