@@ -74,12 +74,12 @@
 		     DB "            |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
 		     DB "            |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
 
-	MYRSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
-	USDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS USD $"
+	MYRSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS RM $"
+	USDSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS USD $"
 	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
-	STR3 DB "                   ENTER AMOUNT FOR PAYMENT : $"
+	STR3 DB "                    ENTER AMOUNT FOR PAYMENT : $"
 	MYRBAL DB "             		THANK YOU! YOUR BALANCE IS RM $"
-	USDBAL DB "             		THANK YOU! YOUR BALANCE IS USD $"
+	USDBAL DB "                     THANK YOU! YOUR BALANCE IS USD $"
 	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
 
 	CURRENCYMENU DB "                   +---------------------------------+",13,10
@@ -89,7 +89,7 @@
 		         DB "                   |    2. US DOLLAR        (USD)    |",13,10
 		         DB "                   +---------------------------------+$",13,10
 		     
-	CURMSG       DB 13,10,"                   ENTER CHOICE FOR CURRENCY(1-2) : $"
+	CURMSG       DB 13,10,"                    ENTER CHOICE FOR CURRENCY(1-2) : $"
 
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
@@ -572,6 +572,8 @@ PURCHASE PROC
 		MOV BH,0  
         MOV WGT,BX
 
+		CALL NEXT_LINE
+		
 		CMP WEIGHT[DI],"1"		;COMPARE THE INPUT WITH NUMBER 1
 		JE QUANTITY_INPUT
 		
@@ -588,8 +590,6 @@ PURCHASE PROC
 		INT 21H
 
 	JMP INPUT_WEIGHT_AGAIN
-	
-	CALL NEXT_LINE
 	
 	QUANTITY_INPUT:	
 	    
