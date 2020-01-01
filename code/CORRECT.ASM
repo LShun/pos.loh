@@ -28,6 +28,8 @@
 
 	USERMENUCHOICE  DB ?
 
+	authorized		DB 0 ; Check if user is authorized. 0 = not, 1 = yes.
+
 	; LOGIN
 	    
 	strRequestPw 	  DB "   Please enter password: $"
@@ -48,7 +50,6 @@
 	
 	ATTEMPTS			DB 3
 	usrAttempts			DB ?
-	authorized			DB 0
 	authFail			DB "   Too many invalid password attempts. Program will now exit.$"
 	authFailLEN			DW 61
 	authFailCOLOR 		DB 0DH
@@ -189,6 +190,10 @@
 MAIN PROC
     MOV AX,@DATA
     MOV DS,AX
+
+	; Initialization
+	MOV AL, 0
+	MOV authorized, AL
 	
 	; Print logo
 	CALL CLEAR_SCREEN
@@ -257,64 +262,6 @@ MAIN PROC
 		INT 21H
 MAIN ENDP
 
-; Usage: General purpose
-; Purpose: Display 5 digit integers (up to 65,535)
-DISPWORD PROC
-    ;Setup
-    ; Main process
-	MOV DX, 0
-	MOV CX, 5 ; 5 digits, change along with operand
-	MOV operand, 10000
-	MOV AL, 1
-	MOV leadZeroFlag, AL
-	
-	; Check if AX is 0 to begin with
-    CMP BX, 0
-    JNZ DWDIVDISP
-    ; If so, print 0
-	MOV AH, 02h
-	MOV DL, "0"
-	INT 21h
-	JMP ENDDISPWORD
-	
-	DWDIVDISP:
-		; divide
-		MOV AX, BX
-		DIV operand
-		MOV operator, DX
-		
-        ; Check if leading zero
-	    CMP leadZeroFlag, 0
-	    JE  DWPRINTNUM
-	    ; Check if zero
-		CMP AX, 0
-		JZ  DWCONTDISPWORD
-		; set not leading zero
-		MOV BL, 0
-	    MOV leadZeroFlag, BL
-		
-		; print number
-		DWPRINTNUM:
-		    MOV DX, AX
-		    MOV AH, 02h
-		    ADD DL, "0"
-		    INT 21h
-		
-		; ready for next print
-		DWCONTDISPWORD:
-    		MOV AX, operand
-    		MOV DX, 0
-    		DIV TENDW
-    		MOV OPERAND, AX
-    		MOV AX, OPERATOR
-    		MOV BX, AX  
-
-		LOOP DWDIVDISP
-    ; Cleanup
-    ENDDISPWORD:
-        RET
-DISPWORD ENDP
-
 ; Usage: Control, Helper
 ; Purpose: Display main menu & ask user to select function
 DISPLAY_MENU PROC
@@ -341,34 +288,6 @@ DISPLAY_MENU PROC
 	MOV USERMENUCHOICE, AL
 	RET
 DISPLAY_MENU ENDP
-
-; Usage: General, Display
-; Purpose: Display a newline
-NEXT_LINE PROC
-	MOV 	AH, 02H
-	MOV		DL, 0DH		; CR
-	INT		21H
-	MOV		DL, 0AH		; LF
-	INT 	21H
-	RET
-NEXT_LINE ENDP
-
-; Usage: Purchase, Billing
-; Purpose: Display meat menu
-DISPLAY_MEAT_MENU PROC	
-
-;-----DISPLAY MEAT MENU
-	CALL NEXT_LINE
-	CALL NEXT_LINE
-	
-	MOV AH,09H
-	LEA DX,MEAT_MENU
-	INT 21H
-	
-	CALL NEXT_LINE
-	RET
-
-DISPLAY_MEAT_MENU ENDP
 
 ; Usage: Login, Control
 ; Purpose: Authenticates the user before allowing entry
@@ -493,7 +412,24 @@ LOGIN_CMP_SETUP PROC
 	MOV BH, [SI]
 	
 	RET
-LOGIN_CMP_SETUP ENDP  
+LOGIN_CMP_SETUP ENDP
+
+; Usage: Purchase, Billing
+; Purpose: Display meat menu
+DISPLAY_MEAT_MENU PROC	
+
+;-----DISPLAY MEAT MENU
+	CALL NEXT_LINE
+	CALL NEXT_LINE
+	
+	MOV AH,09H
+	LEA DX,MEAT_MENU
+	INT 21H
+	
+	CALL NEXT_LINE
+	RET
+
+DISPLAY_MEAT_MENU ENDP
 
 ; PURCHASE FUNCTION
 PURCHASE PROC	
@@ -1431,5 +1367,78 @@ CHECK_QUANTITY_DIGIT PROC
 
 
 CHECK_QUANTITY_DIGIT ENDP
+
+; Usage: General purpose
+; Purpose: Display 5 digit integers (up to 65,535)
+; WARNING: Save all contents of registers to proper variables before calling function
+DISPWORD PROC
+    ; Main process
+	MOV DX, 0
+	MOV CX, 5 ; 5 digits, change along with operand
+	MOV operand, 10000
+	
+	; Setup
+	MOV AL, 1
+	MOV leadZeroFlag, AL
+	
+	; Check if AX is 0 to begin with
+    CMP BX, 0
+    JNZ DWDIVDISP
+    
+	; If so, print 0
+	MOV AH, 02h
+	MOV DL, "0"
+	INT 21h
+	JMP ENDDISPWORD
+	
+	DWDIVDISP:
+		; divide
+		MOV AX, BX
+		DIV operand
+		MOV operator, DX
+		
+        ; Check if leading zero
+	    CMP leadZeroFlag, 0
+	    JE  DWPRINTNUM
+	    ; Check if zero
+		CMP AX, 0
+		JZ  DWCONTDISPWORD
+		; set no longer leading zero
+		MOV BL, 0
+	    MOV leadZeroFlag, BL
+		
+		; print number
+		DWPRINTNUM:
+		    MOV DX, AX
+		    MOV AH, 02h
+		    ADD DL, "0"
+		    INT 21h
+		
+		; ready for next print
+		DWCONTDISPWORD:
+    		MOV AX, operand
+    		MOV DX, 0
+    		DIV TENDW
+    		MOV OPERAND, AX
+    		MOV AX, OPERATOR
+    		MOV BX, AX  
+
+		LOOP DWDIVDISP
+    
+	; Cleanup
+    ENDDISPWORD:
+        RET
+DISPWORD ENDP
+
+; Usage: General, Display
+; Purpose: Display a newline
+NEXT_LINE PROC
+	MOV 	AH, 02H
+	MOV		DL, 0DH		; CR
+	INT		21H
+	MOV		DL, 0AH		; LF
+	INT 	21H
+	RET
+NEXT_LINE ENDP
 
 END MAIN
