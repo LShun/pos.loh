@@ -50,20 +50,20 @@
 	TITSTR DB "                         =======================",13,10
 		   DB "                         CALCULATE PRICE OF MEAT",13,10
 		   DB "                         =======================$",13,10
-	STR1 DB 13,10,"             PRICE OF MEAT BOUGHT IS RM $"
+	STR1 DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
 	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
-	STR3 DB "             ENTER AMOUNT FOR PAYMENT : $"
-	STR4 DB "             THANK YOU! YOUR BALANCE IS RM $"
+	STR3 DB "			ENTER AMOUNT FOR PAYMENT : $"
+	STR4 DB "             		THANK YOU! YOUR BALANCE IS RM $"
 	STR5 DB "      Please return to PURCHASE function for input to proceed...$"
 
-	CURRENCYMENU DB "                 +---------------------------------+",13,10
-		         DB "                 |           CURRENCY              |",13,10
-		         DB "                 +---------------------------------+",13,10
-		         DB "                 |    1. RINGGIT MALAYSIA (MYR)    |",13,10
-		         DB "                 |    2. US DOLLAR        (USD)    |",13,10
-		         DB "                 +---------------------------------+$",13,10
+	CURRENCYMENU DB "                      +---------------------------------+",13,10
+		         DB "                      |           CURRENCY              |",13,10
+		         DB "                      +---------------------------------+",13,10
+		         DB "                      |    1. RINGGIT MALAYSIA (MYR)    |",13,10
+		         DB "                      |    2. US DOLLAR        (USD)    |",13,10
+		         DB "                      +---------------------------------+$",13,10
 		     
-	CURMSG       DB 13,10,"             ENTER CHOICE FOR CURRENCY(1-2) : $"
+	CURMSG       DB 13,10,"             		ENTER CHOICE FOR CURRENCY(1-2) : $"
 
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
@@ -729,33 +729,12 @@ PROCEED:
 	INT 21H
 
 	CALL NEXT_LINE
-
-	MOV AH,09H		;CONTINUE FOR PAYMENT?
-	LEA DX,STR2
-	INT 21H	
-
-	MOV AH,01H
-	INT 21H		;INPUT CHOICE
-	MOV CONFIRMATION,AL
-	
-	CALL NEXT_LINE
-	
-	CMP CONFIRMATION,"Y"
-	JE NEXT
-	
-	
 	CALL NEXT_LINE
 
-	CALL PRESS_KEY_CON
-	RET	
-
-	NEXT: 
-		CALL NEXT_LINE
-
-		MOV AH,09H
-		LEA DX,CURRENCYMENU
-		INC COUNT_PURCHARSE
-		INT 21H
+	MOV AH,09H
+	LEA DX,CURRENCYMENU
+	INC COUNT_PURCHARSE
+	INT 21H
 
 	AGAIN:	MOV AH,09H
 		LEA DX,CURMSG
