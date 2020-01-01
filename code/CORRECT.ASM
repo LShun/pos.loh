@@ -1432,22 +1432,4 @@ CHECK_QUANTITY_DIGIT PROC
 
 CHECK_QUANTITY_DIGIT ENDP
 
-push_all PROC
-   PUSH AX
-   PUSH CX
-   PUSH DX
-   PUSH BX
-   ;NOTE: Missing SP
-   RET
-push_all ENDP
-
-pop_all PROC
-   ;NOTE: Missing SP
-   POP BX
-   POP DX
-   POP CX
-   POP AX
-   RET
-pop_all ENDP
-
 END MAIN
