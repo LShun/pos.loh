@@ -2,14 +2,14 @@
 .STACK 100
 .DATA
 	; EXTRA/USEFUL CONSTANTS
-	STUB			DB "STUB$"
 	TENDW           DW 10
+	STUB			DB "STUB$"
 	SIGN            DB "RM $"
 	CENTS           DB ".00$" 
-	CONFIRMATION    DB ?
 	LINEWIDTH       DB 79
-	
 
+	CONFIRMATION    DB ?
+	
     ; MAIN SCREEN
 	LOGO			DB "          __         ______     __  __     ______   ______     ______          ", 13, 10
 					DB "         /\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\         ", 13, 10
@@ -183,6 +183,9 @@
 	QUANT DW ?
     COUNT_PURCHARSE DB 0
 .CODE
+
+; Usage: Main Program, Control
+; Purpose: Controls program execution
 MAIN PROC
     MOV AX,@DATA
     MOV DS,AX
@@ -194,6 +197,7 @@ MAIN PROC
 	; Ask for login
 	CALL LOGIN
 
+	; Check if properly authorized, if not, quit the program
 	MOV AL, authorized
 	CMP AL, 1
 	JNE ENDPROG
@@ -247,6 +251,7 @@ MAIN PROC
 		    CALL PRINT_LOGO
 			LOOP 	MENU
     
+	; End the program
 	ENDPROG:
 		MOV AX,4C00H
 		INT 21H
@@ -254,7 +259,6 @@ MAIN ENDP
 
 ; Usage: General purpose
 ; Purpose: Display 5 digit integers (up to 65,535)
-; Requirements: Digit store in BX
 DISPWORD PROC
     ;Setup
     ; Main process
@@ -311,9 +315,8 @@ DISPWORD PROC
         RET
 DISPWORD ENDP
 
-; Usage: Control
+; Usage: Control, Helper
 ; Purpose: Display main menu & ask user to select function
-; Requirements: None
 DISPLAY_MENU PROC
 	; DISPLAY MENU
 	MOV	DX, OFFSET STRMAINMENU
@@ -339,7 +342,8 @@ DISPLAY_MENU PROC
 	RET
 DISPLAY_MENU ENDP
 
-; DISPLAY NEXT-LINE FUNCTION
+; Usage: General, Display
+; Purpose: Display a newline
 NEXT_LINE PROC
 	MOV 	AH, 02H
 	MOV		DL, 0DH		; CR
@@ -349,6 +353,8 @@ NEXT_LINE PROC
 	RET
 NEXT_LINE ENDP
 
+; Usage: Purchase, Billing
+; Purpose: Display meat menu
 DISPLAY_MEAT_MENU PROC	
 
 ;-----DISPLAY MEAT MENU
@@ -364,7 +370,8 @@ DISPLAY_MEAT_MENU PROC
 
 DISPLAY_MEAT_MENU ENDP
 
-; LOGIN FUNCTION
+; Usage: Login, Control
+; Purpose: Authenticates the user before allowing entry
 LOGIN PROC
 	; Setup
 	MOV usrAttempts, 0
@@ -459,6 +466,8 @@ LOGIN PROC
 			RET
 LOGIN ENDP
 
+; Usage: Login, Helper
+; Purpose: Accepts user password as setup for authentication process
 LOGIN_CMP_SETUP PROC
 
 	; Hide password by changing input color
@@ -1045,6 +1054,8 @@ CLEAR_SCREEN PROC
     
 CLEAR_SCREEN ENDP    
 
+; Usage: Display, Decoration, Main Program
+; Purpose: Works as splash screen. Displays "LOH Sales System" logo, as well as general important information.
 PRINT_LOGO PROC
 	MOV AH, 09H
 	LEA DX, LOGO
@@ -1421,23 +1432,5 @@ CHECK_QUANTITY_DIGIT PROC
 
 
 CHECK_QUANTITY_DIGIT ENDP
-
-push_all PROC
-   PUSH AX
-   PUSH CX
-   PUSH DX
-   PUSH BX
-   ;NOTE: Missing SP
-   RET
-push_all ENDP
-
-pop_all PROC
-   ;NOTE: Missing SP
-   POP BX
-   POP DX
-   POP CX
-   POP AX
-   RET
-pop_all ENDP
 
 END MAIN
