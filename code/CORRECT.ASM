@@ -74,7 +74,6 @@
 		     DB "            |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
 		     DB "            |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
 
-<<<<<<< HEAD
 	MYRSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
 	USDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS USD $"
 	SGDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS SGD $"
@@ -83,14 +82,6 @@
 	MYRBAL DB "             		THANK YOU! YOUR BALANCE IS RM $"
 	USDBAL DB "             		THANK YOU! YOUR BALANCE IS USD $"
 	SGDBAL DB "             		THANK YOU! YOUR BALANCE IS SGD $"
-=======
-	MYRSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS RM $"
-	USDSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS USD $"
-	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
-	STR3 DB "                     ENTER AMOUNT FOR PAYMENT : $"
-	MYRBAL DB "                 THANK YOU! YOUR BALANCE IS RM $"
-	USDBAL DB "                 THANK YOU! YOUR BALANCE IS USD $"
->>>>>>> a67bea23eee2842ae969410e4d897ca08326b869
 	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
 
 	CURRENCYMENU DB "                   +---------------------------------+",13,10
@@ -190,7 +181,7 @@
 	SUMTITLE			DB "                           __                 __                               ",13,10
                         DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
-	TATXT			    DB "                              TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	TATXT			    DB "                           TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
 	TATXTLEN			DW 41
 	TATXTCLR			DB 0AH
 	TRANSACTS        	DW 0
@@ -587,8 +578,6 @@ PURCHASE PROC
 		MOV BH,0  
         MOV WGT,BX
 
-		CALL NEXT_LINE
-		
 		CMP WEIGHT[DI],"1"		;COMPARE THE INPUT WITH NUMBER 1
 		JE QUANTITY_INPUT
 		
@@ -605,6 +594,8 @@ PURCHASE PROC
 		INT 21H
 
 	JMP INPUT_WEIGHT_AGAIN
+	
+	CALL NEXT_LINE
 	
 	QUANTITY_INPUT:	
 	    
@@ -862,7 +853,8 @@ PROCEED:
 	INC COUNT_PURCHARSE
 	INT 21H
 
-	AGAIN:	MOV AH,09H
+	AGAIN:	
+		MOV AH,09H
 		LEA DX,CURMSG
 		INT 21H
 
@@ -872,88 +864,24 @@ PROCEED:
 
 		CMP CURRENCY,"1"
        		JL FALSE2
+		JE AMOUNT_INPUT
 
 		CMP CURRENCY,"3"
 	    	JG FALSE2
-
-		CMP CURRENCY,"1"
-		JE AMOUNT_INPUT
-
-		CMP CURRENCY,"2"
-		JE USD
-
-		CMP CURRENCY,"3"
 		JE SGD
 
+		CMP CURRENCY,"2"
 		USD:
-			MOV AX,TPRICE
-			MOV DX,1
-			MUL DX
-			DIV FOUR
-			
-			MOV USPRICE,AX
-			MOV USREM,DX
-
-			CMP USREM,2
-			JGE ROUNDUP
-			JMP USNEXT
-	
-			ROUNDUP1:
-				INC USPRICE
-			
-			USNEXT:
-				MOV AH,09H
-				LEA DX,USDSTR
-				INT 21H
-				
-				MOV BX,USPRICE
-				CALL DISPWORD
-
-				CALL NEXT_LINE
-
-				MOV BX,USPRICE
-				MOV TPRICE,BX
-				
-				JMP AMOUNT_INPUT
+			CALL CHANGE_USD
+			JMP AMOUNT_INPUT
 
 		SGD:
-			MOV AX,TPRICE
-			MOV DX,1
-			MUL DX
-			DIV THREE
-			
-			MOV SGPRICE,AX
-			MOV SGREM,DX
+			CALL CHANGE_SGD
+			JMP AMOUNT_INPUT
 
-			CMP USREM,2
-			JGE ROUNDUP
-			JMP SGNEXT
-	
-			ROUNDUP2:
-				INC SGPRICE
-
-
-			SGNEXT:
-				MOV AH,09H
-				LEA DX,USDSTR
-				INT 21H
-				
-				MOV BX,SGPRICE
-				CALL DISPWORD
-
-				CALL NEXT_LINE
-
-				MOV BX,SGPRICE
-				MOV TPRICE,BX
-				
-				JMP AMOUNT_INPUT
-		     
-
-        	;JMP AMOUNT_INPUT
-
-	    	FALSE2:
+		FALSE2:
 		    	CALL DISP_ERROR
-		JMP AGAIN
+			JMP AGAIN
 
 AMOUNT_INPUT:
 		CALL NEXT_LINE
@@ -1055,7 +983,7 @@ AMOUNT_INPUT:
 		INT 21H
 		JMP PRINTPRICE
 
-	PUSMSG:
+	PSGMSG:
 		MOV AH,09H
 		LEA DX,SGDBAL
 		INT 21H		
@@ -1540,5 +1468,71 @@ CHECK_QUANTITY_DIGIT PROC
 
 
 CHECK_QUANTITY_DIGIT ENDP
+
+
+CHANGE_USD PROC
+	MOV AX,TPRICE
+	MOV DX,1
+	MUL DX
+	DIV FOUR
+			
+	MOV USPRICE,AX
+	MOV USREM,DX
+
+	CMP USREM,2
+	JGE ROUNDUP1
+	JMP USNEXT
+	
+	ROUNDUP1:
+		INC USPRICE
+			
+	USNEXT:
+		MOV AH,09H
+		LEA DX,USDSTR
+		INT 21H				
+	
+		MOV BX,USPRICE
+		CALL DISPWORD
+
+		CALL NEXT_LINE
+
+		MOV BX,USPRICE
+		MOV TPRICE,BX
+				
+	RET
+CHANGE_USD ENDP
+
+CHANGE_SGD PROC
+	MOV AX,TPRICE
+	MOV DX,1
+	MUL DX
+	DIV THREE
+			
+	MOV SGPRICE,AX
+	MOV SGREM,DX
+
+	CMP USREM,2
+	JGE ROUNDUP2
+	JMP SGNEXT
+	
+	ROUNDUP2:
+		INC SGPRICE
+
+
+	SGNEXT:
+		MOV AH,09H
+		LEA DX,SGDSTR
+		INT 21H
+				
+		MOV BX,SGPRICE
+		CALL DISPWORD
+
+		CALL NEXT_LINE
+
+		MOV BX,SGPRICE
+		MOV TPRICE,BX
+	RET
+
+CHANGE_SGD ENDP
 
 END MAIN
