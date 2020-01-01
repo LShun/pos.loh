@@ -84,6 +84,12 @@
 	USDBAL DB "             		THANK YOU! YOUR BALANCE IS USD $"
 	SGDBAL DB "             		THANK YOU! YOUR BALANCE IS SGD $"
 =======
+	MYRSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS RM $"
+	USDSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS USD $"
+	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
+	STR3 DB "                     ENTER AMOUNT FOR PAYMENT : $"
+	MYRBAL DB "                 THANK YOU! YOUR BALANCE IS RM $"
+	USDBAL DB "                 THANK YOU! YOUR BALANCE IS USD $"
 >>>>>>> a67bea23eee2842ae969410e4d897ca08326b869
 	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
 
@@ -184,6 +190,7 @@
 	SUMTITLE			DB "                           __                 __                               ",13,10
                         DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
+	TATXT			    DB "                              TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
 	TATXTLEN			DW 41
 	TATXTCLR			DB 0AH
 	TRANSACTS        	DW 0
@@ -580,6 +587,8 @@ PURCHASE PROC
 		MOV BH,0  
         MOV WGT,BX
 
+		CALL NEXT_LINE
+		
 		CMP WEIGHT[DI],"1"		;COMPARE THE INPUT WITH NUMBER 1
 		JE QUANTITY_INPUT
 		
