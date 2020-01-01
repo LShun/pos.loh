@@ -147,11 +147,7 @@
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
 	TATXT			    DB "                    +--------------------------------------+                   ",13,10
 	                    DB "                           TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
-<<<<<<< HEAD
-	TRANSACTS        DW 0
-=======
-	TOTALACTIONS        DW 0
->>>>>>> 21fa0ed0ceb88298c2273e6c61b4ec1f479e2dc9
+	TRANSACTS        	DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
 	THANKYOU            DB "                                  Thank you!                                   $"
