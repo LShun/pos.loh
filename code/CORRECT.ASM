@@ -35,13 +35,24 @@
 	strRequestPwCOLOR DB 0EH
 	
 	strLoginSuccess DB "               User authorized. Welcome!$"
-	strLoginFail 	DB "Incorrect login details. Try again: $"
+	
+	strLoginFail 		DB "   Incorrect login details. Try again: $"
+	strLoginFailLEN		DW 39
+	strLoginFailCOLOR 	DB 0CH
+
 	strPw			DB 53,37,22,22,18,85,23,1,"$" ; PW Hash
 	userPw			DB 20           ; Max char
 	                DB ?            ; Num of char entered
 	                DB 20 DUP(0DH)  ; BUffer for Char entered
 	xorKey          DB "e"
 	
+	ATTEMPTS			DB 3
+	usrAttempts			DB ?
+	authorized			DB 0
+	authFail			DB "   Too many invalid password attempts. Program will now exit.$"
+	authFailLEN			DW 61
+	authFailCOLOR 		DB 0DH
+
 	; MAIN MENU
 	STRMAINMENU 	DB "                                            __                                 ",13,10
                     DB "                        |\/| /\ ||\ |  |\/||_ |\ |/  \                         ",13,10
@@ -179,6 +190,11 @@ MAIN PROC
 	; Ask for login
 	CALL LOGIN
 
+	MOV AL, authorized
+	CMP AL, 1
+	JNE ENDPROG
+	
+
 	; Main menu	
 	MENU:
 		; Setup
@@ -221,12 +237,15 @@ MAIN PROC
 			JNZ CONTINUE
 			EXIT:
 			    CALL SUMMARY
-				MOV AX,4C00H
-				INT 21H
+				JMP ENDPROG
+		; Invalid input
 		CONTINUE:
 		    CALL PRINT_LOGO
 			LOOP 	MENU
     
+	ENDPROG:
+		MOV AX,4C00H
+		INT 21H
 MAIN ENDP
 
 ; Usage: General purpose
@@ -345,6 +364,8 @@ DISPLAY_MEAT_MENU ENDP
 
 ; LOGIN FUNCTION
 LOGIN PROC
+	; Setup
+	MOV usrAttempts, 0
 
 	; Change color
 	MOV AH, 09H
@@ -391,20 +412,49 @@ LOGIN PROC
         LEA DX, strLoginSuccess
         INT 21H
         
-        CALL next_line
-        RET
-        
+		; set authorized flag to 1
+        MOV BL, 1
+		MOV authorized, BL
+        JMP ENDLOGIN
 
     ; Ask user to try again
     loginFail:
-        CALL next_line
+		; Change color
+		MOV AH, 09H
+		MOV BH, 0
+		MOV BL, strLoginFailCOLOR
+		MOV CX, strLoginFailLEN
+		INT 10H
+
+		; Display message
         MOV AH, 09H
         LEA DX, strLoginFail
         INT 21H
+
+		INC usrAttempts
+		
+		; If exceed allowed tries, end process
+		MOV BL, usrAttempts
+		CMP BL, ATTEMPTS
+		JGE ENDLOGIN
         
-        CALL LOGIN_CMP_SETUP
+		CALL LOGIN_CMP_SETUP
         JMP checkPw
-         
+
+		ENDLOGIN:
+			CALL NEXT_LINE
+			; Change color
+			MOV AH, 09H
+			MOV BH, 0
+			MOV BL, authFailCOLOR ; color
+			MOV CX, authFailLEN
+			INT 10H
+
+			; Display auth failed message
+			MOV AH, 09H
+			LEA DX, authFail
+			INT 21H
+			RET
 LOGIN ENDP
 
 LOGIN_CMP_SETUP PROC
