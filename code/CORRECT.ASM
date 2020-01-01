@@ -408,6 +408,16 @@ LOGIN PROC
 LOGIN ENDP
 
 LOGIN_CMP_SETUP PROC
+
+	; Hide password by changing input color
+	; Change color
+	MOV AH, 09H
+	MOV BH, 0
+	MOV BL, 00H ; color
+	MOV CH, 0
+	MOV CL, userPw[0] ; length
+	INT 10H
+
     ; GET PASSWORD
 	MOV AH, 0AH
 	LEA DX, USERPW
