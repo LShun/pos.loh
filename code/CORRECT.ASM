@@ -146,8 +146,9 @@
 	SUMTITLE			DB "                           __                 __                               ",13,10
                         DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
-	TATXT			    DB "                    +--------------------------------------+                   ",13,10
-	                    DB "                           TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	TATXT			    DB "                           TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	TATXTLEN			DW 41
+	TATXTCLR			DB 0AH
 	TRANSACTS        	DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
@@ -329,58 +330,58 @@ DISPLAY_MEAT_MENU ENDP
 
 ; LOGIN FUNCTION
 LOGIN PROC
-;	; Show login prompt
-;	;CALL next_line
-;	MOV	AH, 09H
-;	LEA DX, strRequestPw
-;	INT 21H
-;
-;	CALL LOGIN_CMP_SETUP
-;	
-;	checkPw:
-;	    ; XOR user PW char in BH
-;	    XOR BH, xorKey
-;	    
-;		; Compare each letter
-;		CMP BH, BL
-;		
-;		; if no match, ask user to try again 
-;		JNE loginFail
-;		
-;		; If match, load the next char
-;		INC DI
-;		INC SI
-;		
-;		MOV BL, [DI]
-;	    MOV BH, [SI]
-;		
-;		; once reach end, perform final check
-;		CMP BL, '$'
-;		JNE checkPw
-;		CMP BH, 0DH
-;		JNE loginFail
-;		
-;		; If all match, welcome user
-;		CALL next_line
-;		
-;		MOV AH, 09H
-;        LEA DX, strLoginSuccess
-;        INT 21H
-;        
-;        CALL next_line
+	; Show login prompt
+	;CALL next_line
+	MOV	AH, 09H
+	LEA DX, strRequestPw
+	INT 21H
+
+	CALL LOGIN_CMP_SETUP
+	
+	checkPw:
+	    ; XOR user PW char in BH
+	    XOR BH, xorKey
+	    
+		; Compare each letter
+		CMP BH, BL
+		
+		; if no match, ask user to try again 
+		JNE loginFail
+		
+		; If match, load the next char
+		INC DI
+		INC SI
+		
+		MOV BL, [DI]
+	    MOV BH, [SI]
+		
+		; once reach end, perform final check
+		CMP BL, '$'
+		JNE checkPw
+		CMP BH, 0DH
+		JNE loginFail
+		
+		; If all match, welcome user
+		CALL next_line
+		
+		MOV AH, 09H
+        LEA DX, strLoginSuccess
+        INT 21H
+        
+        CALL next_line
         RET
-;        
-;
-;    ; Ask user to try again
-;    loginFail:
-;        CALL next_line
-;        MOV AH, 09H
-;        LEA DX, strLoginFail
-;        INT 21H
-;        
-;        CALL LOGIN_CMP_SETUP
-;        JMP checkPw
-;         
+        
+
+    ; Ask user to try again
+    loginFail:
+        CALL next_line
+        MOV AH, 09H
+        LEA DX, strLoginFail
+        INT 21H
+        
+        CALL LOGIN_CMP_SETUP
+        JMP checkPw
+         
 LOGIN ENDP
 
 LOGIN_CMP_SETUP PROC
@@ -903,7 +904,19 @@ SUMMARY PROC
     
     CALL next_line
     
-    ; Print total actions
+	; Print bar (decoration)
+	MOV AH, 09H
+    LEA DX, STRVERTBAR
+    INT 21H
+
+    ; Change color
+	MOV AH, 09H
+	MOV BH, 0
+	MOV BL, TATXTCLR
+	MOV CX, TATXTLEN
+	INT 10H
+
+	; Print total actions
     MOV	AH, 09H
     LEA DX, taTxt
     INT 21H
@@ -914,15 +927,15 @@ SUMMARY PROC
     
     CALL next_line
     CALL next_line
-    
-    ; display thank you note
-   
-    MOV AH, 09H
+
+    ; Print bar (decoration)
+	MOV AH, 09H
     LEA DX, STRVERTBAR
     INT 21H
     
     CALL next_line
     
+	; display thank you note
     MOV AH, 09H
     LEA DX, THANKYOU
     INT 21H
