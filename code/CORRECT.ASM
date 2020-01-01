@@ -7,6 +7,7 @@
 	SIGN            DB "RM $"
 	CENTS           DB ".00$" 
 	CONFIRMATION    DB ?
+	LINEWIDTH       DB 79
 	
 
     ; MAIN SCREEN
@@ -40,9 +41,10 @@
 	                DB "                    |             2.  BILLING              |                   ",13,10
 	                DB "                    |             3.  SUMMARY              |                   ",13,10
 	                DB "                    |             4.  EXIT                 |                   ",13,10
-					DB "                    +--------------------------------------+                   ",13,10
-					DB "                    ENTER YOUR CHOICE (1-4): ",'$'
-	
+					DB "                    +--------------------------------------+                   ",13,10,'$'
+	MMENUCHTXT	    DB "                    ENTER YOUR CHOICE (1-4): ",'$'
+	MMENUCHTXTLEN   DW 45
+	MMENUCOLOR      DB 0EH
 
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
@@ -278,7 +280,20 @@ DISPLAY_MENU PROC
 	MOV	DX, OFFSET STRMAINMENU
 	MOV	AH, 9
 	INT	21H
+
 	; ASK FOR CHOICE
+	; Change color
+	MOV AH, 09H
+	MOV BH, 0
+	MOV BL, MMENUCOLOR
+	MOV CX, MMENUCHTXTLEN
+	INT 10H
+	
+	; Display message
+	MOV AH, 09H
+	LEA DX, MMENUCHTXT
+	INT 21h
+	
 	MOV	AH, 01H ; ASK FOR INPUT
 	INT	21H     ; STORE IN AL
 	MOV USERMENUCHOICE, AL
