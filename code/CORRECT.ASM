@@ -76,10 +76,12 @@
 
 	MYRSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS RM $"
 	USDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS USD $"
+	SGDSTR DB 13,10,"             		PRICE OF MEAT BOUGHT IS SGD $"
 	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
 	STR3 DB "                   ENTER AMOUNT FOR PAYMENT : $"
 	MYRBAL DB "             		THANK YOU! YOUR BALANCE IS RM $"
 	USDBAL DB "             		THANK YOU! YOUR BALANCE IS USD $"
+	SGDBAL DB "             		THANK YOU! YOUR BALANCE IS SGD $"
 	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
 
 	CURRENCYMENU DB "                   +---------------------------------+",13,10
@@ -87,14 +89,16 @@
 		         DB "                   +---------------------------------+",13,10
 		         DB "                   |    1. RINGGIT MALAYSIA (MYR)    |",13,10
 		         DB "                   |    2. US DOLLAR        (USD)    |",13,10
+			 DB "                   |    3. SINGAPORE DOLLAR (SGD)    |",13,10
 		         DB "                   +---------------------------------+$",13,10
 		     
-	CURMSG       DB 13,10,"                   ENTER CHOICE FOR CURRENCY(1-2) : $"
+	CURMSG       DB 13,10,"                   ENTER CHOICE FOR CURRENCY(1-3) : $"
 
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
 	TAB DB "		       $"
 	FOUR DW 4
+	THREE DW 3
 
 	PRICEPKG DB 9,10,11,13,8	;ARRAY FOR MEAT PRICE
 	MTYPE DB ?
@@ -108,6 +112,8 @@
 	CURRENCY DB ?
 	USPRICE DW ?
 	USREM DW ?
+	SGPRICE DW ?
+	SGREM DW ?
 
 	INPUT_AMNT LABEL BYTE    
     	AMNT_MAXN DB 6
@@ -858,7 +864,7 @@ PROCEED:
 		CMP CURRENCY,"1"
        		JL FALSE2
 
-        	CMP CURRENCY,"2"
+		CMP CURRENCY,"3"
 	    	JG FALSE2
 
 		CMP CURRENCY,"1"
@@ -866,6 +872,9 @@ PROCEED:
 
 		CMP CURRENCY,"2"
 		JE USD
+
+		CMP CURRENCY,"3"
+		JE SGD
 
 		USD:
 			MOV AX,TPRICE
@@ -878,12 +887,12 @@ PROCEED:
 
 			CMP USREM,2
 			JGE ROUNDUP
-			JMP NEXT
+			JMP USNEXT
 	
-			ROUNDUP:
+			ROUNDUP1:
 				INC USPRICE
-
-			NEXT:
+			
+			USNEXT:
 				MOV AH,09H
 				LEA DX,USDSTR
 				INT 21H
@@ -897,9 +906,41 @@ PROCEED:
 				MOV TPRICE,BX
 				
 				JMP AMOUNT_INPUT
+
+		SGD:
+			MOV AX,TPRICE
+			MOV DX,1
+			MUL DX
+			DIV THREE
+			
+			MOV SGPRICE,AX
+			MOV SGREM,DX
+
+			CMP USREM,2
+			JGE ROUNDUP
+			JMP SGNEXT
+	
+			ROUNDUP2:
+				INC SGPRICE
+
+
+			SGNEXT:
+				MOV AH,09H
+				LEA DX,USDSTR
+				INT 21H
+				
+				MOV BX,SGPRICE
+				CALL DISPWORD
+
+				CALL NEXT_LINE
+
+				MOV BX,SGPRICE
+				MOV TPRICE,BX
+				
+				JMP AMOUNT_INPUT
 		     
 
-        	JMP AMOUNT_INPUT
+        	;JMP AMOUNT_INPUT
 
 	    	FALSE2:
 		    	CALL DISP_ERROR
@@ -986,18 +1027,28 @@ AMOUNT_INPUT:
 		SUB AX,TPRICE
 		MOV BX,AX
 
-		CMP CURRENCY,"1"
-		JE PRINTMSG
+		CMP CURRENCY,"2"
+		JE PUSMSG
+
+		CMP CURRENCY,"3"
+		JE PSGMSG
 		
 		MOV AH,09H
-		LEA DX,USDBAL
-		INT 21H	
+		LEA DX,MYRBAL
+		INT 21H		
+	
 		JMP PRINTPRICE
 		
 
-	PRINTMSG:
+	PUSMSG:
 		MOV AH,09H
-		LEA DX,MYRBAL
+		LEA DX,USDBAL
+		INT 21H
+		JMP PRINTPRICE
+
+	PUSMSG:
+		MOV AH,09H
+		LEA DX,SGDBAL
 		INT 21H		
 
 	PRINTPRICE:
