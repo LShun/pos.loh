@@ -14,16 +14,26 @@
 	LOGO			DB "          __         ______     __  __     ______   ______     ______          ", 13, 10
 					DB "         /\ \       /\  __ \   /\ \_\ \   /\  == \ /\  __ \   /\  ___\         ", 13, 10
 					DB "         \ \ \____  \ \ \/\ \    \ \  _\  \ \  _-/ \ \ \/\ \  \ \___  \        ", 13, 10
-					DB "           \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____\       ", 13, 10, "$"
+					DB "           \/_____/   \/_____/   \/_/\/_/   \/_/     \/_____/   \/_____\       ", 13, 10, '$'
     
 	STRSEPARATOR	DB "================================================================================", 13, 10, "$"
+
 	STRWELCOME		DB "                        WELCOME TO LOH PORK SALES SYSTEM", 13, 10, "$"
-	STRMAINWARN		DB "          AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW", 13, 10, "$"
+	STRWELCOMELEN   DW 56
+	STRWELCOMECOLOR DB 0BH
+	
+	STRMAINWARN		 DB "          AUTHORIZED USER ONLY. UNAUTHORIZED ACCESS IS AGAINST THE LAW",13,10, '$'
+	STRMAINWARNLEN   DW 70
+	STRMAINWARNCOLOR DB 0CH
+
 	USERMENUCHOICE  DB ?
 
 	; LOGIN
 	    
-	strRequestPw 	DB "   Please enter password: $"
+	strRequestPw 	  DB "   Please enter password: $"
+	strRequestPwLEN   DW 26
+	strRequestPwCOLOR DB 0EH
+	
 	strLoginSuccess DB "               User authorized. Welcome!$"
 	strLoginFail 	DB "Incorrect login details. Try again: $"
 	strPw			DB 53,37,22,22,18,85,23,1,"$" ; PW Hash
@@ -162,11 +172,16 @@ MAIN PROC
     MOV AX,@DATA
     MOV DS,AX
 	
+	; Print logo
+	CALL CLEAR_SCREEN
     CALL PRINT_LOGO
 	
+	; Ask for login
 	CALL LOGIN
-		
+
+	; Main menu	
 	MENU:
+		; Setup
 		CALL CLEAR_SCREEN	
 		CALL NEXT_LINE
 		CALL DISPLAY_MENU
@@ -330,6 +345,14 @@ DISPLAY_MEAT_MENU ENDP
 
 ; LOGIN FUNCTION
 LOGIN PROC
+
+	; Change color
+	MOV AH, 09H
+	MOV BH, 0
+	MOV BL, strRequestPwCOLOR
+	MOV CX, strRequestPwLEN
+	INT 10H
+
 	; Show login prompt
 	;CALL next_line
 	MOV	AH, 09H
@@ -385,9 +408,6 @@ LOGIN PROC
 LOGIN ENDP
 
 LOGIN_CMP_SETUP PROC
-    ; OVERWRITE BUFFER
-    
-    
     ; GET PASSWORD
 	MOV AH, 0AH
 	LEA DX, USERPW
@@ -983,6 +1003,13 @@ PRINT_LOGO PROC
 	LEA DX, STRSEPARATOR
 	INT 21H
 	
+	; Change color
+	MOV AH, 09H
+	MOV BH, 0
+	MOV BL, STRWELCOMECOLOR
+	MOV CX, STRWELCOMELEN
+	INT 10H
+
     LEA DX, STRWELCOME
     INT 21H
     
@@ -991,6 +1018,13 @@ PRINT_LOGO PROC
 	
 	CALL NEXT_LINE
 	
+	; Change color
+	MOV AH, 09H
+	MOV BH, 0
+	MOV BL, STRMAINWARNCOLOR
+	MOV CX, STRMAINWARNLEN
+	INT 10H
+
 	MOV AH, 09H
     LEA DX, STRMAINWARN
     INT 21H
