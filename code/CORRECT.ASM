@@ -77,12 +77,11 @@
 	MYRSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS RM $"
 	USDSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS USD $"
 	SGDSTR DB 13,10,"                   PRICE OF MEAT BOUGHT IS SGD $"
-	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
-	STR3 DB "                   ENTER AMOUNT FOR PAYMENT : $"
-	MYRBAL DB "             		THANK YOU! YOUR BALANCE IS RM $"
-	USDBAL DB "             		THANK YOU! YOUR BALANCE IS USD $"
-	SGDBAL DB "                     THANK YOU! YOUR BALANCE IS SGD $"
-	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
+	STR2 DB "                    ENTER AMOUNT FOR PAYMENT : $"
+	MYRBAL DB "                    THANK YOU! YOUR BALANCE IS RM $"
+	USDBAL DB "                    THANK YOU! YOUR BALANCE IS USD $"
+	SGDBAL DB "                    THANK YOU! YOUR BALANCE IS SGD $"
+	STR3 DB "         Please return to PURCHASE function for input to proceed...$"
 
 	CURRENCYMENU DB "                   +---------------------------------+",13,10
 		         DB "                   |           CURRENCY              |",13,10
@@ -769,7 +768,7 @@ BILLING PROC
 
 	DISPM:
 		MOV AH,09H
-		LEA DX,STR5
+		LEA DX,STR3
 		INT 21H
 
 		;CALL next_line
@@ -882,8 +881,8 @@ PROCEED:
 			CALL CHANGE_SGD
 			JMP AMOUNT_INPUT
 
-		FALSE2:
-		    	CALL DISP_ERROR
+		FALSE2:	
+			CALL DISP_ERROR
 			JMP AGAIN
 
 AMOUNT_INPUT:
@@ -891,7 +890,7 @@ AMOUNT_INPUT:
 		CALL NEXT_LINE
 
 		MOV AH,09H
-		LEA DX,STR3		;PROMPT USER TO INPUT AMOUNT
+		LEA DX,STR2		;PROMPT USER TO INPUT AMOUNT
 		INT 21H
 
 		MOV AH,0AH
