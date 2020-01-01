@@ -42,7 +42,7 @@
 	                DB "                    |             3.  SUMMARY              |                   ",13,10
 	                DB "                    |             4.  EXIT                 |                   ",13,10
 					DB "                    +--------------------------------------+                   ",13,10
-					DB "                    ENTER YOUR CHOICE (1-4): ",'$'
+					DB "                     ENTER YOUR CHOICE (1-4): ",'$'
 	
 
 	; BILLING
@@ -51,20 +51,20 @@
 	TITSTR DB "                         =======================",13,10
 		   DB "                         CALCULATE PRICE OF MEAT",13,10
 		   DB "                         =======================$",13,10
-	STR1 DB "		       PRICE OF MEAT BOUGHT IS RM $"
-	STR2 DB "		       DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
-	STR3 DB "		       ENTER AMOUNT FOR PAYMENT: $"
-	STR4 DB "		       THANK YOU! YOUR BALANCE IS RM $"
-	STR5 DB "	   Please return to PURCHASE function for input to proceed...$"
+	STR1 DB 13,10,"             PRICE OF MEAT BOUGHT IS RM $"
+	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
+	STR3 DB "             ENTER AMOUNT FOR PAYMENT: $"
+	STR4 DB "             THANK YOU! YOUR BALANCE IS RM $"
+	STR5 DB "      Please return to PURCHASE function for input to proceed...$"
 
-	CURRENCYMENU DB "			+--------------------------------+",13,10
-		         DB "			|		    CURRENCY             |",13,10
-		         DB "			+--------------------------------+",13,10
-		         DB "			|	 1. RINGGIT MALAYSIA(MYR)    |",13,10
-		         DB "			|    2. US DOLLAR       (USD)    |",13,10
-		         DB "			+--------------------------------+$",13,10
+	CURRENCYMENU DB "                 +--------------------------------+",13,10
+		         DB "                 |           CURRENCY             |",13,10
+		         DB "                 +--------------------------------+",13,10
+		         DB "                 |    1. RINGGIT MALAYSIA(MYR)    |",13,10
+		         DB "                 |    2. US DOLLAR       (USD)    |",13,10
+		         DB "                 +--------------------------------+$",13,10
 		     
-	CURMSG DB "            ENTER CHOICE FOR CURRENCRY(1-2): ",'$'
+	CURMSG       DB 13,10,"            ENTER CHOICE FOR CURRENCRY(1-2): $"
 
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
@@ -92,20 +92,20 @@
    
 	PURCSTUB			DB "PURCHASE STUB$"
 
-	MSG1          DB "            ENTER A NUMBER (6 TO QUIT): $"
-	ERRORM        DB "            INVALID! PLEASE ENTER AGAIN! $"
-	MSG2          DB "            ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
-	MSG3          DB "            ENTER THE QUANTITY (MAX 3 DIGIT): $"
-	MSG4          DB "            DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
+	MSG1          DB "             ENTER A NUMBER (6 TO QUIT): $"
+	ERRORM        DB "             INVALID! PLEASE ENTER AGAIN! $"
+	MSG2          DB "             ENTER THE WEIGHT (1KG,3KG OR 5KG): $"
+	MSG3          DB "             ENTER THE QUANTITY (MAX 3 DIGIT): $"
+	MSG4          DB "             DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
 	MSG5          DB ".00 KG$"
-	MSG6          DB "            DO YOU WANT TO EDIT YOUR CHOICE (Y-YES)? $"
+	MSG6          DB "             DO YOU WANT TO EDIT YOUR CHOICE (Y-YES)? $"
 	MSG7          DB "                        ****************",13,10
 	              DB "                        * 1.  WEIGHT   *",13,10
 	              DB "                        * 2.  QUANTITY *",13,10
 		          DB "                        ****************$"
-	MSG8          DB "            ENTER A NUMBER (1-2) : $"
-	MSG9          DB "            ENTER NEW WEIGHT (1KG,3KG OR 5KG): $"
-	MSG10         DB "            ENTER NEW QUANTITY (MAX 3 DIGIT): $"
+	MSG8          DB "             ENTER A NUMBER (1-2) : $"
+	MSG9          DB "             ENTER NEW WEIGHT (1KG,3KG OR 5KG): $"
+	MSG10         DB "             ENTER NEW QUANTITY (MAX 3 DIGIT): $"
 	EDIT_NUM      DB ?
 	WGT           DW ?
 	MEAT_MENU     DB "            +-----------------------------------+------------+",10,13
@@ -146,7 +146,7 @@
                         DB "                          (_ /  \|\/||\/| /\ |__)\_/                           ",13,10
                         DB "                          __)\__/|  ||  |/--\| \  |                            $"
 	TATXT			    DB "                    +--------------------------------------+                   ",13,10
-	                    DB "                           TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
+	                    DB "                               TRANSACTIONS: $"    ; UPDATE HERE AFTER EACH TRANSACTIONS
 	TRANSACTS        	DW 0
 	OPERAND             DW ?
 	OPERATOR            DW ?
@@ -1000,7 +1000,10 @@ EDITING PROC
 	CMP EDIT_NUM,"1"
 	JE CHANGE_WEIGHT
 	
+	CALL CLEAR_SCREEN
+	CALL DISPLAY_MEAT_MENU
 	CALL NEXT_LINE
+	
 	MOV AH,09H
 	LEA DX,MSG10				;ENTER NEW QUANTITY
 	INT 21H
@@ -1013,11 +1016,6 @@ EDITING PROC
 	CALL NEXT_LINE
 	CALL CHECK_QUANTITY_DIGIT
 	
-	MOV AH,09H
-	LEA DX,MSG4		;OUTPUT
-	INT 21H
-	
-	CALL DISPWORD
 	;CALL NEXT_LINE
 	MOV AH,09H
 	LEA DX,MSG5
@@ -1028,6 +1026,7 @@ EDITING PROC
 	CALL PRESS_KEY_CON
 
 	JMP TEST1
+	
 	
 	;PROCESS FOR EDITING WEIGHT 
 	CHANGE_WEIGHT:
