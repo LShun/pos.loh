@@ -76,32 +76,32 @@
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
 
-	TITSTR DB 10,13,"             __  __   __ __   __        __          ___ __  __ ",10,13
-		     DB "            |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
-		     DB "            |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
+	TITSTR DB 10,13,"                 __  __   __ __   __        __          ___ __  __ ",10,13
+		     DB "                |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
+		     DB "                |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
 
-	MYRSTR DB 13,10,"             	     PRICE OF MEAT BOUGHT IS RM $"
-	USDSTR DB 13,10,"             	     PRICE OF MEAT BOUGHT IS USD $"
+	MYRSTR DB 13,10,"             	    	PRICE OF MEAT BOUGHT IS RM $"
+	USDSTR DB 13,10,"                    PRICE OF MEAT BOUGHT IS USD $"
 	SGDSTR DB 13,10,"                    PRICE OF MEAT BOUGHT IS SGD $"
 	STR2 DB "                    ENTER AMOUNT FOR PAYMENT : $"
 	MYRBAL DB "                    THANK YOU! YOUR BALANCE IS RM $"
 	USDBAL DB "                    THANK YOU! YOUR BALANCE IS USD $"
 	SGDBAL DB "                    THANK YOU! YOUR BALANCE IS SGD $"
-	STR3 DB "         Please return to PURCHASE function for input to proceed...$"
+	STR3 DB "            Please return to PURCHASE function for input to proceed...$"
 
-	CURRENCYMENU DB "                   +---------------------------------+",13,10
-		         DB "                   |           CURRENCY              |",13,10
-		         DB "                   +---------------------------------+",13,10
-		         DB "                   |    1. RINGGIT MALAYSIA (MYR)    |",13,10
-		         DB "                   |    2. US DOLLAR        (USD)    |",13,10
-			     DB "                   |    3. SINGAPORE DOLLAR (SGD)    |",13,10
-		         DB "                   +---------------------------------+$",13,10
+	    CURRENCYMENU DB "			+---------------------------------+",13,10
+		         DB "			|           CURRENCY              |",13,10
+		         DB "			+---------------------------------+",13,10
+		         DB "			|    1. RINGGIT MALAYSIA (MYR)    |",13,10
+		         DB "			|    2. US DOLLAR        (USD)    |",13,10
+			 DB "			|    3. SINGAPORE DOLLAR (SGD)    |",13,10
+		         DB "			+---------------------------------+$",13,10
 		     
-	CURMSG       DB 13,10,"                    ENTER CHOICE FOR CURRENCY(1-3) : $"
+	CURMSG DB 13,10,"                    ENTER CHOICE FOR CURRENCY(1-3) : $"
 
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
-	TAB DB "		       $"
+	TAB DB "             	    	$"
 	FOUR DW 4
 	THREE DW 3
 
@@ -148,18 +148,18 @@
 	MSG10         DB "             ENTER NEW QUANTITY (MAX 3 DIGIT) : $"
 	EDIT_NUM      DB ?
 	WGT           DW ?
-	MEAT_MENU     DB "            +-----------------------------------+------------+",10,13
-				  DB "            |           TYPES OF PORK           | PRICE (RM) |",10,13
-			      DB "            +-----------------------------------+------------+",10,13
-			      DB "            |     1.     PORK BELLY             |        9.00|",10,13
-	              DB "            |     2.     PORK LOIN              |       10.00|",10,13
-	              DB "            |     3.     PORK RIB               |       11.00|",10,13
-	              DB "            |     4.     PORK SHOULDER          |       13.00|",10,13
-	              DB "            |     5.     HAM                    |        8.00|",10,13
-	              DB "            +-----------------------------------+-----------+$",10,13
-	WEIGHT_TITLE  DB 13,10,"               __  __     ___   __        __          ___ __  __ ",13,10
-				  DB "          |  ||_ |/ _ |__| |   /   /\ |  /  /  \|   /\ | /  \|__)",13,10 
-				  DB "          |/\||__|\__)|  | |   \__/--\|__\__\__/|__/--\| \__/| \$",13,10
+	MEAT_MENU     DB "		+-----------------------------------+------------+",10,13
+		      DB "		|           TYPES OF PORK           | PRICE (RM) |",10,13
+		      DB "		+-----------------------------------+------------+",10,13
+		      DB "		|     1.     PORK BELLY             |        9.00|",10,13
+	              DB "		|     2.     PORK LOIN              |       10.00|",10,13
+	              DB "		|     3.     PORK RIB               |       11.00|",10,13
+	              DB "		|     4.     PORK SHOULDER          |       13.00|",10,13
+	              DB "		|     5.     HAM                    |        8.00|",10,13
+	              DB "		+-----------------------------------+-----------+$",10,13
+	WEIGHT_TITLE  	DB 13,10,"                   __  __     ___   __        __          ___ __  __ ",13,10
+			DB "              |  ||_ |/ _ |__| |   /   /\ |  /  /  \|   /\ | /  \|__)",13,10 
+			DB "              |/\||__|\__)|  | |   \__/--\|__\__\__/|__/--\| \__/| \$",13,10
  
 	PREVIO_WEIGHT DB "             PREVIOUS WEIGHT ENTERED: $"			  
 	PREVIO_QUAN   DB "             PREVIOUS QUANTITY ENTERED: $"
@@ -1500,7 +1500,11 @@ CHANGE_USD PROC
 		MOV BX,USPRICE
 		CALL DISPWORD
 
-		CALL NEXT_LINE
+		MOV AH,09H
+		LEA DX,CENTS		;.00
+		INT 21H
+
+		;CALL NEXT_LINE
 
 		MOV BX,USPRICE
 		MOV TPRICE,BX
@@ -1533,7 +1537,11 @@ CHANGE_SGD PROC
 		MOV BX,SGPRICE
 		CALL DISPWORD
 
-		CALL NEXT_LINE
+		MOV AH,09H
+		LEA DX,CENTS		;.00
+		INT 21H
+
+		;CALL NEXT_LINE
 
 		MOV BX,SGPRICE
 		MOV TPRICE,BX
