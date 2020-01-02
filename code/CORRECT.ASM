@@ -143,7 +143,7 @@
 	              DB "                        | 1.  WEIGHT   |",13,10
 	              DB "                        | 2.  QUANTITY |",13,10
 		          DB "                        +--------------+$"
-	MSG8          DB "                  ENTER A NUMBER (1-2) : $"
+	MSG8          DB "                     ENTER A NUMBER (1-2) : $"
 	MSG9          DB "                  ENTER NEW WEIGHT (1KG,3KG OR 5KG) : $"
 	MSG10         DB "                  ENTER NEW QUANTITY (MAX 3 DIGIT) : $"
 	EDIT_NUM      DB ?
@@ -161,8 +161,8 @@
 			DB "              |  ||_ |/ _ |__| |   /   /\ |  /  /  \|   /\ | /  \|__)",13,10 
 			DB "              |/\||__|\__)|  | |   \__/--\|__\__\__/|__/--\| \__/| \$",13,10
  
-	PREVIO_WEIGHT DB "             PREVIOUS WEIGHT ENTERED: $"			  
-	PREVIO_QUAN   DB "             PREVIOUS QUANTITY ENTERED: $"
+	PREVIO_WEIGHT DB "                  PREVIOUS WEIGHT ENTERED: $"			  
+	PREVIO_QUAN   DB "                  PREVIOUS QUANTITY ENTERED: $"
 	
 	TYPE_STR      LABEL BYTE    
 	TYPE_MAXN     DB 2
