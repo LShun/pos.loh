@@ -80,9 +80,9 @@
 		     DB "            |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
 		     DB "            |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
 
-	MYRSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS RM $"
-	USDSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS USD $"
-	SGDSTR DB 13,10,"                   PRICE OF MEAT BOUGHT IS SGD $"
+	MYRSTR DB 13,10,"             	     PRICE OF MEAT BOUGHT IS RM $"
+	USDSTR DB 13,10,"             	     PRICE OF MEAT BOUGHT IS USD $"
+	SGDSTR DB 13,10,"                    PRICE OF MEAT BOUGHT IS SGD $"
 	STR2 DB "                    ENTER AMOUNT FOR PAYMENT : $"
 	MYRBAL DB "                    THANK YOU! YOUR BALANCE IS RM $"
 	USDBAL DB "                    THANK YOU! YOUR BALANCE IS USD $"
@@ -702,7 +702,7 @@ PURCHASE ENDP
 ; BILLING FUNCTION
 BILLING PROC 
 	MOV AX,0600H
-	MOV BH,00001010B
+	MOV BH,10001010B
 	MOV CX,0100H			;BLINKING
 	MOV DX,0379H
 	INT 10H
@@ -845,10 +845,10 @@ AMOUNT_INPUT:
 		CALL NEXT_LINE
 
 		MOV AH,09H
-		LEA DX,STR2		;PROMPT USER TO INPUT AMOUNT
+		LEA DX,STR2			;PROMPT USER TO INPUT AMOUNT
 		INT 21H
 
-		MOV AH,0AH		;INPUT AMOUNT
+		MOV AH,0AH			;INPUT AMOUNT
 		LEA DX,INPUT_AMNT		
 		INT 21H
 
