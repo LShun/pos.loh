@@ -67,9 +67,9 @@
 	                DB "                    |             1.  PURCHASE             |                   ",13,10
 	                DB "                    |             2.  BILLING              |                   ",13,10
 	                DB "                    |             3.  SUMMARY              |                   ",13,10
-	                DB "                    |             4.  EXIT                 |                   ",13,10
+	                DB "                    |             0.  EXIT                 |                   ",13,10
 					DB "                    +--------------------------------------+                   ",13,10,'$'
-	MMENUCHTXT	    DB "                     ENTER YOUR CHOICE (1-4) : ",'$'
+	MMENUCHTXT	    DB "                     ENTER YOUR CHOICE (0-3) : ",'$'
 	MMENUCHTXTLEN   DW 45
 	MMENUCOLOR      DB 0EH
 
@@ -261,7 +261,7 @@ MAIN PROC
 			
 		; END PROGRAM
 		CHKEXIT:
-			CMP USERMENUCHOICE, '4'
+			CMP USERMENUCHOICE, '0'
 			JZ EXIT
 			JNZ CONTINUE
 			EXIT:
