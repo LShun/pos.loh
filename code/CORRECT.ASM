@@ -89,12 +89,12 @@
 	SGDBAL DB "                    THANK YOU! YOUR BALANCE IS SGD $"
 	STR3 DB "            Please return to PURCHASE function for input to proceed...$"
 
-	    CURRENCYMENU DB "			+---------------------------------+",13,10
+	CURRENCYMENU DB "			+---------------------------------+",13,10
 		         DB "			|           CURRENCY              |",13,10
 		         DB "			+---------------------------------+",13,10
 		         DB "			|    1. RINGGIT MALAYSIA (MYR)    |",13,10
 		         DB "			|    2. US DOLLAR        (USD)    |",13,10
-			 DB "			|    3. SINGAPORE DOLLAR (SGD)    |",13,10
+				 DB "			|    3. SINGAPORE DOLLAR (SGD)    |",13,10
 		         DB "			+---------------------------------+$",13,10
 		     
 	CURMSG DB 13,10,"                    ENTER CHOICE FOR CURRENCY(1-3) : $"
@@ -132,28 +132,28 @@
    
 	PURCSTUB			DB "PURCHASE STUB$"
 
-	MSG1          DB "             ENTER A NUMBER (0 TO QUIT) : $"
-	ERRORM        DB "             INVALID! PLEASE ENTER AGAIN! $"
-	MSG2          DB "             ENTER THE WEIGHT (1KG,3KG OR 5KG) : $"
-	MSG3          DB "             ENTER THE QUANTITY (MAX 3 DIGIT) : $"
-	MSG4          DB "             DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
+	MSG1          DB "                  ENTER A NUMBER (0 TO QUIT) : $"
+	ERRORM        DB "                  INVALID! PLEASE ENTER AGAIN! $"
+	MSG2          DB "                  ENTER THE WEIGHT (1KG,3KG OR 5KG) : $"
+	MSG3          DB "                  ENTER THE QUANTITY (MAX 3 DIGIT) : $"
+	MSG4          DB "                  DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
 	MSG5          DB ".00 KG$"
-	MSG6          DB "             DO YOU WANT TO EDIT YOUR CHOICE (Y-YES)? $"
-	MSG7          DB "                        +--------------+",13,10
-				  DB "                        |    CHOICE    |",13,10
-				  DB "                        +--------------+",13,10
-	              DB "                        | 1.  WEIGHT   |",13,10
-	              DB "                        | 2.  QUANTITY |",13,10
-		          DB "                        +--------------+$"
-	MSG8          DB "             ENTER A NUMBER (1-2) : $"
-	MSG9          DB "             ENTER NEW WEIGHT (1KG,3KG OR 5KG) : $"
-	MSG10         DB "             ENTER NEW QUANTITY (MAX 3 DIGIT) : $"
+	MSG6          DB "                  DO YOU WANT TO EDIT YOUR CHOICE (Y-YES)? $"
+	MSG7          DB "                            +--------------+",13,10
+				  DB "                            |    CHOICE    |",13,10
+				  DB "                            +--------------+",13,10
+	              DB "                            | 1.  WEIGHT   |",13,10
+	              DB "                            | 2.  QUANTITY |",13,10
+		          DB "                            +--------------+$"
+	MSG8          DB "                         ENTER A NUMBER (1-2) : $"
+	MSG9          DB "                  ENTER NEW WEIGHT (1KG,3KG OR 5KG) : $"
+	MSG10         DB "                  ENTER NEW QUANTITY (MAX 3 DIGIT) : $"
 	EDIT_NUM      DB ?
 	WGT           DW ?
 	MEAT_MENU     DB "		+-----------------------------------+------------+",10,13
-		      DB "		|           TYPES OF PORK           | PRICE (RM) |",10,13
-		      DB "		+-----------------------------------+------------+",10,13
-		      DB "		|     1.     PORK BELLY             |        9.00|",10,13
+		          DB "		|           TYPES OF PORK           | PRICE (RM) |",10,13
+		          DB "		+-----------------------------------+------------+",10,13
+		         DB "		|     1.     PORK BELLY             |        9.00|",10,13
 	              DB "		|     2.     PORK LOIN              |       10.00|",10,13
 	              DB "		|     3.     PORK RIB               |       11.00|",10,13
 	              DB "		|     4.     PORK SHOULDER          |       13.00|",10,13
@@ -163,8 +163,8 @@
 			DB "              |  ||_ |/ _ |__| |   /   /\ |  /  /  \|   /\ | /  \|__)",13,10 
 			DB "              |/\||__|\__)|  | |   \__/--\|__\__\__/|__/--\| \__/| \$",13,10
  
-	PREVIO_WEIGHT DB "             PREVIOUS WEIGHT ENTERED: $"			  
-	PREVIO_QUAN   DB "             PREVIOUS QUANTITY ENTERED: $"
+	PREVIO_WEIGHT DB "                  PREVIOUS WEIGHT ENTERED: $"			  
+	PREVIO_QUAN   DB "                  PREVIOUS QUANTITY ENTERED: $"
 	
 	TYPE_STR      LABEL BYTE    
 	TYPE_MAXN     DB 2
@@ -1316,7 +1316,7 @@ CHECK_QUANTITY_DIGIT PROC
 		MOV CL,QUANTITY_ACTN 
 		DEC CL
 
-	LP2:
+	LP3:
 		MOV BL,QUANTITY[SI]
 		SUB BL,30H
 		MOV BH,0
@@ -1324,7 +1324,7 @@ CHECK_QUANTITY_DIGIT PROC
 		MUL TENDW
 		INC SI
 
-	LOOP LP2 
+	LOOP LP3 
 	
    CALQ2:
 		MOV BL,QUANTITY[SI]
