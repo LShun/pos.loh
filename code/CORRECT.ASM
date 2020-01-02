@@ -38,8 +38,8 @@
 	
 	strLoginSuccess DB "               User authorized. Welcome!$"
 	
-	strLoginFail 		DB "   Incorrect login details. Try again: $"
-	strLoginFailLEN		DW 39
+	strLoginFail 		DB "   Incorrect login details. $"
+	strLoginFailLEN		DW 27
 	strLoginFailCOLOR 	DB 0CH
 
 	strPw			DB 22,"$" ;53,37,22,22,18,85,23,1,"$" ; PW Hash
@@ -50,6 +50,11 @@
 	
 	ATTEMPTS			DB 3
 	usrAttempts			DB ?
+
+	authRetry			DB "   Try again: $"
+	authRetryLEN		DW 13
+	authRetryCOLOR 		DB 0EH
+
 	authFail			DB "   Too many invalid password attempts. Program will now exit.$"
 	authFailLEN			DW 61
 	authFailCOLOR 		DB 0DH
@@ -354,7 +359,7 @@ LOGIN PROC
 		MOV CX, strLoginFailLEN
 		INT 10H
 
-		; Display message
+		; Display failure message
         MOV AH, 09H
         LEA DX, strLoginFail
         INT 21H
@@ -365,6 +370,20 @@ LOGIN PROC
 		MOV BL, usrAttempts
 		CMP BL, ATTEMPTS
 		JGE ENDLOGIN
+
+		; Otherwise, allow user to retry
+		CALL NEXT_LINE
+		; Change color
+		MOV AH, 09H
+		MOV BH, 0
+		MOV BL, authRetryCOLOR
+		MOV CX, authRetryLEN
+		INT 10H
+
+		; Display retry message
+        MOV AH, 09H
+        LEA DX, authRetry
+        INT 21H
         
 		CALL LOGIN_CMP_SETUP
         JMP checkPw
