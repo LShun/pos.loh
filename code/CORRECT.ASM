@@ -1395,9 +1395,11 @@ DISPWORD PROC
         ; Check if leading zero
 	    CMP leadZeroFlag, 0
 	    JE  DWPRINTNUM
-	    ; Check if zero
+	    
+		; Check if zero
 		CMP AX, 0
 		JZ  DWCONTDISPWORD
+		
 		; set no longer leading zero
 		MOV BL, 0
 	    MOV leadZeroFlag, BL
@@ -1464,12 +1466,10 @@ CHANGE_USD PROC
 		LEA DX,CENTS		;.00
 		INT 21H
 
-		;CALL NEXT_LINE
-
 		MOV BX,USPRICE
 		MOV TPRICE,BX
-				
-	RET
+		RET		
+		
 CHANGE_USD ENDP
 
 CHANGE_SGD PROC
@@ -1501,11 +1501,9 @@ CHANGE_SGD PROC
 		LEA DX,CENTS		;.00
 		INT 21H
 
-		;CALL NEXT_LINE
-
 		MOV BX,SGPRICE
 		MOV TPRICE,BX
-	RET
+		RET
 
 CHANGE_SGD ENDP
 
