@@ -69,35 +69,41 @@
 	                DB "                    |             3.  SUMMARY              |                   ",13,10
 	                DB "                    |             4.  EXIT                 |                   ",13,10
 					DB "                    +--------------------------------------+                   ",13,10,'$'
-	MMENUCHTXT	    DB "                    ENTER YOUR CHOICE (1-4): ",'$'
+	MMENUCHTXT	    DB "                     ENTER YOUR CHOICE (1-4) : ",'$'
 	MMENUCHTXTLEN   DW 45
 	MMENUCOLOR      DB 0EH
 
 	; BILLING
     BILLSTUB			DB "BILLING STUB$"
 
-	TITSTR DB 10,13,"            __  __   __ __   __        __          ___ __  __ ",10,13
-		   DB "           |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
-		   DB "           |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
+	TITSTR DB 10,13,"             __  __   __ __   __        __          ___ __  __ ",10,13
+		     DB "            |__)|__)|/  |_   /   /\ |  /  /  \|   /\ | /  \|__)",10,13
+		     DB "            |   | \ |\__|__  \__/--\|__\__\__/|__/--\| \__/| \$"  
 
-	STR1 DB 13,10,"                     PRICE OF MEAT BOUGHT IS RM $"
-	STR2 DB "             DO YOU WISH TO MAKE PAYMENT (Y-YES)? $"
-	STR3 DB "                   ENTER AMOUNT FOR PAYMENT : $"
-	STR4 DB "                   THANK YOU! YOUR BALANCE IS RM $"
-	STR5 DB "         Please return to PURCHASE function for input to proceed...$"
+	MYRSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS RM $"
+	USDSTR DB 13,10,"             	    PRICE OF MEAT BOUGHT IS USD $"
+	SGDSTR DB 13,10,"                   PRICE OF MEAT BOUGHT IS SGD $"
+	STR2 DB "                    ENTER AMOUNT FOR PAYMENT : $"
+	MYRBAL DB "                    THANK YOU! YOUR BALANCE IS RM $"
+	USDBAL DB "                    THANK YOU! YOUR BALANCE IS USD $"
+	SGDBAL DB "                    THANK YOU! YOUR BALANCE IS SGD $"
+	STR3 DB "         Please return to PURCHASE function for input to proceed...$"
 
 	CURRENCYMENU DB "                   +---------------------------------+",13,10
 		         DB "                   |           CURRENCY              |",13,10
 		         DB "                   +---------------------------------+",13,10
 		         DB "                   |    1. RINGGIT MALAYSIA (MYR)    |",13,10
 		         DB "                   |    2. US DOLLAR        (USD)    |",13,10
+			     DB "                   |    3. SINGAPORE DOLLAR (SGD)    |",13,10
 		         DB "                   +---------------------------------+$",13,10
 		     
-	CURMSG       DB 13,10,"                   ENTER CHOICE FOR CURRENCY(1-2) : $"
+	CURMSG       DB 13,10,"                    ENTER CHOICE FOR CURRENCY(1-3) : $"
 
 	SIGN1 DB " * $"
 	SIGN2 DB " = $"
 	TAB DB "		       $"
+	FOUR DW 4
+	THREE DW 3
 
 	PRICEPKG DB 9,10,11,13,8	;ARRAY FOR MEAT PRICE
 	MTYPE DB ?
@@ -107,9 +113,12 @@
 	AMOUNT DB ?
 	QTY DB ?
 	PRICE DW ?
-    COUNTS DB ?
+    	COUNTS DB ?
 	CURRENCY DB ?
-	
+	USPRICE DW ?
+	USREM DW ?
+	SGPRICE DW ?
+	SGREM DW ?
 
 	INPUT_AMNT LABEL BYTE    
     	AMNT_MAXN DB 6
@@ -128,10 +137,12 @@
 	MSG4          DB "             DEAR CUSTOMER, THE TOTAL WEIGHT IS $"
 	MSG5          DB ".00 KG$"
 	MSG6          DB "             DO YOU WANT TO EDIT YOUR CHOICE (Y-YES)? $"
-	MSG7          DB "                        ****************",13,10
-	              DB "                        * 1.  WEIGHT   *",13,10
-	              DB "                        * 2.  QUANTITY *",13,10
-		          DB "                        ****************$"
+	MSG7          DB "                        +--------------+",13,10
+				  DB "                        |    CHOICE    |",13,10
+				  DB "                        +--------------+",13,10
+	              DB "                        | 1.  WEIGHT   |",13,10
+	              DB "                        | 2.  QUANTITY |",13,10
+		          DB "                        +--------------+$"
 	MSG8          DB "             ENTER A NUMBER (1-2) : $"
 	MSG9          DB "             ENTER NEW WEIGHT (1KG,3KG OR 5KG) : $"
 	MSG10         DB "             ENTER NEW QUANTITY (MAX 3 DIGIT) : $"
@@ -495,7 +506,8 @@ PURCHASE PROC
 
 	    	INVALID:
 		    	CALL DISP_ERROR
-    
+				CALL NEXT_LINE
+				
         JMP MEAT_TYPE_INPUT
 
 	WEIGHT_INPUT: 
@@ -540,11 +552,12 @@ PURCHASE PROC
 	JMP INPUT_WEIGHT_AGAIN
 	
 	
+	
 	QUANTITY_INPUT:	
 	    
-	    CALL NEXT_LINE
 		CALL NEXT_LINE
-	    
+	    CALL NEXT_LINE
+		
 	    MOV AH,09H
 		LEA DX,MSG3
 		INT 21H
@@ -710,7 +723,7 @@ BILLING PROC
 
 	DISPM:
 		MOV AH,09H
-		LEA DX,STR5
+		LEA DX,STR3
 		INT 21H
 
 		;CALL next_line
@@ -779,7 +792,7 @@ PROCEED:
 	CALL NEXT_LINE
 	
 	MOV AH,09H
-	LEA DX,STR1
+	LEA DX,MYRSTR
 	INT 21H
 
 	MOV BX,TPRICE
@@ -797,7 +810,8 @@ PROCEED:
 	INC COUNT_PURCHARSE
 	INT 21H
 
-	AGAIN:	MOV AH,09H
+	AGAIN:	
+		MOV AH,09H
 		LEA DX,CURMSG
 		INT 21H
 
@@ -807,27 +821,33 @@ PROCEED:
 
 		CMP CURRENCY,"1"
        		JL FALSE2
+		JE AMOUNT_INPUT
 
-        	CMP CURRENCY,"2"
+		CMP CURRENCY,"3"
 	    	JG FALSE2
+		JE SGD
 
-		CALL NEXT_LINE        
+		CMP CURRENCY,"2"
+		USD:
+			CALL CHANGE_USD
+			JMP AMOUNT_INPUT
 
-        	JMP AMOUNT_INPUT
+		SGD:
+			CALL CHANGE_SGD
+			JMP AMOUNT_INPUT
 
-	    	FALSE2:
-		    	CALL DISP_ERROR
-		JMP AGAIN
-		
-		CALL NEXT_LINE
+		FALSE2:	
+			CALL DISP_ERROR
+			JMP AGAIN
 
 AMOUNT_INPUT:
-		
+		CALL NEXT_LINE
+		CALL NEXT_LINE
+
 		MOV AH,09H
-		LEA DX,STR3		;PROMPT USER TO INPUT AMOUNT
+		LEA DX,STR2		;PROMPT USER TO INPUT AMOUNT
 		INT 21H
 
-	
 		MOV AH,0AH
 		LEA DX,INPUT_AMNT		
 		INT 21H
@@ -885,8 +905,7 @@ AMOUNT_INPUT:
 	    
 	   CALP:
 	      MOV BL,AMNT[SI]
-		  SUB BL,30H 
-	          ;ADD AL,BL
+		  SUB BL,30H
 		  MOV BH,0
 		  ADD AX,BX
 		    
@@ -898,15 +917,35 @@ AMOUNT_INPUT:
 		CALL DISP_ERROR
 		JMP AMOUNT_INPUT
 
-	
 	CALCHG:
 		SUB AX,TPRICE
 		MOV BX,AX
 
+		CMP CURRENCY,"2"
+		JE PUSMSG
+
+		CMP CURRENCY,"3"
+		JE PSGMSG
+		
 		MOV AH,09H
-		LEA DX,STR4
+		LEA DX,MYRBAL
+		INT 21H		
+	
+		JMP PRINTPRICE
+		
+
+	PUSMSG:
+		MOV AH,09H
+		LEA DX,USDBAL
+		INT 21H
+		JMP PRINTPRICE
+
+	PSGMSG:
+		MOV AH,09H
+		LEA DX,SGDBAL
 		INT 21H		
 
+	PRINTPRICE:
 		CALL DISPWORD
 
 		MOV AH,09H
@@ -1459,5 +1498,70 @@ NEXT_LINE PROC
 	INT 	21H
 	RET
 NEXT_LINE ENDP
+
+CHANGE_USD PROC
+	MOV AX,TPRICE
+	MOV DX,1
+	MUL DX
+	DIV FOUR
+			
+	MOV USPRICE,AX
+	MOV USREM,DX
+
+	CMP USREM,2
+	JGE ROUNDUP1
+	JMP USNEXT
+	
+	ROUNDUP1:
+		INC USPRICE
+			
+	USNEXT:
+		MOV AH,09H
+		LEA DX,USDSTR
+		INT 21H				
+	
+		MOV BX,USPRICE
+		CALL DISPWORD
+
+		CALL NEXT_LINE
+
+		MOV BX,USPRICE
+		MOV TPRICE,BX
+				
+	RET
+CHANGE_USD ENDP
+
+CHANGE_SGD PROC
+	MOV AX,TPRICE
+	MOV DX,1
+	MUL DX
+	DIV THREE
+			
+	MOV SGPRICE,AX
+	MOV SGREM,DX
+
+	CMP USREM,2
+	JGE ROUNDUP2
+	JMP SGNEXT
+	
+	ROUNDUP2:
+		INC SGPRICE
+
+
+	SGNEXT:
+		MOV AH,09H
+		LEA DX,SGDSTR
+		INT 21H
+				
+		MOV BX,SGPRICE
+		CALL DISPWORD
+
+		CALL NEXT_LINE
+
+		MOV BX,SGPRICE
+		MOV TPRICE,BX
+	RET
+
+CHANGE_SGD ENDP
 
 END MAIN
