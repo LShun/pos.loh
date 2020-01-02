@@ -64,10 +64,10 @@
                     DB "                        |\/| /\ ||\ |  |\/||_ |\ |/  \                         ",13,10
                     DB "                        |  |/--\|| \|  |  ||__| \|\__/                         ",13,10
 	                DB "                    +--------------------------------------+                   ",13,10
+	                DB "                    |             0.  EXIT                 |                   ",13,10
 	                DB "                    |             1.  PURCHASE             |                   ",13,10
 	                DB "                    |             2.  BILLING              |                   ",13,10
 	                DB "                    |             3.  SUMMARY              |                   ",13,10
-	                DB "                    |             0.  EXIT                 |                   ",13,10
 					DB "                    +--------------------------------------+                   ",13,10,'$'
 	MMENUCHTXT	    DB "                     ENTER YOUR CHOICE (0-3) : ",'$'
 	MMENUCHTXTLEN   DW 45
@@ -130,7 +130,7 @@
    
 	PURCSTUB			DB "PURCHASE STUB$"
 
-	MSG1          DB "             ENTER A NUMBER (6 TO QUIT) : $"
+	MSG1          DB "             ENTER A NUMBER (0 TO QUIT) : $"
 	ERRORM        DB "             INVALID! PLEASE ENTER AGAIN! $"
 	MSG2          DB "             ENTER THE WEIGHT (1KG,3KG OR 5KG) : $"
 	MSG3          DB "             ENTER THE QUANTITY (MAX 3 DIGIT) : $"
@@ -491,13 +491,13 @@ PURCHASE PROC
         
         MOV DI,0
     
-        CMP CHOICE[DI],"1"
+        CMP CHOICE[DI],"0"
         JL INVALID
 
-        CMP CHOICE[DI],"6"
+        CMP CHOICE[DI],"5"
 	    JG INVALID
 		
-		CMP CHOICE[DI],"6"
+		CMP CHOICE[DI],"0"
 		JNE CONTPURCH
 		RET
 		
