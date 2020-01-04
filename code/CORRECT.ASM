@@ -48,7 +48,7 @@
 	                DB 20 DUP(0DH)  ; BUffer for Char entered
 	xorKey          DB "e"
 	
-	ATTEMPTS			DB 3
+	ATTEMPTS			DB 3 ; Must be between 1 and 255
 	usrAttempts			DB ?
 
 	authRetry			DB "   Try again: $"
