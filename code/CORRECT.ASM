@@ -83,7 +83,7 @@
 	MYRSTR DB 13,10,"             	    	PRICE OF MEAT BOUGHT IS RM $"
 	USDSTR DB 13,10,"                    PRICE OF MEAT BOUGHT IS USD $"
 	SGDSTR DB 13,10,"                    PRICE OF MEAT BOUGHT IS SGD $"
-	STR2 DB "                    ENTER AMOUNT FOR PAYMENT : $"
+	STR2 DB "                    ENTER AMOUNT FOR PAYMENT (1-65535): $"
 	MYRBAL DB "                    THANK YOU! YOUR BALANCE IS RM $"
 	USDBAL DB "                    THANK YOU! YOUR BALANCE IS USD $"
 	SGDBAL DB "                    THANK YOU! YOUR BALANCE IS SGD $"
